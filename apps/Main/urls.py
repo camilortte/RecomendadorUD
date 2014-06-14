@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
-from .views import test
+from .views import Test
 
 urlpatterns = patterns('',
-    # Examples:
-    url(r'^$', 'apps.Main.views.test'),
-    # url(r'^blog/', include('blog.urls')),
+    
+    url(r'^prueba1$', Test.as_view()),
+    
 )
