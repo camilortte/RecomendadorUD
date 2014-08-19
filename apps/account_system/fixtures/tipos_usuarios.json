@@ -1,0 +1,40 @@
+[
+  {
+    "model": "account_system.Tipo",
+    "pk": 1,
+    "fields": {
+      "tag": "Usuario Registrado"
+    }
+  },
+  {
+    "model": "account_system.Tipo",
+    "pk": 2,
+    "fields": {
+      "tag": "Usuario Organizacional"
+    }
+  },
+  {
+    "model": "account_system.Tipo",
+    "pk": 3,
+    "fields": {
+      "tag": "Usuario Administrador"
+    }
+  },
+  {
+    "model": "account_system.User",
+    "pk": 1,
+    "fields": {
+      "username": "1",
+      "password": "pbkdf2_sha256$12000$lcTyWsDyxbPs$LPjJNZRKNXfple0JTeinCiWRDWHezzSMZjdLmTUPaHE=",
+      "last_login": "2014-08-19 15:43:47.479065",
+      "is_superuser": "1",
+      "is_active": "1",
+      "email": "1@hotmail.com",
+      "is_staff": "1",
+      "is_organizacional": "0",
+      "date_joined":"2014-08-19 15:06:28.532669"
+    }
+  }
+]
+
+

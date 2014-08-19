@@ -1,0 +1,91 @@
+{% extends "main/base.html" %}
+
+{% load i18n %}
+{% load account %}
+{% load url from future %}
+{% load socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+    <h1>{% trans "Sign In" %}</h1>
+    <h2>{% trans "Este es un titulo creado para que sea traducido." %}</h2>
+
+    {% if socialaccount.providers  %}
+        <p>{% blocktrans with site.name as site_name %}Please sign in with one
+        of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+        for a {{site_name}} account and sign in below:{% endblocktrans %}</p>
+
+        <div class="socialaccount_ballot">
+
+            <ul class="socialaccount_providers">
+                {% for provider in socialaccount.providers %}
+                    {% if provider.id == "openid" %}
+                        {% for brand in provider.get_brands %}
+                            <li>                                
+                                <a title="{{brand.name}}" 
+                                  class="socialaccount_provider {{provider.id}} {{brand.id}}" 
+                                  href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
+                                >{{brand.name}}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}" 
+                        href="{% provider_login_url provider.id process=process %}">{{provider.name}}</a>
+                    </li>
+              {% endfor %}
+            </ul>
+            <div class="login-or">{% trans 'or' %}</div>
+        </div>
+
+        {% include "socialaccount/snippets/login_extra.html" %}
+
+    {% else %}
+        {% comment %} Cuando no se tiene activado los social providers{% endcomment %} 
+        <p>{% blocktrans %}If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+    {% endif %}
+
+    <form  data-parsley-validate class="login" method="POST" action="{% url 'account_login' %}">{% csrf_token %}        
+        
+        {% for field in form %}
+            {{ field.label_tag }}
+            {{ field }}
+             <br>
+        {% endfor %}
+        
+        {% comment %}     {{form.as_p}}{% endcomment %}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }} " />
+        {% endif %}
+
+            <ul class="errorlist">
+                {% if form.non_field_errors %}
+                    <li>{{ form.non_field_errors }}</li>
+                {% endif %}
+                {% for field in form %}
+                    {% if field.errors %}
+                        <li>
+                            {{ field.label }}
+                            <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
+    </form>
+
+
+
+{% endblock content %}
+
+
+

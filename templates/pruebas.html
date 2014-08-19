@@ -1,0 +1,33 @@
+{% extends "main/base.html" %}
+
+{% load i18n %}
+{% load account %}
+{% load url from future %}
+{% load socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+    <form data-parsley-validate method="POST">{%csrf_token%}
+    {{ form.as_p }}
+    <input type="submit" value="enviar"/>
+</form>
+
+
+
+<script>
+    
+    // use .on() to add a listener. you can add as many listeners as you want.
+ishout.on('notifications', function(data){
+    alert(data.msg);
+});
+
+// .init() will authenticate against the ishout.js server, and open the WebSocket connection.
+ishout.init();
+</script>
+
+{% endblock content %}
+
+
+

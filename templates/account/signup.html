@@ -1,0 +1,51 @@
+{% extends "main/base.html" %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Sign Up" %}</h1>
+
+	<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+	<form data-parsley-validate class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+	  	{% csrf_token %}
+
+	  	{% for field in form.visible_fields %}
+            {{ field.label_tag }}
+            {{ field }}
+             <br>
+        {% endfor %}
+	  		
+	  	{% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }} " />
+        {% endif %}
+
+                <ul class="errorlist">
+            {% if form.non_field_errors %}
+                <li>{{ form.non_field_errors }}</li>
+            {% endif %}
+            {% for field in form %}
+                {% if field.errors %}
+                    <li>
+                        {{ field.label }}
+                        <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+
+	  	{% if redirect_field_value %}
+	  		<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+	  	{% endif %}
+	  	<button type="submit">{% trans "Sign Up" %} &raquo;</button>
+	</form>
+
+{% endblock %}

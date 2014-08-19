@@ -1,0 +1,78 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load dajaxice_templatetags %}
+{% load notifications_tags %}
+
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block scripts %}
+        <script>
+            function my_callback(data){
+                $('#unread').text(data.count);
+                var id_delete='#'+data.id_leido+'_row';
+                $(id_delete).remove();
+            }
+        </script>
+{% endblock %}
+
+
+
+{% block content %}
+ 
+	{% if request.user.is_authenticated %}
+	    <p><a href="{% url 'logout_url' %}">Logout</a></p>
+	    <p><a href="{% url 'update_profile_url' %}">UpdateAccount</a></p>
+        <h2>Welcome
+	    {% if request.user.full_name or request.user.short_name %}
+	        {{ request.user.full_name }} {{ request.user.short_name }}
+	    {% else %}
+	        {{ request.user.username }}
+	    {% endif %}
+        </h2>
+
+	{% else %}
+	    <p><a href="{% url 'login_url'%}" class="pull-right">Login</a></p>
+	{% endif %}
+
+	<a href="{% url 'prueba_url' %}">Prueba_url</a>	    
+    
+    
+    
+    {% notifications_unread as unread_count %}
+    <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ajax</th>
+                            <th>Post</th>
+                            <th>Timestamp</th>
+                            <th>Actor</th>
+                            <th>Verb</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for notification in notifications %}
+                            <tr id='{{notification.id}}_row'>
+                            	
+                            	<td >
+                            		<a href="#" onclick="Dajaxice.apps.account_system.mark_as_read_only(my_callback,{'id':{{notification.id}}}) " id='{{notification.id}}'>{{ notification.id|default:"c" }}</a></td>              	
+                                <td>
+                                    <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}">{{ notification.id|default:"c" }}</a></td>
+                                
+                                <td>{{ notification.recipient|default:"" }}</td>
+                                <td>{{ notification.actor|default:"" }}</td>
+                                <td>{{ notification.verb|default:"" }}</td>
+                                <td>{{ notification.description|default:"" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+    </table>
+
+    {% if unread_count %}
+       <h3>Tienes <strong id='unread'>{{ unread_count }}</strong> notificaciones sin leer.</h3>
+    {% else %}
+        <h3>Tienes <strong id='unread'>0</strong> notificaciones sin leer.</h3>
+    {% endif %}
+
+    
+{% endblock content %}

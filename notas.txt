@@ -1,0 +1,17 @@
+--> Generar requeriments.txt
+	pip freeze > requeriments.txt
+
+--> Cambiar a producción	 
+	export DJANGO_SETTINGS_MODULE=EstudiandoDjago.settings
+	export DJANGO_CONFIGURATION=Dev
+
+	- tene en cuenta que Dev es la clase de configuracion
+
+--> Crear el sites.
+	from django.contrib.sites.models import Site
+	Site.objects.create(domain='localhost:8000',name='localhost:8000')
+
+	- para obtener el id 
+	Site.objects.get(name='localhost:8000').id
+	y guardarlo en el setting SITE_ID=
+

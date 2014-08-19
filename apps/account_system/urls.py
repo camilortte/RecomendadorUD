@@ -1,0 +1,28 @@
+# -*- encoding: utf-8 -*-
+from django.conf.urls import patterns, include, url
+from .views import LoginViewWithCustomForm,SignupViewMio, SignupSocialView, ProfileUpdate
+from django.conf import settings
+
+urlpatterns = patterns('',    
+    url(r'^$', 'apps.account_system.views.home', name='home_url'),         
+    url(r'^home/', 'apps.account_system.views.home', name='home_url_'), 
+
+    url(r'^accounts/login', LoginViewWithCustomForm.as_view(),name='login_url'),    
+    url(r'^accounts/signup/', SignupViewMio.as_view(),name='signup_url'),
+    url(r'^accounts/social/signup/', SignupSocialView.as_view(),name='signup_url'),
+    url(r'^accounts/logout/', 'django.contrib.auth.views.logout',
+                          {'next_page': 'home_url'},name='logout_url'),
+    url(r'^accounts/update/',ProfileUpdate.as_view(), name='update_profile_url'),             
+    url(r'^accounts/updatepass/','apps.account_system.views.change_password', name='change_password_url'),    
+    url(r'^accounts/', include('allauth.urls')),        
+    url('', include('django.contrib.auth.urls', namespace='auth')),    
+    url(r'^prueba/','apps.account_system.views.send_notification', name='prueba_url'),  
+    url(r'^mark_as_read/$', 'apps.account_system.views.mark_as_read', name='mark_as_read'),
+    url(r'^mark_as_read_only/$', 'apps.account_system.views.marcar_notificacion_como_leida', name='mark_as_read_only'),
+)
+
+if True:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
