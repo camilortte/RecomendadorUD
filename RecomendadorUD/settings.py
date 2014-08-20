@@ -4,13 +4,13 @@ from configurations import Configuration
 import os
 from os.path import join
 
-
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 class Base(Configuration):
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    
     SECRET_KEY = 'oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
 
     
@@ -28,6 +28,7 @@ class Base(Configuration):
         'django.contrib.staticfiles',
         'django.contrib.sites',
         'apps.account_system',    
+        'apps.establishment_system',
         'allauth',
         'allauth.account',
         'allauth.socialaccount',    
@@ -41,6 +42,10 @@ class Base(Configuration):
         'notifications',#https://github.com/django-notifications/django-notifications
         #'dajax',       #http://django-dajax.readthedocs.org/en/latest/
         'configurations',    
+        'geoposition',  #http://django-geoposition.readthedocs.org/
+         #'ajax_select',
+         'apps.djadmin_ext',
+
     )
 
     MIDDLEWARE_CLASSES = (
@@ -70,12 +75,7 @@ class Base(Configuration):
     # Database
     # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
+    
 
     # Internationalization
 
@@ -117,7 +117,7 @@ class Base(Configuration):
         'django.contrib.auth.context_processors.auth',
         "allauth.account.context_processors.account",
         "allauth.socialaccount.context_processors.socialaccount",
-        "django.contrib.messages.context_processors.messages",
+        "django.contrib.messages.context_processors.messages",  
 
     )
 
@@ -283,14 +283,17 @@ class Dev(Base):
         'debug_toolbar.panels.logging.LoggingPanel',
         'debug_toolbar.panels.redirects.RedirectsPanel',
     ]
-    MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + Base.MIDDLEWARE_CLASSES
+    MIDDLEWARE_CLASSES =   Base.MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    #('debug_toolbar.middleware.DebugToolbarMiddleware',) + Base.MIDDLEWARE_CLASSES
 
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
     
       
-
-        
-
-
 class Prod(Base):
     DEBUG = False
     ALLOWED_HOSTS=['localhost']

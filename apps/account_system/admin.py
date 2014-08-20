@@ -15,7 +15,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from notifications.admin import Notification
-from .forms import CustomUserChangeForm, CustomUserCreationForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm, NotificationForm
 from .models import User as CustomUser , Tipo
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -28,7 +28,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser','is_organizacional','tipos',
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser','tipos',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
@@ -42,7 +42,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     add_form = CustomUserCreationForm
     change_password_form = AdminPasswordChangeForm
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_organizacional','tipos','groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'tipos','groups')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions',)
@@ -164,9 +164,12 @@ class CustomUserAdmin(admin.ModelAdmin):
         return super(CustomUserAdmin, self).response_add(request, obj,
                                                    post_url_continue)
 
+
 class NotificationsAdmin(admin.ModelAdmin):
     list_display = ['id']
     ordering = ['id']
+
+    form = NotificationForm
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.unregister(Notification)

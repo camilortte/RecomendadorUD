@@ -15,3 +15,16 @@
 	Site.objects.get(name='localhost:8000').id
 	y guardarlo en el setting SITE_ID=
 
+--> Eliminar base de datos de una app
+
+	python manage.py sqlclear APP | python manage.py dbshell
+	python manage.py sqlclear establishment_system | python manage.py dbshell
+
+
+https://github.com/crucialfelix/django-ajax-selects
+http://django-selectable.readthedocs.org/en/v0.8.X/testing.html
+http://django-filter.readthedocs.org/en/latest/usage.html
+https://pypi.python.org/pypi/django-admin-flexselect/0.4.1
+https://github.com/digi604/django-smart-selects
+
+https://github.com/FinalsClub/django-ajax-selects-cascade  <--- interesa

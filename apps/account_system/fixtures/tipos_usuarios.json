@@ -3,26 +3,29 @@
     "model": "account_system.Tipo",
     "pk": 1,
     "fields": {
-      "tag": "Usuario Registrado"
+      "tag": "Usuario Registrado",
+      "name": "user_register"
     }
   },
   {
     "model": "account_system.Tipo",
     "pk": 2,
     "fields": {
-      "tag": "Usuario Organizacional"
+      "tag": "Usuario Organizacional",
+      "name": "user_organizational"
     }
   },
   {
     "model": "account_system.Tipo",
     "pk": 3,
     "fields": {
-      "tag": "Usuario Administrador"
+      "tag": "Usuario Administrador",
+      "name": "user_administrator"
     }
   },
   {
     "model": "account_system.User",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "username": "1",
       "password": "pbkdf2_sha256$12000$lcTyWsDyxbPs$LPjJNZRKNXfple0JTeinCiWRDWHezzSMZjdLmTUPaHE=",
@@ -31,7 +34,20 @@
       "is_active": "1",
       "email": "1@hotmail.com",
       "is_staff": "1",
-      "is_organizacional": "0",
+      "date_joined":"2014-08-19 15:06:28.532669"
+    }
+  },
+  {
+    "model": "account_system.User",
+    "pk": 1,
+    "fields": {
+      "username": "RecomendadorUD",
+      "password": "pbkdf2_sha256$12000$lcTyWsDyxbPs$LPjJNZRKNXfple0JTeinCiWRDWHezzSMZjdLmTUPaHE=",
+      "last_login": "2014-08-19 15:43:47.479065",
+      "is_superuser": "1",
+      "is_active": "1",
+      "email": "recomendador@recomendadorud.com",
+      "is_staff": "1",
       "date_joined":"2014-08-19 15:06:28.532669"
     }
   }

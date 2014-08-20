@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+    var djadminAjax = AdminAjax("../ajax/", "{{ opts.module_name }}_form", {{ adminform.form.change_field_ids|safe }});
+</script>
+{% endblock %}
+
+{% block after_field_sets %}
+<div id="ajax_content"></div>
+{% endblock %}

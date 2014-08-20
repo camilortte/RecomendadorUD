@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('allauth.urls')),        
     url('', include('django.contrib.auth.urls', namespace='auth')),    
     url(r'^prueba/','apps.account_system.views.send_notification', name='prueba_url'),  
-    url(r'^mark_as_read/$', 'apps.account_system.views.mark_as_read', name='mark_as_read'),
+    url(r'^mark_as_read_all/$', 'apps.account_system.views.mark_as_read_all', name='mark_as_read_all_url'),
     url(r'^mark_as_read_only/$', 'apps.account_system.views.marcar_notificacion_como_leida', name='mark_as_read_only'),
 )
 

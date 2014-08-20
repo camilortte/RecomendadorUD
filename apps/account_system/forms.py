@@ -6,6 +6,8 @@ from allauth.utils import set_form_field_order
 from allauth.account.forms import   PasswordField, SetPasswordField
 from .models import User
 from parsley.decorators import parsleyfy
+from django.contrib.contenttypes.models import ContentType
+from notifications.models import Notification
 
 ##############################Forms CustomUser#################################################################
 class CustomUserCreationForm(forms.ModelForm):
@@ -190,3 +192,15 @@ class MyValidatedForm(forms.Form):
     age = forms.DecimalField(min_value=18, max_value=99)
 
 
+"""Formuilario del admin para las notificaciones"""
+class NotificationForm(forms.ModelForm):
+   
+    actor_object_id = forms.ModelChoiceField(queryset=User.objects.all(),cache_choices=True)
+
+    value_conten_type=ContentType.objects.filter(name='user')
+    actor_content_type= forms.ModelChoiceField(queryset=ContentType.objects.filter(name='user'),
+        cache_choices=True, initial=value_conten_type)
+
+    class Meta:
+        model = Notification
+        

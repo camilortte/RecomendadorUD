@@ -165,11 +165,11 @@ def send_notification(request):
     #notify.send(CustomUser.objects.get(id=4), recipient=CustomUser.objects.get(id=1),
     #   verb="Hola, esto es una notificacion", description="Esto es una notificacion que envia hace un buen rato", level="error")
 
-    return HttpResponseRedirect(reverse('home_url'))
+    return redirect('home_url')
 
 
 """Marca como leido toas las notificaciones"""
-def mark_as_read(request):
+def mark_as_read_all(request):
     request.user.notifications.unread().mark_all_as_read()
     return HttpResponseRedirect(reverse('home'))
 
