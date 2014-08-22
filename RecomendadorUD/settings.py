@@ -27,8 +27,6 @@ class Base(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.sites',
-        'apps.account_system',    
-        'apps.establishment_system',
         'allauth',
         'allauth.account',
         'allauth.socialaccount',    
@@ -36,17 +34,26 @@ class Base(Configuration):
         'allauth.socialaccount.providers.twitter', 
         'allauth.socialaccount.providers.facebook',   
         'djrill',
-        'parsley',      #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
+        'parsley',         
+        'apps.account_system',    
+        'apps.establishment_system',
+        'south',     #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
         #'drealtime',   #https://bitbucket.org/inzane/django-realtime
         'dajaxice',     #http://django-dajaxice.readthedocs.org/en/latest/
         'notifications',#https://github.com/django-notifications/django-notifications
         #'dajax',       #http://django-dajax.readthedocs.org/en/latest/
         'configurations',    
         'geoposition',  #http://django-geoposition.readthedocs.org/
-         #'ajax_select',
-         'apps.djadmin_ext',
-
+        #'ajax_select',
+        #'apps.djadmin_ext',
+        'imagekit',
+        'fluent_comments',
+        'crispy_forms',
+        'django.contrib.comments',
     )
+    
+    COMMENTS_APP = 'fluent_comments'
+    FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
 
     MIDDLEWARE_CLASSES = (
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -236,6 +243,14 @@ class Base(Configuration):
     FIXTURE_DIRS = (        
         join(BASE_DIR,  '/account_system/fixtures/'),
     )
+
+    #AJAX_SELECT_BOOTSTRAP = False
+
+    MEDIA_ROOT =  join(BASE_DIR,  'media')
+    MEDIA_URL = '/media/'
+
+
+    
 
     """
     Twitter:

@@ -2,6 +2,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from geoposition.fields import GeopositionField
+from django.utils import timezone
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 class Categoria(models.Model):
 
@@ -57,4 +60,41 @@ class Establecimiento(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+
+class Imagen(models.Model):
     
+    imagen= models.ImageField(upload_to='images_establishment', null=False, blank=False,
+        help_text='Imagen perteneciente al establecimiento')
+    establecimientos = models.ForeignKey(Establecimiento)
+    date_uploaded = date_joined = models.DateTimeField(_('date update'), default=timezone.now)
+    imagen_thumbnail = ImageSpecField(source='imagen',
+                                      processors=[ResizeToFill(100, 50)],
+                                      format='JPEG',
+                                      options={'quality': 60})
+    class Meta:
+        verbose_name = _('Imagen')
+        verbose_name_plural = _('Imagenes')
+
+    def __unicode__(self):
+        return self.establecimientos.nombre
+
+from apps.account_system.models import User
+class Comentario(models.Model):
+
+    created = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User)
+    body = models.TextField()
+    post = models.ForeignKey(Establecimiento)     
+    ip_address = models.GenericIPAddressField(_('IP address'), unpack_ipv4=True, blank=True, null=True)
+    is_public = models.BooleanField(_('is public'), default=True,
+                    help_text=_('Uncheck this box to make the comment effectively ' \
+                                'disappear from the site.'))
+
+    def __unicode__(self):
+        return unicode("%s: %s" % (self.post, self.body[:60]))
+
+    class Meta:
+        verbose_name = _('Comentario')
+        verbose_name_plural = _('Comentarios')
+

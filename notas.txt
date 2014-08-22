@@ -20,6 +20,9 @@
 	python manage.py sqlclear APP | python manage.py dbshell
 	python manage.py sqlclear establishment_system | python manage.py dbshell
 
+--> Graficar modelos
+	python manage.py graph_models -a -g -o mis_modelos.png
+
 
 https://github.com/crucialfelix/django-ajax-selects
 http://django-selectable.readthedocs.org/en/v0.8.X/testing.html
@@ -27,4 +30,26 @@ http://django-filter.readthedocs.org/en/latest/usage.html
 https://pypi.python.org/pypi/django-admin-flexselect/0.4.1
 https://github.com/digi604/django-smart-selects
 
-https://github.com/FinalsClub/django-ajax-selects-cascade  <--- interesa
+https://github.com/FinalsClub/django-ajax-selects-cascade  <--- interesa -->
+
+
+
+
+http://django-generic-ratings.readthedocs.org/en/latest/signals.html votos
+
+
+
+#para convertir las apps a south
+python manage.py convert_to_south myap
+
+#Para crear una migracion inicial de un modelo
+	python manage.py schemamigration establishment_system --init
+	#aplicamps
+	python manage.py migrate establishment_system
+	#si sale error
+	python manage.py migrate establishment_system --fake
+
+#para cuando cambia un modelo
+	python manage.py schemamigration establishment_system --auto
+	#aplicamos los cambios
+ 	python manage.py migrate establishment_system

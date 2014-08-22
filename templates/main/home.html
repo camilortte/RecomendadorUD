@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load dajaxice_templatetags %}
 {% load notifications_tags %}
-
 {% block head_title %}{% trans "HomeView" %}{% endblock %}
 {% block scripts %}
         <script>
@@ -13,6 +12,7 @@
                 $(id_delete).remove();
             }
         </script>
+
 {% endblock %}
 
 
@@ -74,5 +74,19 @@
         <h3>Tienes <strong id='unread'>0</strong> notificaciones sin leer.</h3>
     {% endif %}
 
+    {% load comments %}    
+
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}fluent_comments/css/ajaxcomments.css" />
+    <script type="text/javascript" src="{{ STATIC_URL }}fluent_comments/js/ajaxcomments.js"></script>
+
+    {% render_comment_list for user %}
+    {% render_comment_form for user %}
+
+    
+    
+
+    
+    
     
 {% endblock content %}

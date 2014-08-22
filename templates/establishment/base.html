@@ -1,0 +1,40 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block scripts %}
+
+{% endblock %}
+
+
+
+{% block content %}
+ 
+    <h3>Aca la lista</h3>   
+    
+    <h3> Nombre: {{object.nombre}}</h3>
+    <h3> Email: {{object.email}}</h3>
+    <h3> Pagina Web: {{object.web_page}}</h3>
+    <h3> Direccion: {{object.address}}</h3>
+    <h3> Posicion{{object.position}}</h3>
+    <h3> Categoria: {{object.sub_categorias.categorias}}</h3>
+    <h3> SubCategoria: {{object.sub_categorias}}</h3>
+    
+    <h3> Imagen: {{imagen.imagen}}</h3>
+    {% for imagen in imagenes  %}
+        <div><img src="{{MEDIA_URL}}{{imagen.imagen}}" with='50' height='50' alt="{{imagen.imagen}}"/></div>
+    {% endfor %}
+    
+    {% load comments %}    
+
+    <div id="comments-wrapper">       
+
+        {% render_comment_list for object %}    
+        {% render_comment_form for object %}
+    </div>
+
+    
+       
+
+{% endblock content %}
