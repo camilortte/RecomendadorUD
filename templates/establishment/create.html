@@ -1,0 +1,53 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+
+
+{% block content %}
+	
+	<form action="" method="post">{% csrf_token %}
+	    {{ form.as_p }}
+	    <input type="submit" value="Create" />
+	</form>
+
+
+	<script>
+
+        $('#categoria').click(function() {
+            //alert($('#my_form').serialize());
+
+            var data = JSON.stringify({
+			    "categorias": $('#categoria').val()
+			});
+
+            $.ajax({
+                url: '/api/SubCategoriaResource/?categorias='+$('#categoria').val(),
+                type: 'GET',
+                data: data,
+                dataType: 'json',
+                success: function(response) {   
+                	console.log(response);
+                	$('#id_sub_categorias').empty().append('-------');
+                	console.log("CATEGORIA: "+$('#categoria').val());
+                    for (var i = response.length - 1; i >= 0; i--) {
+                    	console.log(response[i].tag);
+                    	 $('#id_sub_categorias').append('<option value="'+response[i].id+'">'+response[i].tag +'</option>');
+                    };
+                    console.log("\n");
+                },
+                error:function(){
+                    console.log("ERROR");
+                    //location.reload();
+                }
+            });
+
+
+        });
+    </script>
+
+{% endblock content %}

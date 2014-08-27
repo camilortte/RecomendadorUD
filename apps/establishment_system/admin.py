@@ -3,9 +3,7 @@ from django.contrib import admin
 from .models import Categoria, Establecimiento, SubCategoria, Imagen
 from .forms import CategoriasForm
 from .models import Comentario
-from django.contrib.comments.admin import CommentsAdmin as CommentsAdminBase
-from fluent_comments.admin import FluentCommentsAdmin, CommentModel
-from django.contrib import comments
+#from fluent_comments.admin import FluentCommentsAdmin, CommentModel
 
 #from django import forms
 # from apps.djadmin_ext.helpers import BaseAjaxModelAdmin
@@ -41,19 +39,18 @@ from django.contrib import comments
 
 
 class CommentAdmin(admin.ModelAdmin):
-    display_fields = ["post", "author", "created"]
+    raw_id_fields = ('author','post' )
 
 
 class EstablecimientoAdmin(admin.ModelAdmin):
-     form=CategoriasForm
+    form=CategoriasForm
+    
+    class Media:
+        js = (    
+            'http://code.jquery.com/jquery-2.1.1.min.js', # jquery
+            'js/update_categoria.js',       # project static folder
+        )
 
-
-# class CustomFluentCommentsAdmin(FluentCommentsAdmin):
-
-#     def __init__(self, *args, **kwargs):
-#         super(CustomFluentCommentsAdmin, self).__init__(*args, **kwargs)
-
-#     readonly_fields =()
 
 class CustomFluentCommentsAdmin(admin.ModelAdmin):
     pass
@@ -64,5 +61,10 @@ admin.site.register(Establecimiento,EstablecimientoAdmin)
 admin.site.register(SubCategoria)
 admin.site.register(Imagen)
 admin.site.register(Comentario, CommentAdmin)
-admin.site.unregister(CommentModel)
-admin.site.register(CommentModel)#, CustomFluentCommentsAdmin)
+#admin.site.unregister(CommentModel)
+#admin.site.register(CommentModel)#, CustomFluentCommentsAdmin)
+
+from tastypie.models import ApiKey, ApiAccess
+ 
+#admin.site.unregister(ApiKey)
+#admin.site.unregister(ApiAccess)

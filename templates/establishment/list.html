@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+
+
+{% block content %}
+	
+    
+    <a href="{% url 'establecimientos_list_url' %}">Buscar establecimientos</a>
+    <a href="{% url 'establecimiento_create_url' %}">Crear establecimiento</a>
+    <a href="#">Modificar establecimiento</a>
+
+	<h1>Establecimientos</h1>
+	<ul>
+		{% for establecimiento in object_list %}
+			<li><a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{ establecimiento.nombre }} </a></li>
+		{% empty %}			
+		{% endfor %}
+	</ul>
+
+	{% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'establecimientos_list_url' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'establecimientos_list_url' %}?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+{% endblock content %}

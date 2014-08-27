@@ -37,9 +37,10 @@ class Base(Configuration):
         'parsley',         
         'apps.account_system',    
         'apps.establishment_system',
-        'south',     #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
+        #'south',     #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
         #'drealtime',   #https://bitbucket.org/inzane/django-realtime
         'dajaxice',     #http://django-dajaxice.readthedocs.org/en/latest/
+        'dajax',
         'notifications',#https://github.com/django-notifications/django-notifications
         #'dajax',       #http://django-dajax.readthedocs.org/en/latest/
         'configurations',    
@@ -47,13 +48,23 @@ class Base(Configuration):
         #'ajax_select',
         #'apps.djadmin_ext',
         'imagekit',
-        'fluent_comments',
-        'crispy_forms',
-        'django.contrib.comments',
+        #'fluent_comments',
+        'crispy_forms',       
+        #'django_comments_xtd',
+        'rest_framework',
+        'tastypie',
     )
     
-    COMMENTS_APP = 'fluent_comments'
-    FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
+    #COMMENTS_APP = 'fluent_comments'
+    #COMMENTS_APP = 'django_comments_xtd'
+    #COMMENTS_APP = 'django.contrib.comments'
+    #COMMENTS_XTD_CONFIRM_EMAIL =True
+    #COMMENTS_XTD_MODEL = "apps.establishment_system.models.Comentario"
+    #COMMENTS_XTD_FORM_CLASS = "apps.establishment_system.forms.CommentForm"
+    #FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
+    COMMENT_MAX_LENGTH=500
+
+    #COMMENTS_XTD_CONFIRM_EMAIL = False
 
     MIDDLEWARE_CLASSES = (
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -87,7 +98,7 @@ class Base(Configuration):
     # Internationalization
 
     LANGUAGE_CODE = 'en-us'
-    TIME_ZONE = 'UTC'
+    TIME_ZONE = 'America/Bogota'
     USE_I18N = True
     USE_L10N = True
     USE_TZ = True
@@ -242,6 +253,7 @@ class Base(Configuration):
 
     FIXTURE_DIRS = (        
         join(BASE_DIR,  '/account_system/fixtures/'),
+        join(BASE_DIR,  '/establishment_system/fixtures/'),
     )
 
     #AJAX_SELECT_BOOTSTRAP = False
@@ -265,6 +277,21 @@ class Base(Configuration):
         ApiKey=481544714964-9jtarg0p2l7qm4ep7ea4u3ors9hpd43b.apps.googleusercontent.com
         secret=HY5M6bs8qpX02dcSsqKtCJ3-
     """
+
+
+    REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+    }
+    TASTYPIE_DEFAULT_FORMATS = ['json']
 
 
 

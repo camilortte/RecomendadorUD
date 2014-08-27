@@ -35,7 +35,7 @@ class SubCategoria(models.Model):
     def __unicode__(self):
         return self.tag
 
-
+from django.contrib.contenttypes.models import ContentType
 class Establecimiento(models.Model):
 
     nombre= models.CharField(_('Nombre'),max_length=100,null=False,blank=False,
@@ -44,7 +44,7 @@ class Establecimiento(models.Model):
         help_text='Correo electronico del Establecimiento',unique=False)
     web_page=models.URLField(_('Pagina web'),null=True,blank=True, unique=False, 
         help_text='Direccion de la pagina web ')
-    address= models.CharField(_('Direccion'),max_length=100,null=True,blank=True,
+    address= models.CharField(_('Direccion'),max_length=100,null=False,blank=False,
         help_text='Direccion del establecimiento',unique=True)
     description=models.TextField(_('Descripcion'),null=True,blank=True,
         help_text='Una breve descripcion del establecimiento', unique=False)
@@ -61,13 +61,18 @@ class Establecimiento(models.Model):
     def __unicode__(self):
         return self.nombre
 
+    def comment_count(self) :
+        ct = ContentType.objects.get_for_model(Establecimiento)
+        obj_pk = self.id
+        return Comment.objects.filter(content_type=ct,object_pk=obj_pk).count()
+
 
 class Imagen(models.Model):
     
     imagen= models.ImageField(upload_to='images_establishment', null=False, blank=False,
         help_text='Imagen perteneciente al establecimiento')
     establecimientos = models.ForeignKey(Establecimiento)
-    date_uploaded = date_joined = models.DateTimeField(_('date update'), default=timezone.now)
+    date_uploaded = models.DateTimeField(_('date upload'), default=timezone.now)
     imagen_thumbnail = ImageSpecField(source='imagen',
                                       processors=[ResizeToFill(100, 50)],
                                       format='JPEG',
@@ -80,11 +85,12 @@ class Imagen(models.Model):
         return self.establecimientos.nombre
 
 from apps.account_system.models import User
+from django.contrib.comments.models import Comment
 class Comentario(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User)
-    body = models.TextField()
+    body = models.TextField(_('Ingresa tu comentario'),max_length=500, null=False, blank=False)
     post = models.ForeignKey(Establecimiento)     
     ip_address = models.GenericIPAddressField(_('IP address'), unpack_ipv4=True, blank=True, null=True)
     is_public = models.BooleanField(_('is public'), default=True,
@@ -97,4 +103,3 @@ class Comentario(models.Model):
     class Meta:
         verbose_name = _('Comentario')
         verbose_name_plural = _('Comentarios')
-

@@ -1,4 +1,3 @@
-{% load dajaxice_templatetags %}
 {% load staticfiles %}
 
 <!DOCTYPE html>
@@ -26,12 +25,13 @@
     <script src="{% static 'bootstrap/js/bootstrap.min.js'%}"></script>
     <script src="{% static 'parsley/parsley.min.js'%}"></script>
     
-    {% dajaxice_js_import %}    
+   
     {% block scripts %}{% endblock  %}
     
 </head>
 <body>
     <h1>Template from main jeje</h1>    
+    <a href="{% url 'home_url' %}">Home</a>
     {% block content %}{% endblock %}
 </body>
 

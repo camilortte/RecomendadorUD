@@ -9,13 +9,9 @@
 
 
 {% block content %}
-
-    <a href="{% url 'establecimientos_list_url' %}">Buscar establecimientos</a>
-    <a href="{% url 'establecimiento_create_url' %}">Crear establecimiento</a>
-    
  
     <h3>Aca la lista</h3>   
-    
+    <a href="{% url 'establecimiento_update_url' object.id %}">Modificar establecimiento</a>
     <h3> Nombre: {{object.nombre}}</h3>
     <h3> Email: {{object.email}}</h3>
     <h3> Pagina Web: {{object.web_page}}</h3>
