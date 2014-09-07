@@ -7,6 +7,78 @@
 {% endblock %}
 {% load static %}
 
+{% block styles %}
+
+    <style>
+         
+          /*
+A custom Bootstrap 3.1 theme from http://bootply.com\
+
+This CSS code should follow the 'bootstrap.css'
+in your HTML file.
+
+license: MIT
+author: bootply.com
+*/
+
+
+html,body{
+    height:100%;
+}
+
+body{
+    padding-top:50px; /*padding for navbar*/
+}
+
+.navbar-custom .icon-bar {
+    background-color:#fff;
+}
+
+.navbar-custom {
+    background-color: #168ccc;
+    color:#fff;
+}
+
+.navbar-custom li>a:hover,.navbar-custom li>a:focus {
+    background-color:#49bfff;
+}
+
+.navbar-custom a{
+    color:#fefefe;
+}
+
+.navbar-custom .form-control:focus {
+    border-color: #49bfff;
+    outline: 0;
+    -webkit-box-shadow: inset 0 0 0;
+    box-shadow: inset 0 0 0;
+}
+
+#main, #main>.row {
+    height:100%;
+}
+
+#main>.row {
+    overflow-y:scroll;
+}
+
+#left {
+    height:100%;
+}
+
+#map-canvas {
+    width:33.3333%;
+    height:calc(100% - 0);
+    position:absolute;
+    right:16px;
+    top:50px;
+    bottom:0;
+    overflow:hidden;
+}
+
+    </style>
+    
+{% endblock styles %}
 
 {% block content %}
 	
@@ -40,3 +112,194 @@
     {% endif %}
 
 {% endblock content %}
+
+
+
+{% block content_free %}
+
+
+   
+    
+    
+    
+    <div id="map-canvas"></div>
+  <div class="container-fluid" id="main">
+ 
+  <div class="row">
+    <div class="col-xs-8" id="left">
+    
+
+    </div>
+    <div class="col-xs-4"><!--map-canvas will be postioned here--></div>
+    
+  </div>
+
+</div>
+<!--Mapas-->
+
+    <script>    
+    /* google maps -----------------------------------------------------*/
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function initialize() {
+
+  /* position Amsterdam */
+  var latlng = new google.maps.LatLng(52.3731, 4.8922);
+
+  var mapOptions = {
+    center: latlng,
+    scrollWheel: false,
+    zoom: 13
+  };
+  
+  var marker = new google.maps.Marker({
+    position: latlng,
+    url: '/',
+    animation: google.maps.Animation.DROP
+  });
+  
+  var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  marker.setMap(map);
+
+};
+ 
+/*
+    Notas importante: Al parecer hay un Bug al momento de convertir de adrees String a longitud y latitud,
+    En la funcion calcularRutaFinla() en geocoder.
+
+    Mirar como se arregla
+*/
+
+var iconOrigin= 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=O|FFFF00|000000';
+var lugares = new Array();
+
+//Posicion actual o seleccionada
+var currentPosition;
+//posicion mas cerca de nuestra ubicacion actual
+var menor;
+
+
+$(function() {
+    Dajaxice.Principal.get_locals(my_callback);
+    map.removePolylines();
+    map.removeMarkers();
+});
+
+GMaps.geolocate({
+  success: function(position) {
+    map.setCenter(position.coords.latitude, position.coords.longitude);
+        currentPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        var myMarker_oringe={
+            icon: iconOrigin,
+            animation: google.maps.Animation.DROP,
+            color: '#FF0000',
+            lat: currentPosition.lat(),
+            lng: currentPosition.lng(),
+            title: 'Origen',
+            infoWindow: {
+              content:  '<p>Origen</p>'
+            }
+        };
+        map.addMarker(myMarker_oringe);
+  },
+  error: function(error) {
+    alert('Geolocation failed: '+error.message);
+  },
+  not_supported: function() {
+    alert("Your browser does not support geolocation");
+  },
+  always: function() {
+    //DONE
+   }
+});
+
+function my_callback(datas){
+    for (var i=0;i<datas.length;i++){
+        lugares.push(new google.maps.LatLng(datas[i][1],datas[i][2] ));
+        var myMarker_destino={
+            animation: google.maps.Animation.DROP,
+            lat: lugares[i].lat(),
+            lng: lugares[i].lng(),
+            title: datas[i][0],
+            infoWindow: {
+                content: '<b>'+datas[i][0]+'</b><p>'+datas[i][3]+'</p><p>Tipo: '+datas[i][5]+'</p><p>Direccion: '+datas[i][4]+'</p>'
+            }
+        };
+        map.addMarker(myMarker_destino);
+    }
+}
+
+//Creacion facil de nuestro mapa proporcionada por gmaps.js
+var map = new GMaps({
+  div: '#map',
+  zoom: 11,
+  lat: 4.579825820210706,
+  lng: -74.08602476119995,
+  //Cuando se de un clic se dispara el evento que obtiene las cordenadas en el click
+  click: function(e) {
+    var myLatLng = e.latLng;
+    var lat = myLatLng.lat();
+    var lng = myLatLng.lng();
+    //Modificamos nuestra posicion actual
+    currentPosition = new google.maps.LatLng(lat,lng);
+    //Actualizamos las rutas de nuestra base de datos
+    //actualziarRutas();
+     // actualizarUbicacion();
+  }
+});
+
+//Actualiza todas las rutas con markers
+function actualziarRutas(){
+
+    map.removePolylines();
+    map.removeMarkers();
+    var myMarker_oringe={
+        icon: iconOrigin,
+        animation: google.maps.Animation.DROP,
+        color: '#FF0000',
+        lat: currentPosition.lat(),
+        lng: currentPosition.lng(),
+        title: 'Origen',
+        infoWindow: {
+          content:  '<p>Origen</p>'
+        }
+    };
+    map.addMarker(myMarker_oringe);
+    for (var i = 0; i < lugares.length; i++) {
+        var myMarker_destino={
+            animation: google.maps.Animation.DROP,
+            lat: lugares[i].lat(),
+            lng: lugares[i].lng(),
+            title: 'Destino '+i,
+            infoWindow: {
+                content: '<p>Destino '+i+' </p>'
+            }
+        };
+        map.addMarker(myMarker_destino);
+    }
+}
+
+//actualiza la ubicacin py pone el marker
+function actualizarUbicacion(){
+    map.removeMarkers();
+    var myMarker_oringe={
+        icon: iconOrigin,
+        animation: google.maps.Animation.DROP,
+        color: '#FF0000',
+        lat: currentPosition.lat(),
+        lng: currentPosition.lng(),
+        title: 'Origen',
+        infoWindow: {
+          content:  '<p>Origen</p>'
+        }
+    };
+    map.addMarker(myMarker_oringe);
+    $('[name="lan"]').val(currentPosition.lat());
+    $('[name="lot"]').val(currentPosition.lng());
+}
+
+
+    </script>
+
+{% endblock content_free %}

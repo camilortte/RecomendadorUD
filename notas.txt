@@ -23,6 +23,12 @@
 --> Graficar modelos
 	python manage.py graph_models -a -g -o mis_modelos.png
 
+--> Eliminar base de datos de una app
+	python manage.py sqlclear establishment_system | python manage.py dbshell
+
+
+
+--> Jquery rating http://plugins.krajee.com/star-rating
 
 https://github.com/crucialfelix/django-ajax-selects
 http://django-selectable.readthedocs.org/en/v0.8.X/testing.html
@@ -53,3 +59,24 @@ python manage.py convert_to_south myap
 	python manage.py schemamigration establishment_system --auto
 	#aplicamos los cambios
  	python manage.py migrate establishment_system
+
+
+
+--> Error list
+<ul class="errorlist">
+            {% if form.non_field_errors %}
+                <li>{{ form.non_field_errors }}</li>
+            {% endif %}
+            {% for field in form %}
+                {% if field.errors %}
+                    <li>
+                        {{ field.label }}
+                        <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>

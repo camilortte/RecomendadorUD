@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 from django import forms
+from .models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.utils.translation import ugettext, ugettext_lazy as _
-from allauth.utils import set_form_field_order
-from allauth.account.forms import   PasswordField, SetPasswordField
-from .models import User
 from parsley.decorators import parsleyfy
 from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
+
+
 
 ##############################Forms CustomUser#################################################################
 class CustomUserCreationForm(forms.ModelForm):
@@ -103,16 +103,23 @@ class CustomUserChangeForm(forms.ModelForm):
 
 #Extencion para el account signup 
 class SignupExtendForm(forms.Form):
-    first_name = forms.CharField(max_length=30, label='Voornaam',required=True)
-    last_name = forms.CharField(max_length=30, label='Achternaam',required=False)
+    first_name = forms.CharField(max_length=200, label='Nombres',required=True)
+    last_name = forms.CharField(max_length=200, label='Apellidos',required=True)
 
     def signup(self, request, user):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
 
+    class Meta:
+        model = User 
+
+
+
 #Estas llamadas deben realizarse en este orden debido a que la clase SignuPExtendForm se usa posterioromente
 # en la llamada de las librerias
+from allauth.utils import set_form_field_order
+from allauth.account.forms import   PasswordField, SetPasswordField
 from allauth.account.forms import LoginForm
 from allauth.account.forms import SignupForm
 from allauth.socialaccount.forms import SignupForm as SingupFormSoialAccount
@@ -145,7 +152,7 @@ class CustomLoginForm(LoginForm):
 
 
 #Sobrecargar del formulario Signup de Allauth
-@parsleyfy
+
 class SignupFormMio(SignupForm):
 
     def __init__(self, *args, **kwargs):
@@ -163,6 +170,8 @@ class SignupFormSocial(SingupFormSoialAccount):
 """This forms is about de update user profile by own user"""
 @parsleyfy
 class EditAccountForm(forms.ModelForm):    
+    first_name=forms.CharField(label='Nombres', min_length=3, max_length=100,required=True)
+    last_name=forms.CharField(label='Apellidos', min_length=3, max_length=100,required=True)
     class Meta:
         model = User
         fields = ('username','email','first_name', 'last_name')#,'password1', 'password2')

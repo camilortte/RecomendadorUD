@@ -19,21 +19,7 @@
 
 {% block content %}
  
-	{% if request.user.is_authenticated %}
-	    <p><a href="{% url 'logout_url' %}">Logout</a></p>
-	    <p><a href="{% url 'update_profile_url' %}">UpdateAccount</a></p>
-        <h2>Welcome
-	    {% if request.user.full_name or request.user.short_name %}
-	        {{ request.user.full_name }} {{ request.user.short_name }}
-	    {% else %}
-	        {{ request.user.username }}
-	    {% endif %}
-        </h2>
-
-	{% else %}
-	    <p><a href="{% url 'login_url'%}" class="pull-right">Login</a></p>
-	{% endif %}
-    
+	
     <ul>
     	<li><a href="{% url 'prueba_url' %}">Prueba_url</a></li>
         <li><a href="{% url 'establecimientos_list_url' %}">Establecimientos</a></li>

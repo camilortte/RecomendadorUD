@@ -1,0 +1,42 @@
+{% extends "admin/change_form.html" %}
+
+{% block after_field_sets %}	
+
+{% if  establecimiento%}
+<h2 class="grp-collapse-handler">Establecimiento <a href="{{establecimiento.get_admin_url}}" onclick='return showAddAnotherPopup(this);'>Editar</a></h2>
+<fieldset class="grp-module ">	
+	{% for field, value in establecimiento.fields.iteritems %}
+		<div class="grp-row grp-cells-1 ">
+			<div class="l-2c-fluid l-d-4">
+				<div class="c-1">
+					<label class="required" for="{{field}}_establecimientos">{{field}}</label>
+				</div>
+				<div class="c-1">
+					<p id="{{field}}_establecimientos" > {{value}}</p>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+</fieldset>
+{% endif%}
+
+{% if  establecimiento_temporal%}
+	<h2 class="grp-collapse-handler">Establecimiento Enviado por el usuario <a href="{{establecimiento_temporal.get_admin_url}}" onclick='return showAddAnotherPopup(this);'>Editar</a></h2>
+	<fieldset class="grp-module ">	
+		{% for field, value in establecimiento_temporal.fields.iteritems %}
+			<div class="grp-row grp-cells-1 ">
+				<div class="l-2c-fluid l-d-4">
+					<div class="c-1">
+						<label class="required" for="{{field}}_establecimientos">{{field}}</label>
+					</div>
+					<div class="c-1">
+						<p class=''id="{{field}}_establecimientos" > {{value}}</p>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</fieldset>
+{% endif %}
+
+
+{% endblock %}

@@ -55,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    tipos= models.ForeignKey(Tipo,default=3)
+    tipos= models.ForeignKey(Tipo,default=1)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
@@ -114,3 +114,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def change_to_organizational(self):
         self.is_staff = False
         self.is_superuser = False
+
+        
+    def is_organizacional(self):
+        if(self.tipos.name=="user_organizational"):
+            return True
+
+
+

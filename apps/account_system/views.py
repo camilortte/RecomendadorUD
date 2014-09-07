@@ -17,6 +17,7 @@ from notifications import notify
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .forms import SignupFormMio
+from django.contrib.auth.decorators import login_required
 
 
 """Home"""
@@ -36,6 +37,7 @@ def logout_view(request):
     logout(request)  
     return redirect('home_url')
 
+    
 
 #sobrecarga de la vista login de allAuth
 class LoginViewWithCustomForm(LoginView):
@@ -43,6 +45,8 @@ class LoginViewWithCustomForm(LoginView):
     template_name = "account/login.html"
     success_url = None
     redirect_field_name = "next"
+
+
 
 
 """View signup from local account """
@@ -69,9 +73,21 @@ class ProfileUpdate(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
+    def get_context_data(self, **kwargs):
+        ctx = super(ProfileUpdate, self).get_context_data(**kwargs)
+        usuario=self.request.user
+        cuentas=SocialAccount.objects.filter(user=usuario)
+        print "Cuentas: ",cuentas
+        if  cuentas:
+            print "Cuentas no vacio"
+            ctx['social_accounts'] = cuentas
+
+        return ctx
+
     @method_decorator(login_required(login_url='home_url'))
     def dispatch(self, *args, **kwargs):
         return super(ProfileUpdate, self).dispatch(*args, **kwargs)
+
 
 """View to change password"""
 @login_required(login_url='home_url')
@@ -143,6 +159,7 @@ class probe(View):
 
 #DEV
 """Envia notificaciones """
+@login_required
 def send_notification(request):
     messages.success(request, "Send notificaction")    
     recipient_username = request.POST.get('recipient_username', None)
@@ -169,11 +186,13 @@ def send_notification(request):
 
 
 """Marca como leido toas las notificaciones"""
+@login_required
 def mark_as_read_all(request):
     request.user.notifications.unread().mark_all_as_read()
     return HttpResponseRedirect(reverse('home'))
 
 """MArca las url como leidas mediante GET"""
+@login_required
 def marcar_notificacion_como_leida(request):
     try:
         usuario=request.user

@@ -17,9 +17,16 @@ class Base(Configuration):
     DEBUG=True
 
     ALLOWED_HOSTS = []
-
+    MAX_UPLOAD_SIZE = 5242880 #5 MB
+    MAX_UPLOAD_PER_USER=3
+    MAX_IMAGES_PER_PLACE=8
 
     INSTALLED_APPS = (
+       #'grappelli', #http://django-grappelli.readthedocs.org/en/latest/customization.html
+        #'admin_tools.theming',
+        #'admin_tools.menu',
+        #'admin_tools.dashboard',
+
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -27,6 +34,7 @@ class Base(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.sites',
+        'haystack',
         'allauth',
         'allauth.account',
         'allauth.socialaccount',    
@@ -36,7 +44,8 @@ class Base(Configuration):
         'djrill',
         'parsley',         
         'apps.account_system',    
-        'apps.establishment_system',
+        'apps.establishment_system', #https://github.com/dcramer/django-ratings
+        'apps.externals.djangoratings',
         #'south',     #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
         #'drealtime',   #https://bitbucket.org/inzane/django-realtime
         'dajaxice',     #http://django-dajaxice.readthedocs.org/en/latest/
@@ -52,8 +61,37 @@ class Base(Configuration):
         'crispy_forms',       
         #'django_comments_xtd',
         'rest_framework',
-        'tastypie',
+        'selectable', #http://django-selectable.readthedocs.org/en/latest/admin.html
+        'autocomplete_light',
+        'queued_search', #https://github.com/toastdriven/queued_search
+        'bootstrap3', #https://github.com/dyve/django-bootstrap3
+        'mathfilters',#https://github.com/dbrgn/django-mathfilters
     )
+
+    #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
+    #HAYSTACK_SIGNAL_PROCESSOR = 'apps.establishment_system.signals.QueuedSignalProcessor'
+    HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+    # HAYSTACK_CONNECTIONS = {
+    #     'default': {
+    #         'ENGINE': 'xapian_backend.XapianEngine',
+    #         'PATH': os.path.join(os.path.dirname(__file__), 'xapian_index')
+    #     },
+    # }   
+
+    HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+            'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+        },
+    }
+
+    # HAYSTACK_CONNECTIONS = {
+    #     'default': {
+    #         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    #     },
+    # }
     
     #COMMENTS_APP = 'fluent_comments'
     #COMMENTS_APP = 'django_comments_xtd'
@@ -105,10 +143,14 @@ class Base(Configuration):
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/1.6/howto/static-files/
-    STATIC_URL = '/static/'
+    STATIC_URL = '/static/'    
     STATICFILES_DIRS = (    
         join(BASE_DIR,  'static'),
     )
+
+    # STATIC_URL =join(BASE_DIR,'/static/')
+    #STATIC_ROOT =join(BASE_DIR,'static')
+
 
 
     #Custom model users
@@ -133,22 +175,21 @@ class Base(Configuration):
         'django.core.context_processors.static',
         'django.core.context_processors.request',
         'django.contrib.auth.context_processors.auth',
+        "apps.establishment_system.context_processors.notificaciones",
         "allauth.account.context_processors.account",
         "allauth.socialaccount.context_processors.socialaccount",
-        "django.contrib.messages.context_processors.messages",  
 
     )
 
     AUTHENTICATION_BACKENDS = (
         "django.contrib.auth.backends.ModelBackend",
         "allauth.account.auth_backends.AuthenticationBackend",    
-        'django.contrib.auth.backends.ModelBackend',
     )
 
 
     STATICFILES_FINDERS = (
-        'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'django.contrib.staticfiles.finders.FileSystemFinder',
         'dajaxice.finders.DajaxiceFinder',
     )
 
@@ -185,7 +226,7 @@ class Base(Configuration):
         #Determines whether or not the user is automatically logged out by a mere GET request. See documentation for the LogoutView for details.
     ACCOUNT_LOGOUT_REDIRECT_URL ='/'
         #The URL (or URL name) to return to after the user logs out. This is the counterpart to Django’s LOGIN_REDIRECT_URL.
-    #ACCOUNT_SIGNUP_FORM_CLASS ='apps.account_system.forms.SignupExtendForm'
+    ACCOUNT_SIGNUP_FORM_CLASS ='apps.account_system.forms.SignupExtendForm'
         #A string pointing to a custom form class (e.g. ‘myapp.forms.SignupForm’) that is used during signup to ask the user 
         #for additional input (e.g. newsletter signup, birth date). This class should implement a def signup(self, request, user) 
         #method, where user represents the newly signed up user.
@@ -280,18 +321,25 @@ class Base(Configuration):
 
 
     REST_FRAMEWORK = {
-    # Use hyperlinked styles by default.
-    # Only used if the `serializer_class` attribute is not set on a view.
-    'DEFAULT_MODEL_SERIALIZER_CLASS':
-        'rest_framework.serializers.HyperlinkedModelSerializer',
+        # Use hyperlinked styles by default.
+        # Only used if the `serializer_class` attribute is not set on a view.
+        #'DEFAULT_MODEL_SERIALIZER_CLASS':            'rest_framework.serializers.HyperlinkedModelSerializer',
 
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+        # Use Django's standard `django.contrib.auth` permissions,
+        # or allow read-only access for unauthenticated users.
+        # 'DEFAULT_PERMISSION_CLASSES': [
+        #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # ],
+
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.BasicAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
+        )
     }
-    TASTYPIE_DEFAULT_FORMATS = ['json']
+
+    GRAPPELLI_ADMIN_TITLE= "RecomendadorUD"
+    #ADMIN_TOOLS_MENU="RecomendadorUD"
+    
 
 
 
@@ -339,3 +387,9 @@ class Dev(Base):
 class Prod(Base):
     DEBUG = False
     ALLOWED_HOSTS=['localhost']
+
+
+
+
+
+#Slider menu = https://github.com/codrops/Blueprint-SlidePushMenus

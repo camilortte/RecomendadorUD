@@ -3,6 +3,9 @@ from django.conf.urls import patterns, include, url
 from .views import LoginViewWithCustomForm,SignupViewMio, SignupSocialView, ProfileUpdate
 from django.conf import settings
 
+
+
+
 urlpatterns = patterns('',    
     url(r'^$', 'apps.account_system.views.home', name='home_url'),         
     url(r'^home/', 'apps.account_system.views.home', name='home_url_'), 

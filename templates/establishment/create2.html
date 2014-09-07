@@ -1,0 +1,30 @@
+{% load static %}  
+{% load selectable_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    {% include_ui_theme %} 
+    {% include_jquery_libs %}
+    {{ form.media.js }}
+</head>
+<body>
+    <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Create" />
+    </form>
+
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+        function newParameters(query) {
+            query.categorias = $('#categoria').val();
+        }
+        $('#id_sub_categorias_0').djselectable('option', 'prepareQuery', newParameters);
+    });
+    </script>
+    
+
+</body>
+</html> 

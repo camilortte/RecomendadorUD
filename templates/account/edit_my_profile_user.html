@@ -1,40 +1,35 @@
 {% extends "main/base.html" %}
-
 {% load url from future %}
 {% load i18n %}
 {% block head_title %}{% trans "Update my profile account" %}{% endblock %}
+{% load bootstrap3 %}
 
-{% block content %}
-	<form  data-parsley-validate class="login" method="POST" >{% csrf_token %}        
-        
-        {% for field in form %}
-            {{ field.label_tag }}
-            {{ field }}
-             <br>
-        {% endfor %}
-        
-        {% comment %}     {{form.as_p}}{% endcomment %}
 
-        <ul class="errorlist">
-            {% if form.non_field_errors %}
-                <li>{{ form.non_field_errors }}</li>
+{% block content %}   
+    <div class="row " >
+        <div class="col-md-12 col-sm-11 col-xs-11 ">            
+        <div class="col-md-offset-3 col-sm-offset-2 col-xs-offset-1 col-md-6 col-sm-8 col-xs-10  col-md-offset-3 col-sm-offset-2 col-xs-offset-1">
+            
+            <p class="text-center"><h1>Actualización de datos</h1></p>
+        	<form  class="form-horizontal login" role="form" data-parsley-validate method="POST" >{% csrf_token %}  
+                  {% bootstrap_form form %}
+                  <button type="submit" class="btn btn-success">{% trans "Actualizar datos" %}</button>                                        
+            </form>   
+            <br>            
+            {% if not social_accounts %}
+                <a class="btn btn-primary btn-sm" href="{% url 'change_password_url' %}">Cambiar contraseña</a> 
+            {% else %}
+                 <p class="text-justify">Cuentas conectadas: </p>
+                {% for cuenta in social_accounts %}
+                  <ul>
+                    <li><a href="{{cuenta.get_profile_url}}"  target="_blank">{{cuenta.provider| title}} </a></li>
+                  </ul>
+                {% endfor %}
             {% endif %}
-            {% for field in form %}
-                {% if field.errors %}
-                    <li>
-                        {{ field.label }}
-                        <ul class="errorlist">
-                        {% for error in field.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                        </ul>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-
-        <button class="primaryAction" type="submit">{% trans "Actualizar datos" %}</button>
-    </form>
-    <a href="{% url 'change_password_url' %}">Cambiar contraseña</a>
+              
+             <br><br>
+        </div>
+        </div>
+    </div>
 
 {% endblock %}

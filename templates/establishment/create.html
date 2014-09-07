@@ -3,9 +3,10 @@
 {% load i18n %}
 {% load notifications_tags %}
 {% block head_title %}{% trans "HomeView" %}{% endblock %}
-{% block scripts %}
-{% endblock %}
+
 {% load static %}
+
+
 
 
 {% block content %}
@@ -13,41 +14,85 @@
 	<form action="" method="post">{% csrf_token %}
 	    {{ form.as_p }}
 	    <input type="submit" value="Create" />
+	    <input type="button" value="Create with ajax" id="botn" />
 	</form>
 
 
 	<script>
 
-        $('#categoria').click(function() {
-            //alert($('#my_form').serialize());
+		// using jQuery
+		function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie != '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = jQuery.trim(cookies[i]);
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
 
-            var data = JSON.stringify({
-			    "categorias": $('#categoria').val()
-			});
 
-            $.ajax({
-                url: '/api/SubCategoriaResource/?categorias='+$('#categoria').val(),
-                type: 'GET',
-                data: data,
-                dataType: 'json',
-                success: function(response) {   
-                	console.log(response);
-                	$('#id_sub_categorias').empty().append('-------');
-                	console.log("CATEGORIA: "+$('#categoria').val());
-                    for (var i = response.length - 1; i >= 0; i--) {
-                    	console.log(response[i].tag);
-                    	 $('#id_sub_categorias').append('<option value="'+response[i].id+'">'+response[i].tag +'</option>');
-                    };
-                    console.log("\n");
-                },
-                error:function(){
-                    console.log("ERROR");
-                    //location.reload();
+		$.ajaxSetup({
+		    beforeSend: function(xhr, settings) {
+		        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+		            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		        }
+		    }
+		});
+
+		data  = JSON.stringify({
+			"nombre":"DonaColaa",
+			"email":"DonaColaa@hotmail.com",
+			"address":"address",			
+			"web_page":"http://wwww.coquito.com",
+			"sub_categorias":"1",
+			"description":"http://wwww.coquito.com",
+			"position":"-2.811371193331128,-68.203125"
+		});
+		console.log(data);
+
+
+	$( "#botn" ).click(function() {
+		alert("CLIC");
+			$.ajax({
+			    type: "POST",
+			    //url: "http://localhost:8000/api2/establecimientos/",
+			    url: "http://localhost:8000/establecimiento/create_api/",		    
+			    data: data,
+			    sucess: function(response) { alert("CReADO"); },
+			    complete: function(xhr) {	                
+	                if (xhr.readyState == 4) {
+	                    if (xhr.status == 201) {
+	                        alert("Created");
+	                    }
                 }
-            });
+	            },
+			    contentType: "application/json; charset=utf-8",
+			    dataType: "json",
+			    crossDomain:false,
+			    beforeSend: function(xhr, settings) {
+			      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			    },
+			    error:function(error){
+	                console.log("ERROR",error);
+	                alert(error)
+	                //location.reload();
+	            }
 
+	        });
 
-        });
-    </script>
+		});
 
+	</script>
 {% endblock content %}
+
+  {% block scripts %}
+    <script src="{% static 'js/update_categoria.js'%}"></script>        
+  {% endblock  %}

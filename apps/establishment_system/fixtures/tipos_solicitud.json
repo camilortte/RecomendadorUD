@@ -1,0 +1,38 @@
+[
+	{
+		"pk": 1, 
+		"model": "establishment_system.tipossolicitud", 
+		"fields": 
+		{
+			"nombre": "eliminacion", 
+			"tag": "Eliminación"
+		}
+	}, 
+	{
+		"pk": 2, 
+		"model": "establishment_system.tipossolicitud", 
+		"fields": 
+		{
+			"nombre": "modificacion", 
+			"tag": "Modificación"
+		}
+	}, 
+	{
+		"pk": 3, 
+		"model": "establishment_system.tipossolicitud", 
+		"fields": 
+		{
+			"nombre": "administracion", 
+			"tag": "Administración"
+		}
+	},
+	{
+		"pk": 4, 
+		"model": "establishment_system.tipossolicitud", 
+		"fields": 
+		{
+			"nombre": "desactivacion", 
+			"tag": "Desactivar"
+		}
+	}
+]
