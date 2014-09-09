@@ -222,7 +222,7 @@
       <a href="#">Mis Lugares</a> 
     {% endif %}
       <a href="#">¡Recomiendame!</a> 
-      <a href="#">Crear lugar</a>         
+      <a href="{% url 'establecimiento_create_url' %}">Crear lugar</a>         
   {% else %}
 
   {% endif %}
@@ -234,6 +234,7 @@
     {% block content %}{% endblock %}
   </div>
 </div>
+
 
 {% block content_free %}{% endblock %}
 

@@ -4,7 +4,7 @@ from .views import (detalle_establecimiento, CommentCreateView,
 	Establecimientoslist, CrearEstablecimiento, 
 	UpdateEstablecimiento, CrearEstablecimiento2, 
 	Busqueda,Autocomplete, EliminarComentario, EstablecimientoCreateApiView, 
-	CalificacionApiView, UploadField, UploadField2)
+	CalificacionApiView, UploadField, UploadField2, EstablecimientosByBoung)
 from rest_framework import routers
 from .api import SubCategoriaViewSet, EstablecimientoViewSet
 from .models import Establecimiento
@@ -46,5 +46,8 @@ urlpatterns = patterns('',
 	url(r'^establecimiento/create_api/$', EstablecimientoCreateApiView.as_view(), name='user-list'),
 	url(r'^establecimiento/calificar/(?P<pk>[0-9]+)/$', CalificacionApiView.as_view(), name='calificar_url'),
 	url(r'^establecimientos/(?P<pk>\d+)/upload2/$', UploadField2.as_view(), name='establecimiento_upload_2_image_url'), 
+
+
+	url(r'^establecimiento/boung/$', EstablecimientosByBoung.as_view(), name='establecimientos_by_boung_url'),	
 )
 

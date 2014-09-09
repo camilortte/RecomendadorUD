@@ -1,0 +1,7 @@
+{% extends "gis/admin/openlayers.html" %}
+{% block extrastyle %}{{ block.super }}
+<style type="text/css">v\:* {behavior:url(#default#VML);}
+.olLayerGoogleCopyright{visibility: hidden;}
+</style>
+{% endblock %}
+{% block openlayers %}{% include "admin/gmgdav3.js" %}{% endblock %}

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from geoposition.fields import GeopositionField
+#from geoposition.fields import GeopositionField
 from django.utils import timezone
 from imagekit.models import ImageSpecField
 
@@ -12,6 +12,7 @@ from imagekit.processors import TrimBorderColor, Adjust
 from apps.account_system.models import User
 from django.core import urlresolvers
 from django.contrib.sites.models import Site
+from django.contrib.gis.db import models 
 
 
 class Categoria(models.Model):
@@ -45,6 +46,7 @@ class SubCategoria(models.Model):
 
 from django.contrib.contenttypes.models import ContentType
 from apps.externals.djangoratings.fields import RatingField
+#from django.contrib.gis.db import models as geo_models
 
 class Establecimiento(models.Model):
 
@@ -62,7 +64,9 @@ class Establecimiento(models.Model):
         help_text='Numero de telefono',unique=True)
     #longitud=models.FloatField(_('Longitud'), null=True, blank=False,help_text='Longitud')
     #latitud=models.FloatField(_('Latitud'),null=True, blank=False,help_text='Latitud')
-    position = GeopositionField()
+    #position = GeopositionField()
+    position =models.PointField() # GeopositionField()
+    objects = models.GeoManager()
     administradores= models.ManyToManyField(User,blank=True,null=True)
     sub_categorias=models.ForeignKey(SubCategoria)
     visible = models.BooleanField(_('Is visible'), default=True,
@@ -146,8 +150,9 @@ class EstablecimientoTemporal(models.Model):
         help_text='Direccion del establecimiento',unique=True)
     description=models.TextField(_('Descripcion'),null=True,blank=True,
         help_text='Una breve descripcion del establecimiento', unique=False)
-    position = GeopositionField()
+    position =models.PointField() # GeopositionField()
     sub_categorias=models.ForeignKey(SubCategoria)
+    objects = models.GeoManager()
     #solicitudes = models.OneToOneField(Solicitud, null=True, blank=True)
     class Meta:
         verbose_name = _('Establecimiento temporal')
@@ -182,3 +187,11 @@ class Solicitud(models.Model):
         return (str(self.tipo_solicitudes)+" "+str(self.usuarios)).decode('utf-8')            
 
     
+
+
+
+from django.contrib.gis.db import models
+class Casa(models.Model):
+    nombre = models.CharField(max_length=100)
+    poly = models.PointField()
+    objects = models.GeoManager()

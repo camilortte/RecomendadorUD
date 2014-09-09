@@ -2,16 +2,19 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-{% block head_title %}{% trans "HomeView" %}{% endblock %}
+% block head_title %
+{% load static %}
 {% block scripts %}
+
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
+    <script src="{% static 'Gmaps/gmaps.js'%}"></script>
 {% endblock %}
 {% load static %}
 
 {% block styles %}
 
-    <style>
          
-          /*
+        /*
 A custom Bootstrap 3.1 theme from http://bootply.com\
 
 This CSS code should follow the 'bootstrap.css'
@@ -67,7 +70,7 @@ body{
 }
 
 #map-canvas {
-    width:33.3333%;
+    width:40%;
     height:calc(100% - 0);
     position:absolute;
     right:16px;
@@ -76,230 +79,297 @@ body{
     overflow:hidden;
 }
 
-    </style>
-    
+.media-body{
+  height: 10em;
+}
+
 {% endblock styles %}
 
-{% block content %}
-	
-    
-    <a href="{% url 'establecimientos_list_url' %}">Buscar establecimientos</a>
-    <a href="{% url 'establecimiento_create_url' %}">Crear establecimiento</a>
-    <a href="#">Modificar establecimiento</a>
 
-	<h1>Establecimientos</h1>
-	<ul>
-		{% for establecimiento in object_list %}
-			<li><a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{ establecimiento.nombre }} </a></li>
-		{% empty %}			
-		{% endfor %}
-	</ul>
-
-	{% if is_paginated %}
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                    <a href="{% url 'establecimientos_list_url' %}?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-                {% if page_obj.has_next %}
-                    <a href="{% url 'establecimientos_list_url' %}?page={{ page_obj.next_page_number }}">next</a>
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
-
-{% endblock content %}
 
 
 
 {% block content_free %}
 
 
-   
-    
-    
-    
-    <div id="map-canvas"></div>
-  <div class="container-fluid" id="main">
- 
-  <div class="row">
-    <div class="col-xs-8" id="left">
-    
 
+
+<div id="map-canvas"></div>
+<div class="container-fluid" id="main">
+  <div class="row">
+    <div class="col-xs-7 col-md-7 col-sm-7" id="left">
+      <br><br>
+    
+    <div class="row" id="all_elements">
+       <!-- Aca los items -->       
     </div>
-    <div class="col-xs-4"><!--map-canvas will be postioned here--></div>
+    <div class="row">
+    <div class="col-md-12 text-center">
+      <ul class="pagination text-center">  
+      </ul>
+    </div>
+    </div>
+     
+    </div>
+    <div class="col-xs-5"><!--map-canvas will be postioned here-->
+       
+  </div>
     
   </div>
-
 </div>
-<!--Mapas-->
-
-    <script>    
-    /* google maps -----------------------------------------------------*/
-google.maps.event.addDomListener(window, 'load', initialize);
-
-function initialize() {
-
-  /* position Amsterdam */
-  var latlng = new google.maps.LatLng(52.3731, 4.8922);
-
-  var mapOptions = {
-    center: latlng,
-    scrollWheel: false,
-    zoom: 13
-  };
-  
-  var marker = new google.maps.Marker({
-    position: latlng,
-    url: '/',
-    animation: google.maps.Animation.DROP
-  });
-  
-  var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-  marker.setMap(map);
-
-};
- 
-/*
-    Notas importante: Al parecer hay un Bug al momento de convertir de adrees String a longitud y latitud,
-    En la funcion calcularRutaFinla() en geocoder.
-
-    Mirar como se arregla
-*/
-
-var iconOrigin= 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=O|FFFF00|000000';
-var lugares = new Array();
-
-//Posicion actual o seleccionada
-var currentPosition;
-//posicion mas cerca de nuestra ubicacion actual
-var menor;
 
 
-$(function() {
-    Dajaxice.Principal.get_locals(my_callback);
-    map.removePolylines();
-    map.removeMarkers();
-});
 
-GMaps.geolocate({
-  success: function(position) {
-    map.setCenter(position.coords.latitude, position.coords.longitude);
-        currentPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-        var myMarker_oringe={
-            icon: iconOrigin,
-            animation: google.maps.Animation.DROP,
-            color: '#FF0000',
-            lat: currentPosition.lat(),
-            lng: currentPosition.lng(),
-            title: 'Origen',
-            infoWindow: {
-              content:  '<p>Origen</p>'
-            }
-        };
-        map.addMarker(myMarker_oringe);
-  },
-  error: function(error) {
-    alert('Geolocation failed: '+error.message);
-  },
-  not_supported: function() {
-    alert("Your browser does not support geolocation");
-  },
-  always: function() {
-    //DONE
-   }
-});
+<script>
 
-function my_callback(datas){
-    for (var i=0;i<datas.length;i++){
-        lugares.push(new google.maps.LatLng(datas[i][1],datas[i][2] ));
-        var myMarker_destino={
-            animation: google.maps.Animation.DROP,
-            lat: lugares[i].lat(),
-            lng: lugares[i].lng(),
-            title: datas[i][0],
-            infoWindow: {
-                content: '<b>'+datas[i][0]+'</b><p>'+datas[i][3]+'</p><p>Tipo: '+datas[i][5]+'</p><p>Direccion: '+datas[i][4]+'</p>'
-            }
-        };
-        map.addMarker(myMarker_destino);
-    }
+var x1,y1,x2,y2,pagina=1;
+var pinColor = "47a3da";
+var markers=[];
+var actual_page=1;
+var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+
+function add_marker(lng,lat,id,nombre){
+  console.log("Esto llega: "+lng+" , "+lat);
+  markers.push(map.addMarker({
+    lat: lat,
+    lng: lng,
+    icon: pinImage,
+    animation: google.maps.Animation.DROP,
+    id:id,
+    infoWindow: {
+      content: '<h4><a href="/establecimientos/'+id+'">'+nombre+'</h4>'
+    },
+  }));  
+
+  console.log("markers: ");
+  console.log(markers);
 }
 
-//Creacion facil de nuestro mapa proporcionada por gmaps.js
-var map = new GMaps({
-  div: '#map',
-  zoom: 11,
-  lat: 4.579825820210706,
-  lng: -74.08602476119995,
-  //Cuando se de un clic se dispara el evento que obtiene las cordenadas en el click
-  click: function(e) {
-    var myLatLng = e.latLng;
-    var lat = myLatLng.lat();
-    var lng = myLatLng.lng();
-    //Modificamos nuestra posicion actual
-    currentPosition = new google.maps.LatLng(lat,lng);
-    //Actualizamos las rutas de nuestra base de datos
-    //actualziarRutas();
-     // actualizarUbicacion();
+
+function paginador(anterior,siguiente,current){
+  $('.pagination').empty();
+  if(anterior){
+    $('<li class="link" data-page="'+anterior+'"><a  href="#">&laquo;</a></li>').appendTo(".pagination");  
+  }
+
+  if (anterior || siguiente){
+    $('<li ><a href="#">'+current+'</a></li>').appendTo(".pagination");   
+  }
+
+  if(siguiente){
+    $('<li class="link" data-page="'+siguiente+'"><a  href="#">&raquo;</a></li>').appendTo(".pagination");  
+  }
+  
+
+}
+
+
+function send_data(){
+ $.ajax({
+      url: '/establecimiento/boung/',
+      type: 'GET',
+      data: {"x1":x1,"x2":x2,"y1":y1,"y2":y2,"pagina":pagina},
+      dataType: 'json',
+      success: function(response) {
+        console.log("succes");
+        console.log(response)
+        console.log(response.results)
+
+        siguiente=response.next
+        anterior=response.previous
+        cantidad=response.count
+        console.log("Anterio")        
+        paginador(anterior,siguiente,actual_page)
+
+        map.removeMarkers();
+        $( "#all_elements" ).empty();
+        markers=[];
+        if (response.results.length > 0){
+          $("<div class='col-md-12'><h3 class='text-center'>Encontramos "+cantidad+" lugares que te gustaran</h3><br></div>").appendTo('#all_elements');
+          console.log("Resultao");
+          console.log(response.results);
+          for (var i = response.results.length - 1; i >= 0; i--) {
+            str_position=(response.results[i].position);   
+            console.log(str_position);
+            if (str_position){
+              str_position=str_position.replace("(","");
+              str_position=str_position.replace(")","");
+              str_position=str_position.split(" ");
+
+              cantidad=response.results.length
+              id=response.results[i].id
+              nombre=response.results[i].nombre
+              subcategoria=response.results[i].sub_categorias
+              descripcion=response.results[i].description
+              description=""
+              add_elemento(id,nombre,descripcion,subcategoria,cantidad)
+              add_marker(parseFloat(str_position[1]),parseFloat(str_position[2]),id,nombre);
+        }        
+          };
+        }  else{
+            $('<div class="col-md-12"><h4 class="text-center">Opps No se encontró nada</h4></div>').appendTo("#all_elements");
+        }     
+        
+      },
+      error:function(error){
+          console.log("ERROR");
+          console.log(error);
+      }
+  });
+}
+
+
+//$('.link').click(function(){console.log("hola");});
+
+$('.pagination').on('click', '.link', function(e) {
+        //alert('Parameter: ' + $(this).attr('data-page').split("=")[1]);
+        pagina=$(this).attr('data-page').split("=")[1];
+        actual_page=$(this).attr('data-page').split("=")[1];
+        send_data()
+
+  });
+
+function sra(){
+   polygon = map.drawPolygon({
+      paths: path, // pre-defined polygon shape
+      strokeColor: '#BBD8E9',
+      strokeOpacity: 1,
+      strokeWeight: 3,
+      fillColor: '#BBD8E9',
+      fillOpacity: 0.6
+    });
+
+}
+
+
+map = new GMaps({
+  div: '#map-canvas',
+  zoom: 13,
+  lat: 4.579503,
+  lng: -74.157113,
+  scrollwheel: true,
+  idle:function(e) {
+    console.log(this.getBounds());
+
+    var bounds = map.getBounds();
+
+    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest();
+
+
+    // x1= this.getBounds().pa.j;
+    // y1= this.getBounds().Ca.k;
+
+    // x2= this.getBounds().pa.k;
+    // y2= this.getBounds().Ca.j;
+
+    x1=ne.lat()
+    y1=sw.lng()
+
+    x2=sw.lat()
+    y2=ne.lng()
+
+    // x2=ne.lat()
+    // y2=sw.lng()
+
+    // x1=sw.lat()
+    // y1=ne.lng()
+
+
+    path = [[x1,y1], [x1,y2], [x2,y2], [x2,y1],[x1,y1]];
+    //path = [[-74.1,5.10], [x1,y2], [x2,y2],[-74.1,5.10]];    
+    //path = [[-12.040397656836609,-77.03373871559225], [-12.040248585302038,-77.03993927003302], [-12.050047116528843,-77.02448169303511], [-12.044804866577001,-77.02154422636042]];
+//    sra(path);
+
+   
+    
+    send_data();
+  },
+  mousemove: function(e){
+   // console.log("Latitude: "+e.latLng.lat());
+    //console.log("Longitude: "+e.latLng.lng());
   }
 });
 
-//Actualiza todas las rutas con markers
-function actualziarRutas(){
 
-    map.removePolylines();
-    map.removeMarkers();
-    var myMarker_oringe={
-        icon: iconOrigin,
-        animation: google.maps.Animation.DROP,
-        color: '#FF0000',
-        lat: currentPosition.lat(),
-        lng: currentPosition.lng(),
-        title: 'Origen',
-        infoWindow: {
-          content:  '<p>Origen</p>'
-        }
-    };
-    map.addMarker(myMarker_oringe);
-    for (var i = 0; i < lugares.length; i++) {
-        var myMarker_destino={
-            animation: google.maps.Animation.DROP,
-            lat: lugares[i].lat(),
-            lng: lugares[i].lng(),
-            title: 'Destino '+i,
-            infoWindow: {
-                content: '<p>Destino '+i+' </p>'
-            }
-        };
-        map.addMarker(myMarker_destino);
+// $('#all_elements').hover(function () {
+//   //this.find( ".col-md-6" ).css( "background-color", "red" );
+//   function() {
+//     $( this ).append( $( "<span> ***</span>" ) );
+//   }, function() {
+//     $( this ).find( "span:last" ).remove();
+//   }
+//   });
+
+
+// $( ".mierda").hover(  
+//   function() {
+//     //alert("ENTRO MIEDA");
+//       //id=$(this).prop('id')
+//       console.log("id");
+//       //marker_only=$.grep(markers, function(e){ return e.id == id; })
+//       //marker_only[0].setIcon();
+
+//   }, function() {
+//       //id=$(this).prop('id')
+//       console.log("id");
+//       //marker_only=$.grep(markers, function(e){ return e.id == id; })
+//       //marker_only[0].setIcon("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|47a3da");      
+//   }
+// );
+
+
+
+$(document).on({
+    mouseenter: function () {
+      id=$(this).prop('id')
+      //console.log("id");
+      marker_only=$.grep(markers, function(e){ return e.id == id; })
+      marker_only[0].setIcon();
+    },
+    mouseleave: function () {
+      id=$(this).prop('id')
+      //console.log("id");
+      marker_only=$.grep(markers, function(e){ return e.id == id; })
+      marker_only[0].setIcon("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|47a3da");      
     }
+}, ".mierda"); //pass the element as an argument to .on
+
+function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
+    var item= "\
+    <div class='col-md-6 mierda' id='"+id+"'> \
+              <a href='/establecimientos/"+id+"' >\
+              <div class='media' id=''>    \
+                         <div class='media-body'  style='border-style: dotted;border-color: #47a3da; border-width: 2px;'>\
+                          <br>\
+                            <h4 class='media-heading text-center ' > "+nombre+" </h4>\
+                            <div class='col-md-offset-1 col-md-10 col-md-offset-1'>\
+                            <p class='text-justify'>"+descripcion+"</p>\
+                            <h4><small>  </small> </h4>\
+                            </div> \
+                        </div>     \
+                </div>  \
+                </a>\
+                <br><br>\
+            </div>  \
+    "
+    $(item).appendTo("#all_elements");
+
+
+   
 }
+//cargando datos
+// $(document).on({
+//     ajaxStart: function() { $("#myModal").modal('show'); },
+//     ajaxStop: function() { $("#myModal").modal('hide'); }    
+// });
 
-//actualiza la ubicacin py pone el marker
-function actualizarUbicacion(){
-    map.removeMarkers();
-    var myMarker_oringe={
-        icon: iconOrigin,
-        animation: google.maps.Animation.DROP,
-        color: '#FF0000',
-        lat: currentPosition.lat(),
-        lng: currentPosition.lng(),
-        title: 'Origen',
-        infoWindow: {
-          content:  '<p>Origen</p>'
-        }
-    };
-    map.addMarker(myMarker_oringe);
-    $('[name="lan"]').val(currentPosition.lat());
-    $('[name="lot"]').val(currentPosition.lng());
-}
+// }
 
-
-    </script>
+</script>
 
 {% endblock content_free %}

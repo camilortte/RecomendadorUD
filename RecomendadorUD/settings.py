@@ -20,6 +20,7 @@ class Base(Configuration):
     MAX_UPLOAD_SIZE = 5242880 #5 MB
     MAX_UPLOAD_PER_USER=3
     MAX_IMAGES_PER_PLACE=8
+    ITEMS_PAGINATE=20
 
     INSTALLED_APPS = (
        #'grappelli', #http://django-grappelli.readthedocs.org/en/latest/customization.html
@@ -53,7 +54,7 @@ class Base(Configuration):
         'notifications',#https://github.com/django-notifications/django-notifications
         #'dajax',       #http://django-dajax.readthedocs.org/en/latest/
         'configurations',    
-        'geoposition',  #http://django-geoposition.readthedocs.org/
+        #'geoposition',  #http://django-geoposition.readthedocs.org/
         #'ajax_select',
         #'apps.djadmin_ext',
         'imagekit',
@@ -66,6 +67,7 @@ class Base(Configuration):
         'queued_search', #https://github.com/toastdriven/queued_search
         'bootstrap3', #https://github.com/dyve/django-bootstrap3
         'mathfilters',#https://github.com/dbrgn/django-mathfilters
+        'django.contrib.gis',
     )
 
     #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
@@ -378,8 +380,12 @@ class Dev(Base):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.contrib.gis.db.backends.spatialite',  #'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'base.db'),#'db.sqlite3'),
+        },        
+        'spatial': {
+            'NAME': os.path.join(BASE_DIR, 'spatial.db'),
+            'ENGINE': 'django.contrib.gis.db.backends.spatialite',            
         }
     }
     

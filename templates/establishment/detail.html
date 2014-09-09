@@ -71,19 +71,9 @@
     color: #47a3da;
 }
     
-}
 
-.img-wrap {
-    position: relative;
-    ...
-}
-.img-wrap .close {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    z-index: 100;
-    ...
-}
+
+
 
 
 
@@ -137,7 +127,7 @@
                 <h4 class="text-center" >
                     <span class="fileinput-button">
                         <!-- The file input field used as target for the file upload widget -->
-                        Arrastrar o Click
+                        Pulsa aquí o arrastra para subir imagenes
                         <input id="fileupload" type="file" name="file" >                        
                     </span>   
                 </h4>
@@ -171,8 +161,8 @@
                     <h3><span class="glyphicon glyphicon-phone-alt"></span>  Telefono:  <small class="small-white">{{object.telefono}}</small></h3>    
                 {% endif %}
                 
-                <input type="hidden" id="latitude" value="{{object.position.latitude}}">
-                <input type="hidden" id="longitude" value ="{{object.position.longitude}}">
+                <input type="hidden" id="latitude" value="{{object.position.y}}">
+                <input type="hidden" id="longitude" value ="{{object.position.x}}">
                 
                 
                 <h3><span class="

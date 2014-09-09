@@ -28,7 +28,7 @@
       "description": "Este es un establecimiento para joder la vida", 
       "web_page": "http://www.donpablo.com", 
       "address": "call128", 
-      "position": "-2.811371193331128,-68.203125", 
+      "position": "POINT (-73.0371090000000009 3.1283569999999998)",
       "nombre": "12", 
       "email": "donpedro@homail.com"
     }
@@ -42,7 +42,7 @@
       "description": "", 
       "web_page": "", 
       "address": "aaaaaaa", 
-      "position": "63.23362741232568,110.390625", 
+      "position": "POINT (-73.0371090000000009 3.1283569999999998)",
       "nombre": "DonaLola", 
       "email": ""
     }

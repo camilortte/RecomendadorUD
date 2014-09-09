@@ -449,7 +449,7 @@ class Autocomplete(View):
 
         return establecimientos
 
-from .serializers import EstablecimientoSerializer
+from .serializers import EstablecimientoSerializer, PaginatedEstablecimientoSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -507,8 +507,7 @@ class CalificacionApiView(APIView):
 
     def post(self, request, pk,format=None):
         print "ENTRADA NORMAL JAJAJ con id=",pk
-        try:
-            print request.DATA            
+        try:                      
             calificacion = request.DATA.get("calificacion")
             respuesta=""
             establecimiento = Establecimiento.objects.get(id=pk)
@@ -552,6 +551,7 @@ class UploadField2(APIView):
     authentication_classes = (  SessionAuthentication, BasicAuthentication,)
 
     def post(self, request, pk,format=None):
+
         print "ENTRADA NORMAL JAJAJ"
         try:
             print "DATA: ",request.DATA  
@@ -589,6 +589,46 @@ class UploadField2(APIView):
             print e
 
         return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
+
+from django.contrib.gis.geos import Polygon
+from django.core.paginator import Paginator
+class EstablecimientosByBoung(APIView):
+
+    def get(self, request, format=None):
+        print request.GET
+        # boung_data_x1 = request.GET.get("x1",None)
+        # boung_data_y1 = request.GET.get("y1")
+        # boung_data_x2 = request.GET.get("x2")
+        # boung_data_y2 = request.GET.get("y2")
+
+        boung_data_x1 = request.GET.get("y1",None)
+        boung_data_y1 = request.GET.get("x1")
+        boung_data_x2 = request.GET.get("y2")
+        boung_data_y2 = request.GET.get("x2")
+
+        number_page=request.GET.get("pagina",None)
+        if number_page is None:
+            number_page=1
+
+        print "boung_data_x1: ",boung_data_x1
+        print "boung_data_y1: ",boung_data_y1
+        print "boung_data_x2: ",boung_data_x2
+        print "boung_data_y1: ",boung_data_y2
+        if boung_data_x1 is not None:
+            box=Polygon.from_bbox((boung_data_x1,boung_data_y1,boung_data_x2,boung_data_y2))
+            query=Establecimiento.objects.filter(position__within=box,visible=True).order_by('rating_score')
+
+            paginator = Paginator(query, settings.ITEMS_PAGINATE)
+            query=paginator.page(number_page)
+            serializer=PaginatedEstablecimientoSerializer(query)
+            salida=serializer.data
+            print "Respuesta: ",salida
+        else:
+            salida={"error":"None"}            
+
+
+        return Response(salida,status=status.HTTP_200_OK)
+
 
 
 from django.db.models.signals import pre_delete

@@ -47,21 +47,7 @@ class CommentAdmin(admin.ModelAdmin):
 class ImagenInline(admin.StackedInline):
     model = Imagen
 
-class EstablecimientoAdmin(admin.ModelAdmin):
-    list_display = ('nombre','email','web_page','address','visible','sub_categorias')
-    filter_horizontal=('administradores',)
-    form=EstablecimientoAdminForm
-    list_select_related = ('imagen',)
-    inlines = [ ImagenInline  ]
-    
-        
-    class Media:
-        js = (    
-            'http://code.jquery.com/jquery-2.1.1.min.js', # jquery
-            'js/update_categoria_admin.js',       # project static folder
-        )
 
-  
 
 # class EstablecimientoTemporalInline(admin.StackedInline):
 #     model = EstablecimientoTemporal
@@ -293,7 +279,7 @@ class SolicitudAdmin(admin.ModelAdmin):
 # admin.site.register(MyPost, MyPostAdmin)
 
 admin.site.register(Categoria)
-admin.site.register(Establecimiento,EstablecimientoAdmin)
+
 admin.site.register(SubCategoria)
 admin.site.register(Imagen)
 admin.site.register(EstablecimientoTemporal)
@@ -311,3 +297,37 @@ admin.site.register(Comentario, CommentAdmin)
 #admintastypie.site.unregister(ApiKey)
 #admin.site.unregister(ApiAccess)
 
+from django.contrib.gis import admin 
+from django.contrib.gis.geos import GEOSGeometry
+
+
+   
+
+
+
+class GoogleAdmin(admin.OSMGeoAdmin): 
+    g = GEOSGeometry('POINT (-74.157175 4.578896)') # Set map center 
+    g.set_srid(4326) 
+    g.transform(900913) 
+    default_lon = int(g.x) 
+    default_lat = int(g.y) 
+    default_zoom = 11 
+    extra_js = ["http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"] 
+    map_template = 'admin/gmgdav3.html'
+
+    list_display = ('nombre','email','web_page','address','visible','sub_categorias')
+    filter_horizontal=('administradores',)
+    form=EstablecimientoAdminForm
+    list_select_related = ('imagen',)
+    inlines = [ ImagenInline  ]
+    
+        
+    class Media:
+        js = (    
+            'http://code.jquery.com/jquery-2.1.1.min.js', # jquery
+            'js/update_categoria_admin.js',       # project static folder
+        )
+
+
+admin.site.register(Establecimiento, GoogleAdmin) 
+#admin.site.register(Establecimiento,EstablecimientoAdmin)
