@@ -28,6 +28,8 @@
     "pk": 2,
     "fields": {
       "username": "1",
+      "first_name":"Camilo Antonio",
+      "last_name": "Ramirez Morales",
       "password": "pbkdf2_sha256$12000$lcTyWsDyxbPs$LPjJNZRKNXfple0JTeinCiWRDWHezzSMZjdLmTUPaHE=",
       "last_login": "2014-08-19 15:43:47.479065",
       "is_superuser": "1",
@@ -42,6 +44,8 @@
     "pk": 1,
     "fields": {
       "username": "RecomendadorUD",
+      "first_name":"Camilo Antonio",
+      "last_name": "Ramirez Morales",
       "password": "pbkdf2_sha256$12000$lcTyWsDyxbPs$LPjJNZRKNXfple0JTeinCiWRDWHezzSMZjdLmTUPaHE=",
       "last_login": "2014-08-19 15:43:47.479065",
       "is_superuser": "1",

@@ -2,29 +2,10 @@
 [
   {
     "pk": 1, 
-    "model": "establishment_system.categoria", 
-    "fields": 
-    {
-      "nombre": "restaurantes", 
-      "tag": "Restaurantes"
-    }
-  },
-  {
-    "pk": 1, 
-    "model": "establishment_system.subcategoria", 
-    "fields": 
-    {
-      "nombre": "comida_rapida", 
-      "categorias": 1, 
-      "tag": "Comida rapida"
-    }
-  },
-  {
-    "pk": 1, 
     "model": "establishment_system.establecimiento", 
     "fields": 
     {
-      "sub_categorias": 1, 
+      "sub_categorias": 10, 
       "description": "Este es un establecimiento para joder la vida", 
       "web_page": "http://www.donpablo.com", 
       "address": "call128", 
@@ -38,7 +19,7 @@
     "model": "establishment_system.establecimiento", 
     "fields": 
     {
-      "sub_categorias": 1, 
+      "sub_categorias": 11, 
       "description": "", 
       "web_page": "", 
       "address": "aaaaaaa", 
@@ -50,3 +31,4 @@
 ]
 
 
+{"pk": 1, "model": "establishment_system.categoria", "fields": {"nombre": "restaurantes", "tag": "Restaurantes"}}, {"pk": 2, "model": "establishment_system.categoria", "fields": {"nombre": "entretenimiento", "tag": "Entretenimiento"}}, {"pk": 3, "model": "establishment_system.categoria", "fields": {"nombre": "arte_y_entretenimiento", "tag": "Arte y entretenimiento"}}, {"pk": 4, "model": "establishment_system.categoria", "fields": {"nombre": "viajes_y_transporte", "tag": "Viajes y transporte"}}, {"pk": 5, "model": "establishment_system.categoria", "fields": {"nombre": "compras_y_servicios", "tag": "Compras y servicios"}}, {"pk": 6, "model": "establishment_system.categoria", "fields": {"nombre": "otros_lugares", "tag": "Otros lugares"}}, {"pk": 7, "model": "establishment_system.categoria", "fields": {"nombre": "ocio", "tag": "Ocio"}}, {"pk": 8, "model": "establishment_system.categoria", "fields": {"nombre": "comida", "tag": "Comida"}}

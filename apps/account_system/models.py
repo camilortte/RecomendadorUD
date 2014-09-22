@@ -97,7 +97,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.change_to_organizational()
         elif self.tipos.name=='user_administrator':
             self.change_to_admin()
-    
+        
+        
+
+        
         return super(User, self).save(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -120,5 +123,40 @@ class User(AbstractBaseUser, PermissionsMixin):
         if(self.tipos.name=="user_organizational"):
             return True
 
+
+# class Notificacion(models.Model):
+#     LEVELS = Choices('success', 'info', 'warning', 'error')
+#     author
+#     destinario
+#     verb = models.CharField(max_length=255)
+#     description = models.TextField(blank=True, null=True)
+#     creado = models.DateTimeField(default=now)
+#     unread = models.BooleanField(default=True, blank=False)
+#     public = models.BooleanField(default=True)
+
+#     class Meta:
+#         ordering = ('-creado', )
+
+#     def timesince(self, now=None):
+#         """
+#         Shortcut for the ``django.utils.timesince.timesince`` function of the
+#         current timestamp.
+#         """
+#         from django.utils.timesince import timesince as timesince_
+#         return timesince_(self.creado, now)
+
+#     @property
+#     def slug(self):
+#         return id2slug(self.id)
+
+#     def mark_as_read(self):
+#         if self.unread:
+#             self.unread = False
+#             self.save()
+
+#     def mark_as_unread(self):
+#         if not self.unread:
+#             self.unread = True
+#             self.save()
 
 

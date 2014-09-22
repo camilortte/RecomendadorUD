@@ -21,12 +21,14 @@ class Base(Configuration):
     MAX_UPLOAD_PER_USER=3
     MAX_IMAGES_PER_PLACE=8
     ITEMS_PAGINATE=20
+    MAX_COMMENTS_PER_PAGE=10
 
     INSTALLED_APPS = (
        #'grappelli', #http://django-grappelli.readthedocs.org/en/latest/customization.html
         #'admin_tools.theming',
         #'admin_tools.menu',
         #'admin_tools.dashboard',
+        #'yawdadmin',
 
         'django.contrib.admin',
         'django.contrib.auth',
@@ -35,6 +37,7 @@ class Base(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.sites',
+        'django.contrib.humanize',
         'haystack',
         'allauth',
         'allauth.account',
@@ -43,14 +46,15 @@ class Base(Configuration):
         'allauth.socialaccount.providers.twitter', 
         'allauth.socialaccount.providers.facebook',   
         'djrill',
-        'parsley',         
+        'parsley',        
+        #'simple_history' ,
         'apps.account_system',    
         'apps.establishment_system', #https://github.com/dcramer/django-ratings
         'apps.externals.djangoratings',
         #'south',     #https://github.com/agiliq/Django-parsley  #http://parsleyjs.org/
         #'drealtime',   #https://bitbucket.org/inzane/django-realtime
-        'dajaxice',     #http://django-dajaxice.readthedocs.org/en/latest/
-        'dajax',
+        #'dajaxice',     #http://django-dajaxice.readthedocs.org/en/latest/
+        #'dajax',
         'notifications',#https://github.com/django-notifications/django-notifications
         #'dajax',       #http://django-dajax.readthedocs.org/en/latest/
         'configurations',    
@@ -62,14 +66,21 @@ class Base(Configuration):
         'crispy_forms',       
         #'django_comments_xtd',
         'rest_framework',
-        'selectable', #http://django-selectable.readthedocs.org/en/latest/admin.html
+        #'selectable', #http://django-selectable.readthedocs.org/en/latest/admin.html
         'autocomplete_light',
         'queued_search', #https://github.com/toastdriven/queued_search
         'bootstrap3', #https://github.com/dyve/django-bootstrap3
         'mathfilters',#https://github.com/dbrgn/django-mathfilters
-        'django.contrib.gis',
+        'django.contrib.gis',        
+        'recommends',
+        #'recommends.storages.redis',
+        'apps.recommender_system',
+        'avatar', #http://django-avatar.readthedocs.org/en/latest/
     )
 
+    
+    NEW_RELIC_CONFIG_FILE="newrelic.ini"
+    AVATAR_DEFAULT_URL="https://pbs.twimg.com/profile_images/497122002138714113/rlyHDPED_bigger.png"
     #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
     #HAYSTACK_SIGNAL_PROCESSOR = 'apps.establishment_system.signals.QueuedSignalProcessor'
     HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
@@ -81,6 +92,7 @@ class Base(Configuration):
     #         'PATH': os.path.join(os.path.dirname(__file__), 'xapian_index')
     #     },
     # }   
+
 
     HAYSTACK_CONNECTIONS = {
         'default': {
@@ -106,6 +118,16 @@ class Base(Configuration):
 
     #COMMENTS_XTD_CONFIRM_EMAIL = False
 
+    RECOMMENDS_STORAGE_BACKEND='recommends.storages.redis.storage.RedisStorage'
+
+    RECOMMENDS_STORAGE_REDIS_DATABASE ={
+    'HOST': 'localhost',
+    'PORT': 7777,
+    'NAME': 0,
+    'ATOMIC_REQUESTS': True
+    }
+
+
     MIDDLEWARE_CLASSES = (
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -114,6 +136,7 @@ class Base(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',    
         #'drealtime.middleware.iShoutCookieMiddleware',
+        #'simple_history.middleware.HistoryRequestMiddleware',
     )
 
     ROOT_URLCONF = 'RecomendadorUD.urls'
@@ -179,7 +202,7 @@ class Base(Configuration):
         'django.contrib.auth.context_processors.auth',
         "apps.establishment_system.context_processors.notificaciones",
         "allauth.account.context_processors.account",
-        "allauth.socialaccount.context_processors.socialaccount",
+        "allauth.socialaccount.context_processors.socialaccount",           
 
     )
 
@@ -192,7 +215,7 @@ class Base(Configuration):
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
         'django.contrib.staticfiles.finders.FileSystemFinder',
-        'dajaxice.finders.DajaxiceFinder',
+        #'dajaxice.finders.DajaxiceFinder',
     )
 
     SITE_ID = 2
@@ -382,11 +405,14 @@ class Dev(Base):
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.spatialite',  #'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'base.db'),#'db.sqlite3'),
-        },        
-        'spatial': {
-            'NAME': os.path.join(BASE_DIR, 'spatial.db'),
-            'ENGINE': 'django.contrib.gis.db.backends.spatialite',            
+            'ATOMIC_REQUESTS': True
         }
+        # ,        
+        # 'spatial': {
+        #     'NAME': os.path.join(BASE_DIR, 'spatial.db'),
+        #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',        
+        #     'ATOMIC_REQUESTS': True    
+        # }
     }
     
       

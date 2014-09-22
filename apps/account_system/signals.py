@@ -2,7 +2,10 @@
 from allauth.account.signals import user_signed_up, user_logged_in, email_confirmed
 from allauth.socialaccount.signals import pre_social_login
 from django.dispatch import receiver
-
+from django.db.models import signals
+from apps.recommender_system.models import EstablecimientosRecommender
+from .models import User
+from django.db.models.signals import post_save
 
 # When account is created via social, fire django-allauth signal to populate Django User record.
  
@@ -57,3 +60,11 @@ def cosa(sender,sociallogin=None,request=None, **kwargs):
 @receiver(email_confirmed)
 def email_confirmed(sender,**kwargs):
     print "mail confirmado"
+
+
+
+
+
+@receiver(post_save, sender = User)
+def pre_category_save(sender, **kwargs):
+    print "Pre SAAAAAAAAAAAAAAAAAAAAAAAVE"

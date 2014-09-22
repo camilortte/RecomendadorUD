@@ -1,3 +1,21 @@
+# -*- encoding: utf-8 -*-
+
+"""
+    
+    signals.py: Señales 
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
 import Queue
 from django.db import models
 from haystack.signals import BaseSignalProcessor

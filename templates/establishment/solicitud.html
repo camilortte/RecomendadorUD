@@ -1,0 +1,76 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% load bootstrap3 %}
+{% load static %}   
+
+
+{% block scripts %}
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
+
+ <script src="{% static 'Gmaps/gmaps.js'%}"></script>
+{% endblock scripts %}
+
+{% block styles %}
+     .map { height: 30em; }
+{% endblock styles %}
+
+
+{% block content %}
+    
+    <form action="" method="POST">{% csrf_token %}
+        {% if form2 %}
+            {% bootstrap_form form2%}
+            <div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
+                <div class="map" id="id_mapa"></div>
+            </div>
+            <input type="hidden" id="latitude" value='{{lng}}'>
+            <input type="hidden" id="longitude" value='{{lat}}'>
+            <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
+            <br><br>
+             <hr>
+        {% endif %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-success">{% trans "Enviar" %}</button>
+    </form>
+
+    <script src="{% static 'js/update_categoria.js'%}"></script>   
+
+   {% if form2 %}
+   
+            <script>    
+var mapa= new GMaps({
+  div: '#id_mapa',
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+    zoom: 16,
+});
+
+var myMarker = mapa.addMarker({
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+  draggable:true,
+});
+
+$('#id_position').hide();
+$('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
+
+google.maps.event.addListener(myMarker, 'dragend', function() {
+    console.log("TErminado: ");
+    $('#latitude').val(myMarker.getPosition().lat());
+    $('#longitude').val(myMarker.getPosition().lng());
+    $('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
+
+     
+  });
+
+  
+    </script>
+
+   {% endif %}
+    
+{% endblock content %}
+

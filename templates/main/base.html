@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load notifications_tags %}
-
+{% load avatar_tags %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +18,7 @@
   <!-- Latest compiled and minified CSS 
    style="background:#DBDBDB;"
 -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">  
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
   <!--Menu desplegable -->
@@ -39,6 +40,61 @@
         text-align: center;
     }
 
+    hr {
+  -moz-border-bottom-colors: none;
+  -moz-border-image: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: #EEEEEE -moz-use-text-color #FFFFFF;
+  border-style: solid none;
+  border-width: 1px 0;
+  margin: 18px 0;
+}
+
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+  background-color: rgb(197, 197, 197);
+  border-radius: 20px;
+}
+
+#footer > .container{
+  background-color: rgb(197, 197, 197);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+
+.alert_list{font-size: 11px; color:grey}
+li.alert_li {
+  font-size: 11px; 
+  color:grey;
+  padding:10px 0px 2px 0px;
+  border-bottom: thin solid #c0c0c0;
+}
+li.alert_li:hover{background-color:#eee}
+.turn_off_alert{float:right;margin-bottom :1px}
+a.alert_message{color : grey}
+a.alert_message:hover{color : grey}
   {% block styles %}
     
   {% endblock styles %}
@@ -58,7 +114,8 @@
     {% block scripts %}{% endblock  %}     
 
   </head>
-  <body class="cbp-spmenu-push" >
+  <body class="cbp-spmenu-push" > {% if request.get_full_path != '/establecimientos/' %}<div id="wrap">{%endif%}
+
 
     <!-- Nav Top -->
     
@@ -104,38 +161,30 @@
 
 
 
-      <ul class="nav navbar-nav navbar-right" >         
+      <ul class="nav navbar-nav navbar-right" >  
         {% if user.is_authenticated %}
         {% notifications_unread as unread_count %}
         {% if unread_count %}   
-
-
-           
-
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown"  href="#" >
+    
+          <li><a href="#" id="notificaciones">
             <i class="glyphicon glyphicon-bell"></i>
-            <span class="badge">{{unread_count}}</span>
-          </a>
-          <ul class="dropdown-menu scrollable-menu" role="menu">
+              <span class="badge">{{unread_count}}</span>
+          </a></li> 
 
-            {% for notification in notifications %}
-
-            <li class="dropdown-header">
-              <p>
-                Titulo {{ notification.verb|default:"" }}
-                De {{ notification.actor|default:"" }}
-                Descripcion {{ notification.description|default:"" }}
-              </p>
-
-
-
-              <a  href="{% url 'mark_as_read_only' %}?id={{notification.id}}">Marcar como leida</a>
-
-            </li>
-            {% endfor %}
-          </ul>
-        </li>
+          <div style="display:none" class="alert_list">
+            {% for notification in notifications %}  
+              <li data-alert_id="1" class="alert_li">
+                <p class="alert_message">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:"" |truncatechars:30}}</a> -
+                  {{notification.timestamp |naturalday }}
+                </p>                
+                <a href="#" class="alert_message">{{ notification.description|default:"" |truncatechars:300}} </a><br>
+                <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Leida</a>
+                <div class="clearfix"></div>
+              </li>
+            {% endfor %}    
+            <li><h5 class="text-center"><a href="{% url 'notificaciones_url'%}">Ver todas</h5></a></li>        
+          </div>
+          
         {% else %}
 
         <li class="dropdown">
@@ -143,15 +192,28 @@
             <i class="glyphicon glyphicon-bell"></i>
           </a>
           <ul class="dropdown-menu scrollable-menu" role="menu">
-            <li><a href="#">No tienes notificaciones</a></li>
+            <li><a href="#">No tienes notificaciones.</a></li>
+            <li><a href="{% url 'notificaciones_url'%}">Ver todas las notificaciones</a></li>
           </ul>
         </li>
 
         {% endif %}
+    
+                
+       
+
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.first_name|title}} | <span class="glyphicon glyphicon-user"></span></a>  
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.first_name|title}} | 
+            {% if request.user|has_avatar  %}
+              <img src="{% avatar_url user 25 %}" class="img-circle" alt="{{request.user}}">
+            {% else %}
+              <span class="glyphicon glyphicon-user"></span>  
+            {% endif %}
+            
+            
+          </a>  
           <ul class="dropdown-menu" role="menu" >
-            <li><a href="#">Perfil</a></li>
+            <li><a href="{% url 'profile_url'%}"><span class="glyphicon glyphicon-user"></span> Perfil</a></li>
             <li class="divider"></li>
             <li><a href="{% url 'update_profile_url' %}"><span class="glyphicon glyphicon-cog"></span> UpdateAccount</a></li>
             <li><a href="{% url 'logout_url' %}"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
@@ -214,15 +276,14 @@
     <br>
     <br>
   </a>  
-  <a href="{% url 'home_url' %}">Inicio</a>
-  <a href="{% url 'establecimientos_list_url' %}">Lugares</a>
-  <a href="#">Categorias</a>
+  <a href="{% url 'home_url' %}"><span class="glyphicon glyphicon-home"></span> Inicio</a>
+  <a href="{% url 'establecimientos_list_url' %}"><span class="glyphicon glyphicon-search"></span> Buscar Lugares</a>  
   {% if request.user.is_authenticated %}
     {% if  user.is_organizacional or user.is_superuser%}
-      <a href="#">Mis Lugares</a> 
+      <a href="{% url 'establecimientos_propios_ur'%}"><span class="glyphicon glyphicon-briefcase"></span> Mis Lugares</a>
     {% endif %}
-      <a href="#">¡Recomiendame!</a> 
-      <a href="{% url 'establecimiento_create_url' %}">Crear lugar</a>         
+      <a href="{% url 'recmendacion_url'%}"><span class="glyphicon glyphicon-thumbs-up"></span> ¡Recomiendame!</a> 
+      <a href="{% url 'establecimiento_create_url' %}"><span class="glyphicon glyphicon-ok"></span>  Crear lugar</a>         
   {% else %}
 
   {% endif %}
@@ -230,18 +291,40 @@
 
 
   <div class="container" >
-  <div class="main"   >   
+  <div class="main"   >  
     {% block content %}{% endblock %}
   </div>
 </div>
 
 
+
 {% block content_free %}{% endblock %}
 
 
+{% if request.get_full_path != '/establecimientos/' %}
+</div>
+<div id="footer">
+      <div class="container text-center">
+         <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-heart"></span> Sobre la plataforma</h3>
+                <p class="text-justify">Para más información mira  <a href="{% url 'about_url' %}">este</a> enlace.</p> 
+            </div>
+            <div class="col-md-4">
+                <h3 ><span class="glyphicon glyphicon-star"></span> Sobre el proyecto</h3>
+                <p class="text-justify">RecomendadorUD ® es un proyecto final de grado de la carrera de Sistematización de datos de la <a href="http://www.udistrital.edu.co/" target="_blanck"> Universidad distrital Francisco José de Caldas</a></p>                
+            </div>
+            <div class="col-md-4" >
+                <h3 ><span class="glyphicon glyphicon-music"></span> Sobre el autor</h3>
+                <p class="text-justify">Diseñado y desarollado por Camilo Ramírez</p>
+                <p class="text-justify">- camilortte@hotmail.com</p>
+                <p class="text-justify">- camilolinchis@gmail.com</p>
+                <p class="text-justify">- <a href="https://twitter.com/camilortte" target="_blanck">@camilortte</a>  on Twitter</p>
+            </div>
 
-
-
+          <div class="col-md-12"> <a href="#">Terminos y condiciiones</a> - Todos los derechos reservado 2014-2015</div>
+      </div>
+    </div>
+{% endif %}
 
 <script src="{% static 'js/menu_desplegable.js'%}"></script>  
 
@@ -302,8 +385,34 @@
       },
       source: bestPictures.ttAdapter()
     });
-    </script>
 
+
+    $("#notificaciones").popover({
+  'title' : "<p style='color:black;'>Notificaciones</p>", 
+  'html' : true,
+  'placement' : 'bottom',
+  'content':$('.alert_list').html(),
+  'placement': 'bottom',
+  'animation': 'true',
+  'container': '.navbar-nav'
+
+});
+
+
+
+
+
+    </script>
+<!-- Google Analytics -->
+<script async src='//www.google-analytics.com/analytics.js'></script>
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-XXXX-Y', {
+  'cookieDomain': 'none'
+});
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
 
   </body>
 

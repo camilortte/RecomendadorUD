@@ -18,6 +18,7 @@ from notifications.admin import Notification
 from .forms import CustomUserChangeForm, CustomUserCreationForm, NotificationForm
 from .models import User as CustomUser , Tipo
 
+from notifications import notify
 csrf_protect_m = method_decorator(csrf_protect)
 sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 
@@ -165,12 +166,73 @@ class CustomUserAdmin(admin.ModelAdmin):
         return super(CustomUserAdmin, self).response_add(request, obj,
                                                    post_url_continue)
 
+from .models import User
+from django.contrib.contenttypes.models import ContentType
+
 
 class NotificationsAdmin(admin.ModelAdmin):
     list_display = ['id']
     ordering = ['id']
-
+    #raw_id_fields = ('author', )
     form = NotificationForm
+
+    class Meta:
+        model = Notification
+        ordering = ('-timestamp', )
+
+    def save_model(self, request, obj, form, change):
+        """
+            Crea las notificaciones para el usuario o para todos los usuarios
+        """
+        try:
+            form.cleaned_data['todos']  
+            todos=True
+        except Exception:
+            todos=False
+
+        if todos: 
+            #Si es para todos los usuarios
+            author=form.cleaned_data['author']
+            titulo=form.cleaned_data['titulo']
+            descripcion=form.cleaned_data['descripcion']
+            for usuario in User.objects.all():                
+                notify.send(
+                    form.cleaned_data['author'],
+                    recipient=usuario,
+                    verb=titulo,
+                    timestamp=obj.timestamp,
+                    description=descripcion
+                )   
+        else:
+            #Un usuario en particular
+            author=form.cleaned_data['author']
+            titulo=form.cleaned_data['titulo']
+            descripcion=form.cleaned_data['descripcion']
+            destinario=form.cleaned_data['destinario']
+            obj.actor_content_type=ContentType.objects.get_for_model(User)
+            obj.actor=author
+            obj.verb=titulo
+            obj.description=descripcion
+            obj.recipient=destinario
+            obj.save()         
+
+        return obj
+
+
+class NotificationsAdmin2(admin.ModelAdmin):
+    """
+        DEPRECATE
+        ---------
+        No se realiza tantanso modificaciones y es limitado.
+    """
+    list_display = ['id']
+    ordering = ['id']
+    raw_id_fields = ('recipient','actor_object_id' )
+
+    class Meta:
+        model = Notification
+        ordering = ('-timestamp', )
+        
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.unregister(Notification)

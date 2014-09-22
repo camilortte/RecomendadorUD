@@ -1,4 +1,5 @@
 from django.views.generic.base import View
+from django.views.generic import TemplateView
 from django.shortcuts import render
 
 # Create your views here.
@@ -21,3 +22,6 @@ class Test(View):
         # TODO: DELETE ACTIONS
         return render(request,"Main/index.html")
 
+
+class About(TemplateView):
+    template_name="main/about.html"

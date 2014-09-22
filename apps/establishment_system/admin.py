@@ -1,64 +1,59 @@
 # -*- encoding: utf-8 -*-
-from django.contrib import admin
-from .models import Categoria, Establecimiento, SubCategoria, Imagen ,EstablecimientoTemporal, Solicitud, TiposSolicitud,Solicitud
-from .forms import EstablecimientoAdminForm
-from .models import Comentario, Establecimiento, EstablecimientoTemporal, Imagen
-from django.utils.translation import ugettext_lazy as _
-from django.contrib import messages 
-#from fluent_comments.admin import FluentCommentsAdmin, CommentModel
-
-#from django import forms
-# from apps.djadmin_ext.helpers import BaseAjaxModelAdmin
-# from apps.djadmin_ext.admin_forms import BaseAjaxModelForm
-
-
-# class EstablecimientoAdminForm(BaseAjaxModelForm):
+"""
     
-#     ajax_change_fields = ["categorias"]
-#     categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),cache_choices=True)
-#     sub_categorias= forms.ModelChoiceField(queryset=SubCategoria.objects.all(),cache_choices=True)
+    admin: modelos de administración del systema de establecimientos
 
-#     @property
-#     def dynamic_fields(self):
-#         selecte_categoria=  self.get_selected_value('categorias')
-#         if not selecte_categoria:
-#             return {}
-
-#         sub_categorias = SubCategoria.objects.filter(categorias=selecte_categoria)
-#         fields = {}
-#         fields['sub_categorias'] = lambda:forms.ModelChoiceField(queryset=sub_categorias,cache_choices=True)
-#         return fields
-
-#     def create_field_and_assign_initial_value(self, queryset, selected_value):
-#         return lambda: super(EstablecimientoAdminForm, self).create_field_and_assign_initial_value(queryset, selected_value)
-
-#     class Meta(object):
-#         model = Establecimiento
-
-# class EstablecimientoAdmin(BaseAjaxModelAdmin):
-#     form=CategoriasForm
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
 
 
+"""
+#Django
+from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages, admin
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
+#Models
+from .models import (
+    Categoria, Establecimiento, 
+    SubCategoria, Imagen ,EstablecimientoTemporal, 
+    Solicitud, TiposSolicitud,Comentario)
+
+#Forms
+from .forms import EstablecimientoAdminForm
 
 
 class CommentAdmin(admin.ModelAdmin):
+    """
+        Clase encargada de presentar los comentarios en el admin
+    """
     raw_id_fields = ('author','post' )
+    list_filter = ('author', 'post', 'ip_address', 'is_public',)
+    search_fields = ('author', 'post', )
+    ordering = ('author',)
+
 
 class ImagenInline(admin.StackedInline):
+    """
+        Clase encargada de presentar las imagenes inline en el modelo del establecimiento.
+    """
     model = Imagen
 
 
-
-# class EstablecimientoTemporalInline(admin.StackedInline):
-#     model = EstablecimientoTemporal
-
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
 class SolicitudAdmin(admin.ModelAdmin):
-    
+    """
+        Clase encargada de presentar las solicitudes en el admin
+    """
+
     list_display = ('usuarios','establecimientos','tipo_solicitudes','aprobar')    
-    #change_form_template = 'establishment/admin.html'
-    #inlines = [ EstablecimientoTemporalInline  ]
     change_form_template = 'establishment/admin.html'
     fieldsets = (
         (None, {
@@ -69,11 +64,16 @@ class SolicitudAdmin(admin.ModelAdmin):
             'fields': ('fecha_creada','aprobar')
         }),
     )
+    list_filter = ('tipo_solicitudes','aprobar',)
+    search_fields = ('usuarios', 'establecimientos', )
+    ordering = ('fecha_creada',)
 
 
     def change_view(self, request, object_id, form_url='', extra_context=None): 
-        extra_context = extra_context or {}        
-
+        """
+            Se agregan al contexto los ddatos de la solicitud
+        """
+        extra_context = extra_context or {}     
 
         try:
             obj=Solicitud.objects.get(id=object_id)
@@ -119,14 +119,21 @@ class SolicitudAdmin(admin.ModelAdmin):
     class Meta:
         model = Solicitud
     
-    """Si la solicitud se aprobo ya no puede editarse"""
+    
     def get_readonly_fields(self, request, obj=None):  
+        """
+            Si la solicitud se aprobo ya no puede editarse
+        """
         if obj is not None :
             if obj.aprobar:
                 return self.fields or [f.name for f in self.model._meta.fields]        
         return super(SolicitudAdmin, self).get_readonly_fields(request, obj)
 
     def save_model(self, request, obj, form, change):
+        """
+            Almacena la solicitud dependiendo tel tipo de solicitud al que 
+            corresponde
+        """
         print obj.aprobar
         if  obj.aprobar:
             try:
@@ -159,6 +166,9 @@ class SolicitudAdmin(admin.ModelAdmin):
             obj.save()
 
     def aprobar_desactivacon(self,request,form,obj):           
+        """
+            Aprueba desactivar un establecimeinto
+        """
         try:
             obj.establecimientos.visible=False
             obj.establecimientos.save()               
@@ -177,6 +187,9 @@ class SolicitudAdmin(admin.ModelAdmin):
 
     #Metodo cuando se aprueba una solicitud de elmiminacion
     def aprobar_eliminacion(self,request,form,obj):
+        """
+            Aprueba eliminar un establecimiento
+        """
         try:
             object_id=str(obj.id)
             ###ELIMINACION DE ESTABLECIMIENTO
@@ -194,10 +207,12 @@ class SolicitudAdmin(admin.ModelAdmin):
                              level=messages.ERROR, extra_tags='', fail_silently=False)
             return False
         
-
     
     #Metodo cuando se aprueba solicitud de modificacion
     def aprobar_modificacion(self,request,form,obj):
+        """
+            Aprueba modificar un establecimiento
+        """
         #establecimientos_temporales=EstablecimientoTemporal.objects.filter(solicitudes=obj.id)
         if(obj.establecimientos_temporales):
             # print self.__dict__
@@ -243,6 +258,9 @@ class SolicitudAdmin(admin.ModelAdmin):
 
     #Metodo cuandop se aprueba solicitud de administracion
     def aprobar_administracion(self,request,form,obj):
+        """
+            Apruba la administracón de un establecimiento.
+        """
         if(obj.usuarios):            
             establecimientos=obj.establecimientos
             print Establecimiento.objects.filter(administradores=obj.usuarios.id,id=establecimientos.id)
@@ -263,46 +281,43 @@ class SolicitudAdmin(admin.ModelAdmin):
         else:
             return False
 
-    # #Redirige cuando eliminan establecimiento
     def response_delete(request, obj_display):
+        """
+            Redirige cuando eliminan establecimiento
+        """
         return HttpResponseRedirect(reverse('admin:establishment_system'))
 
 
-# class MyPost(Establecimiento):
-#     class Meta:
-#         proxy = True
+class ImagenAdmin(admin.ModelAdmin):
+    """
+        Clase encargada de presentar las imagines en el admin
+    """
+    list_display = ('id','imagen_thumbnail','establecimientos','date_uploaded','usuarios')       
+    list_filter = ('usuarios', 'establecimientos', )
+    search_fields = ('usuarios', 'establecimientos', )
+    ordering = ('date_uploaded',)
 
-# class MyPostAdmin(admin.ModelAdmin):
-#     def queryset(self, request):
-#         return Solicitud.objects.all()
 
-# admin.site.register(MyPost, MyPostAdmin)
+    class Meta:
+        model=Imagen
+
+
 
 admin.site.register(Categoria)
-
 admin.site.register(SubCategoria)
-admin.site.register(Imagen)
+admin.site.register(Imagen,ImagenAdmin)
 admin.site.register(EstablecimientoTemporal)
 admin.site.register(Solicitud, SolicitudAdmin)
 admin.site.register(TiposSolicitud)
 admin.site.register(Comentario, CommentAdmin)
-#admin.site.unregister(CommentModel)
-#admin.site.register(CommentModel)#, CustomFluentCommentsAdmin)
 
 
-# from tastypie.models import ApiKey
-# from tastypie import admin as admintastypie
 
- 
-#admintastypie.site.unregister(ApiKey)
-#admin.site.unregister(ApiAccess)
-
+"""
+    Modificación del mapa de GeoDjango
+"""
 from django.contrib.gis import admin 
 from django.contrib.gis.geos import GEOSGeometry
-
-
-   
-
 
 
 class GoogleAdmin(admin.OSMGeoAdmin): 
@@ -320,6 +335,9 @@ class GoogleAdmin(admin.OSMGeoAdmin):
     form=EstablecimientoAdminForm
     list_select_related = ('imagen',)
     inlines = [ ImagenInline  ]
+
+    list_filter = ('visible','sub_categorias' )    
+    search_fields = ('nombre','web_page','address', )
     
         
     class Media:
@@ -330,4 +348,3 @@ class GoogleAdmin(admin.OSMGeoAdmin):
 
 
 admin.site.register(Establecimiento, GoogleAdmin) 
-#admin.site.register(Establecimiento,EstablecimientoAdmin)

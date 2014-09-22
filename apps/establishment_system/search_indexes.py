@@ -1,3 +1,21 @@
+# -*- encoding: utf-8 -*-
+
+"""
+    
+    search_indexex.py: Creacion de los indices de busqueda.
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
 #import datetime
 from haystack import indexes
 from .models import Establecimiento, Categoria

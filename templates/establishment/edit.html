@@ -3,51 +3,64 @@
 {% load i18n %}
 {% load notifications_tags %}
 {% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% load static %}   
+{% load bootstrap3 %}
 {% block scripts %}
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
+
+ <script src="{% static 'Gmaps/gmaps.js'%}"></script>
 {% endblock %}
 {% load static %}
 
+{% block styles %}
+     .map { height: 30em; }
+{% endblock styles %}
 
 {% block content %}
-	
-	<form action="" method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Create" />
+	<h1>Actualización {{object}}</h1>
+    <form action="" method="POST">{% csrf_token %}
+        
+        {% bootstrap_form form%}
+        <div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
+            <div class="map" id="id_mapa"></div>
+        </div>
+        <input type="hidden" id="latitude" value='{{lng}}'>
+        <input type="hidden" id="longitude" value='{{lat}}'>
+        <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
+        <br><br>
+        <button type="submit" class="btn btn-success">{% trans "Actualizar" %}</button>
     </form>
 
+    <script src="{% static 'js/update_categoria.js'%}"></script>   
 
-    <script>
+   
+            <script>    
+var mapa= new GMaps({
+  div: '#id_mapa',
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+    zoom: 16,
+});
 
-        $('#categoria').click(function() {
-            //alert($('#my_form').serialize());
+var myMarker = mapa.addMarker({
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+  draggable:true,
+});
 
-            var data = JSON.stringify({
-                "categorias": $('#categoria').val()
-            });
+$('#id_position').hide();
+$('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
 
-            $.ajax({
-                url: '/api/SubCategoriaResource/?categorias='+$('#categoria').val(),
-                type: 'GET',
-                data: data,
-                dataType: 'json',
-                success: function(response) {   
-                    console.log(response);
-                    $('#id_sub_categorias').empty().append('-------');
-                    console.log("CATEGORIA: "+$('#categoria').val());
-                    for (var i = response.length - 1; i >= 0; i--) {
-                        console.log(response[i].tag);
-                         $('#id_sub_categorias').append('<option value="'+response[i].id+'">'+response[i].tag +'</option>');
-                    };
-                    console.log("\n");
-                },
-                error:function(){
-                    console.log("ERROR");
-                    //location.reload();
-                }
-            });
+google.maps.event.addListener(myMarker, 'dragend', function() {
+    console.log("TErminado: ");
+    $('#latitude').val(myMarker.getPosition().lat());
+    $('#longitude').val(myMarker.getPosition().lng());
+    $('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
 
+     
+  });
 
-        });
+  
     </script>
 
 {% endblock content %}

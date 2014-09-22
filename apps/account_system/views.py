@@ -17,17 +17,12 @@ from notifications import notify
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .forms import SignupFormMio
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 
-
+from apps.establishment_system.models import Establecimiento
 """Home"""
 def home(request):        
-    ctx= {'user': request.user}
-    try:
-        notifications = request.user.notifications.unread().order_by('-timestamp')[:10]          
-        ctx['notifications']=notifications
-    except( Exception ):
-        print "A error occurred : Anonimous user"
+    ctx= {'cantidad':Establecimiento.objects.count()}
     
     return render(request,'main/home.html', ctx)
                              
@@ -189,7 +184,7 @@ def send_notification(request):
 @login_required
 def mark_as_read_all(request):
     request.user.notifications.unread().mark_all_as_read()
-    return HttpResponseRedirect(reverse('home'))
+    return redirect('notificaciones_url')
 
 """MArca las url como leidas mediante GET"""
 @login_required
@@ -203,6 +198,57 @@ def marcar_notificacion_como_leida(request):
     except Exception:
         print "Usuario anonimo "
     return redirect('home_url')
+
+
+class ProfileUser(TemplateView):
+    """
+        Clase encargada de mostrar el perfil del usuario activo
+    """
+    template_name="account/profile.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProfileUser, self).dispatch(*args, **kwargs)
+
+
+class PorfilesUsers(TemplateView):
+    """
+        Clase que se encarga de mostrar los perfiles del usuario seleccionado
+    """
+    template_name="account/profiles.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PorfilesUsers, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+            Se agrega el contexto del usuario
+        """
+        print "El contexto es: ",kwargs['pk']
+        context = super(PorfilesUsers, self).get_context_data(**kwargs)
+        #context['now'] = timezone.now()
+        context['usuario']= get_object_or_404(User,pk=kwargs['pk'])
+        return context
+
+
+class NotificacionesView(TemplateView):
+    template_name="account/notificaciones.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(NotificacionesView, self).dispatch(*args, **kwargs)
+
+    # def get_context_data(self, **kwargs):
+    #     """
+    #         Se agrega el contexto del notificaciones
+    #     """
+    #     print "El contexto es: ",kwargs['pk']
+    #     context = super(PorfilesUsers, self).get_context_data(**kwargs)
+    #     #context['now'] = timezone.now()
+    #     context['usuario']= get_object_or_404(User,pk=kwargs['pk'])
+    #     return context
+
 
 #Anadir message:
 #messages.add_message(request, messages.INFO, 'Hello world.')   

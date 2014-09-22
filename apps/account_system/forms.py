@@ -172,6 +172,7 @@ class SignupFormSocial(SingupFormSoialAccount):
 class EditAccountForm(forms.ModelForm):    
     first_name=forms.CharField(label='Nombres', min_length=3, max_length=100,required=True)
     last_name=forms.CharField(label='Apellidos', min_length=3, max_length=100,required=True)
+    username=forms.CharField(label='Nombre de usuario', min_length=6, max_length=100,required=True)
     class Meta:
         model = User
         fields = ('username','email','first_name', 'last_name')#,'password1', 'password2')
@@ -200,16 +201,110 @@ class MyValidatedForm(forms.Form):
     surname = forms.CharField(label='Surname', min_length=3, max_length=20,required=True)
     age = forms.DecimalField(min_value=18, max_value=99)
 
+# from django.core.exceptions import ValidationError
+# def validate_even(value):
+#     print "Lleeeeeeeeeeeeeeeeeeeeeeeeeeega: ",value
+#     if value == "-1":
+#         pass
+#     else:
+#         if User.objects.filter(id=int(value)):
+#             pass
+#         else:
+#             raise ValidationError(u'Selecciona una opción valida.')
 
-"""Formuilario del admin para las notificaciones"""
+
+
+
+
+
 class NotificationForm(forms.ModelForm):
-   
-    actor_object_id = forms.ModelChoiceField(queryset=User.objects.all(),cache_choices=True)
+    """
+        Formuilario del admin para las notificaciones
+        Se modifico el __init__ para permitir crear notificaciones para todos los usuarios
+    """   
+    author = forms.ModelChoiceField(
+        label=_("Autor"),
+        queryset=User.objects.all().order_by('username'),
+        widget=forms.Select(),
+        help_text=u'De parte de')
+    destinario = forms.ModelChoiceField(
+        label=_("Destinatario"),
+        queryset=User.objects.all().order_by('username'),
+        help_text=u'Destinado al usuario (Si la opcion "Todos los usuarios" esta activa, esta opción será ignorada)')
+    titulo = forms.CharField(
+        label=_("Titulo"),
+        max_length=255,
+        help_text=u'Titulo de la notificacion')
+    descripcion=forms.CharField(
+        label=_("Descripcion"),
+        widget = forms.Textarea, 
+        required=False,
+        help_text=u'Descripcion de la notificación')
+    todos= forms.BooleanField(
+        label=_("Totodos los usuarios"),
+        help_text=u'Seleccionar esta opcion para enviar a todos los usuarios activos del sistema.'
+        )
 
-    value_conten_type=ContentType.objects.filter(name='user')
-    actor_content_type= forms.ModelChoiceField(queryset=ContentType.objects.filter(name='user'),
-        cache_choices=True, initial=value_conten_type)
-
+    es_instancea=False
     class Meta:
-        model = Notification
+        model= Notification
+        fields = ('author','destinario','level', 'titulo','descripcion','unread','public','timestamp')
+
+ 
+    def __init__(self, *args, **kwargs):
+        """
+            Agregamos los items de envio a todos
+        """
+        super(NotificationForm, self).__init__(*args, **kwargs)
+        # self.fields['destinario'].choices = \
+        #     list(self.fields['destinario'].choices) + [('-1', 'Todos')]
         
+        try:
+            instance=kwargs['instance']
+        except Exception:
+            instance=False
+
+        if instance:
+            self.es_instancea=True            
+
+            #self.fields['author'].widget.attrs['disabled'] = "disable"
+            #self.fields['destinario'].widget.attrs['disabled'] = "disable"
+
+            self.fields['descripcion'].initial=instance.description
+            self.fields['titulo'].initial=instance.verb
+            self.fields['author'].initial=instance.actor
+            self.fields['destinario'].initial=instance.recipient
+            self.fields['todos'].widget = forms.HiddenInput()
+
+        
+    def clean(self):
+        """
+            Validamos que si se selecciono todos, entonces borramos los errores de
+            destinatarios, de lo contrario borramos los errores de todos y retornamos
+            la data
+        """
+        cleaned_data = super(NotificationForm, self).clean()
+        if not self.es_instancea:   
+            print "Entro en clean"         
+            todos = cleaned_data.get("todos")
+            destinario = cleaned_data.get("destinario")
+
+            print "TODOS: ",todos
+            print "Destinario: ", destinario
+
+            if todos:
+                try:
+                    del self.errors['destinario']
+                except Exception:
+                    pass
+                return cleaned_data
+            else: 
+                if destinario:
+                    del self._errors['todos']
+        else:
+            del self._errors['todos']
+        
+        return cleaned_data
+            
+        
+

@@ -1,48 +1,98 @@
 # -*- encoding: utf-8 -*-
+
+"""
+    
+    Views: Encontramos todas las vistas del sistema de establecimientos.
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
+
+import datetime
+import json
+
+#Django
 from django.shortcuts import render,redirect
 from django.views.generic.base import View
-from django.views.generic import DetailView, CreateView , ListView, UpdateView, TemplateView, DeleteView
-from .models import Establecimiento, Comentario,  Imagen, SubCategoria
-from .forms import  ComentarioForm, EstablecimientoForm, CategoriasForm2, UploadImageForm, UploadImageForm
-from django.http import HttpResponse
-from django.core.urlresolvers import reverse
-import datetime
-from django.forms import DateField
-import json
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from haystack.query import SearchQuerySet
-from django.core.urlresolvers  import reverse_lazy , lazy
+from django.http import HttpResponse, Http404,HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.forms import DateField
+from django.contrib.gis.geos import Polygon, GEOSGeometry
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers  import reverse_lazy , lazy,reverse
+from django.views.generic import (
+    DetailView, CreateView , ListView, UpdateView,
+    DeleteView)
 
-class probe(View):
+#externals apps
+from vanilla import CreateView as CreateViewVanilla
+from vanilla import TemplateView as TemplateViewVanilla
+from haystack.query import SearchQuerySet
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
-    def get(self, request):
-        return None
+#Internal apps
+from apps.account_system.models import User
+from apps.recommender_system.models import EstablecimientosRecommender
 
-    def post(self, request):
- 		return None
+#Serializers
+from .serializers import EstablecimientoSerializer, PaginatedEstablecimientoSerializer
 
-    def put(self, request):
-        return None
- 
-    def delete(self, request):
-        return None
+#Models
+from .models import (
+    Establecimiento, Comentario,  Imagen, SubCategoria, 
+    Categoria, TiposSolicitud, Solicitud)
+
+#Forms
+from .forms import (
+    ComentarioForm, EstablecimientoForm,  
+    UploadImageForm, CategoriasFilterForm, 
+    SolicitudForm, EstablecimientoTemporalForm)
 
 
+class DetalleEstablecimientoView(DetailView):
+    u"""
+        Se encarga de mostrar todos los datos de un establecimiento (entre 
+        ellos las images), ademas carga todos los forms como comentarios y
+        rating requeridos para la correcta interacción.
 
+        Hereda todo de DetailView
 
-class detalle_establecimiento(DetailView):
- 
-    #queryset = Establecimiento.objects.all()
+        Attributes:
+            template_name (str): Plantilla que se cargará.
+            model (Mode): Clase del modelo que se usará.            
+
+    """
+
     template_name = "establishment/detail.html"
     model= Establecimiento
-    #slug_field= 'establecimiento_id'
-    #slug_field_url='establecimiento_id'
 
     def get_context_data(self, **kwargs):
-        context = super(detalle_establecimiento, self).get_context_data(**kwargs)
+        u"""
+            Se agregan contenxtos como las  imagenes, los forms de
+            agregar y eliminar imagenes así como tambien los forms
+            de agregar y eliminar comentarios.
+
+            Tambien se realiza la paginación de comentarios.
+
+            Tambien realiza las respectiva validaciones de quien puede,
+            eliminiar, y agregar.
+
+        """
+        context = super(DetalleEstablecimientoView, self).get_context_data(**kwargs)
         establecimiento = self.object
         context['imagenes'] = Imagen.objects.filter(establecimientos=establecimiento)
         count=Imagen.objects.filter(establecimientos=establecimiento).count()
@@ -63,16 +113,22 @@ class detalle_establecimiento(DetailView):
                     'is_public':True
                 }   
                 print "Esta vacio"        
-                context['form'] = ComentarioForm(initial=data)      
-                print context['form']
+                context['form'] = ComentarioForm(initial=data)                      
             
             else:
-                #No esta vacio no puede comentar
-                #context['form'] = ComentarioForm(data=context['form'])      
+                #No esta vacio no puede comentar    
                 pass
             
+
+            if self.request.user.is_organizacional():            
+                propietario=Establecimiento.objects.filter(administradores=self.request.user,id=establecimiento.id)                
+                if propietario:
+                    #Es propietario del establecimiento
+                    context['propietario']=True
+
+
         comentarios=Comentario.objects.filter(post=establecimiento,is_public=True)   
-        paginator = Paginator(comentarios, 10) # Show 10 contacts per page
+        paginator = Paginator(comentarios, settings.MAX_COMMENTS_PER_PAGE) # Show 10 contacts per page
         page = self.request.GET.get('page')
         try:
             comentarios = paginator.page(page)
@@ -83,32 +139,33 @@ class detalle_establecimiento(DetailView):
             # If page is out of range (e.g. 9999), deliver last page of results.
             comentarios = paginator.page(paginator.num_pages)
         context['comentarios'] = comentarios
+        context['can_upload_image']=self.can_upload_image()
 
-        
-        
-            
         return context
 
 
+    def can_upload_image(self):
+        """
+            Se envargad de validar si es posible subir otra imagen
+        """
+        if self.object.imagen_set.all().count() >= settings.MAX_IMAGES_PER_PLACE:
+            return False
+        else:
+            if self.request.user.is_superuser or self.object.administradores.filter(id=self.request.user.id):
+                return True
+            else:
+                if Imagen.objects.filter(usuarios=self.request.user).count() >= settings.MAX_UPLOAD_PER_USER:
+                    return False
+        return True
 
-    # def dispatch(self, *args, **kwargs):
-        
-    #     return super(detalle_establecimiento, self).dispatch(*args, **kwargs)
 
-    # def get_object(self):
-    #     # Llamamos ala superclase
-    #     object = super(detalle_establecimiento, self).get_object()
-    #     # Grabamos el ultimo acceso ala base de datos
-    #     #object.last_accessed = datetime.datetime.now()
-    #     object.save()
-    #     # Retornamos el objeto
-    #     return object
 class JSONMixin(object):
 
-
+    u"""
+        JSONMixin es un mixin para enviar los comentarios mediante JSON.
+    """
 
     def render_to_response(self, context, **httpresponse_kwargs):
-        print "Entro render to response"
         return self.get_json_response(
             self.convert_context_to_json(context),
             **httpresponse_kwargs
@@ -116,7 +173,6 @@ class JSONMixin(object):
 
    
     def get_json_response(self, content, **httpresponse_kwargs):
-        print "Entro render to response"
         return HttpResponse(
             content,
             content_type='application/json',
@@ -124,10 +180,12 @@ class JSONMixin(object):
         )
 
     def convert_context_to_json(self, context):
-        u""" Este método serializa un formulario de Django y
-        retorna un objeto JSON con sus campos y errores
+        u""" 
+            Este método serializa un formulario de Django y
+            retorna un objeto JSON con sus campos y errores
+
+            retorna un objecto JSON
         """
-        print "CIONVEAAAAAAAAAAAAAAAAAAAAAAAAAA"
         form = context.get('form')
         to_json = {}
         options = context.get('options', {})
@@ -169,11 +227,32 @@ class JSONMixin(object):
 
 
 class CommentCreateView(JSONMixin, CreateView):
+
+    u"""
+        Se envcarga de crear un nuevo comentario, usa el mixisn JSON
+        para crearlo con json.
+
+        Atributes:
+            model (Mode): Clase del modelo que se usará.   
+            form_class (Form): La clase formulario para la creación. 
+    """
+
     model = Comentario
     form_class = ComentarioForm
 
     # once the user submits the form, validate the form and create the new user
     def post(self, request, *args, **kwargs):
+        u"""
+            Validamos los datos del formulario y segun esto procedemos con la 
+            creación del comentario.
+
+            se usa la clase validate comment para validar.
+
+            Returns:
+                Llamado a la clase padre de form_valid si es valido el comentario
+                De lo contrario se llama a la clase padre form_invalid()
+
+        """
         self.object = None
         # setup the form
         # we can use get_form this time as we no longer need to set the data property
@@ -186,10 +265,8 @@ class CommentCreateView(JSONMixin, CreateView):
         form.instance.post = Establecimiento.objects.get(id=self.establecimiento_id)
 
         if form.is_valid() and self.validate_comment():
-            print "VALID FORM"
             return self.form_valid(form)
         else:
-            print "INCALID FORM"
             return self.form_invalid(form)
 
     def form_valid(self, form):
@@ -198,7 +275,14 @@ class CommentCreateView(JSONMixin, CreateView):
 
 
     def validate_comment(self):
-        print "VALIDATE COMETARIO"
+        u"""            
+            Se validan que el usuario no halla comentado anteriormente en el mismo
+            establecimiento, 
+
+            Returns:
+                True si puede comentario
+                False si ya comento y no pdra comentar
+        """
         comentario=Comentario.objects.filter(author=self.request.user.id,post=self.establecimiento_id)
         print comentario
         if  not comentario:      
@@ -206,20 +290,36 @@ class CommentCreateView(JSONMixin, CreateView):
             return True
         else:
             #Si existe un comentario
-            print "ESTA INTENTANDO JODER EL SISTEMA"
             return False
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CommentCreateView, self).dispatch(*args, **kwargs)
 
-from django.http import Http404,HttpResponseRedirect
+
 
 class EliminarComentario(DeleteView):
-    model = Comentario    
+
+    u"""
+        Clase para eliminar un comentario, este solo podrá ser eliminado
+        por el autor, el propietario  del establecimiento o un usuario 
+        administrador
+
+        Atributes:
+            model (Model): Modelo que se usará.
+    """
+
+    model = Comentario        
 
     def get_object(self, queryset=None):
-        """ Hook to ensure object is owned by request.user. """
+        u"""             
+            Validamos que el objeto que se eliminará sea propiedad del
+            usuario que lo elminará
+
+            Returns:
+                Context si el usuario es quien eliminara su propio comentario
+                Http404 si es un usuario invalido intentnaod eliminar.
+        """
         establecimiento_id= self.kwargs['establecimiento_id']
         comentario_id= self.kwargs['comentario_id']
         #obj = super(EliminarComentario, self).get_object()
@@ -235,12 +335,17 @@ class EliminarComentario(DeleteView):
             print "No puede elimianr el comentario y esta intentando joder el sistema"
             raise Http404
 
-
         return {'comentario_id':comentario_id}
 
-    # Override the delete function to delete report Y from client X
-    # Finally redirect back to the client X page with the list of reports
-    def delete(self, request, *args, **kwargs):        
+    
+    def delete(self, request, *args, **kwargs):    
+        u"""
+            se comprueba que el comentario a eliminar sea eliminado por el propietario del comentario
+            o por un usuario administrador. Si todo es valido se eliminara.
+
+            Returns:
+                HttpResponseRedirect A el establecimiento que alojó el comentario.
+        """    
         comentario_id = self.kwargs['comentario_id'] 
         establecimiento_id = self.kwargs['establecimiento_id'] 
         comentario=Comentario.objects.filter(author=request.user,
@@ -248,11 +353,8 @@ class EliminarComentario(DeleteView):
             id=comentario_id)
         #No esta vacio
         if  comentario:
-            print comentario, "<---Comentarui"
             if comentario[0].author.id==request.user.id:
                 comentario[0].delete()
-            else:
-                print "INTENTANDO JODER EL SISTEMA"
         if request.user.is_superuser:
             comentario=Comentario.objects.get(id=comentario_id)
             comentario.delete()
@@ -268,50 +370,52 @@ class EliminarComentario(DeleteView):
 
 
 class Establecimientoslist(ListView):
+
+    u"""
+        Lista  los establecimientos en el sisitema, segun los criterios de busqueda.
+
+        Atributes:
+            paginate_by (int): Numero de establecimientos por pagina.
+            model (Model): Modelo 
+            template_name (String): Template donde se carga la información
+    """
+
     paginate_by = 10
     model = Establecimiento
     template_name = "establishment/list.html"
+
     def get_context_data(self, **kwargs):
+        u"""
+            Se agrega el contenxto el formulario de categorias
+        """
         context = super(Establecimientoslist, self).get_context_data(**kwargs)
         #context['now'] = timezone.now()
+        context['form_categorias']=CategoriasFilterForm
         return context
 
 
-from vanilla import CreateView as CreateViewVanilla
-from vanilla import TemplateView as TemplateViewVanilla
-from django.utils.functional import lazy 
-
 class CrearEstablecimiento(CreateViewVanilla):
+    u"""
+        Crea un nuevo establecimiento
+    """
     model= Establecimiento
     template_name = "establishment/create.html"
     content_type = None
     form_class = EstablecimientoForm
-    success_url = lazy(reverse, str)("home_url") 
-    # def post(self, request, *args, **kwargs):
-    #     self.object = None
-    #     # setup the form
-    #     # we can use get_form this time as we no longer need to set the data property
-    #     form = self.get_form(self.form_class)
-    #     print form
+    success_url = lazy(reverse, str)("home_url")   #Esta se modifica en el metodo get_succes_url
 
-    #     if form.is_valid() and self.validate_comment():
-    #         print "VALID FORM"
-    #         return self.form_valid(form)
-    #     else:
-    #         print "INCALID FORM"
-    #         return self.form_invalid(form)
-
+    def get_success_url(self):        
+        return reverse_lazy('establecimiento_detail_url',
+                            kwargs={'pk': self.object.id})
 
     def form_invalid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         return super(CrearEstablecimiento, self).form_invalid(form)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CrearEstablecimiento, self).dispatch(*args, **kwargs)
 
-
+#################NO SE PARA QUE SE USA#########################################<------------------------------------------------------------------------------------------------------------------------------------
 class RecargarDatosEstablecimiento(TemplateViewVanilla):
 
     def render_to_response(self, context, **httpresponse_kwargs):
@@ -372,45 +476,117 @@ class RecargarDatosEstablecimiento(TemplateViewVanilla):
     
 
 class UpdateEstablecimiento(UpdateView):
+
+    u"""
+        Actualizar los datos de un establecimientos
+    """
+
     model= Establecimiento
     template_name = "establishment/edit.html"
     content_type = None
     form_class = EstablecimientoForm
-    success_url = lazy(reverse, str)("home_url")  
+    success_url = lazy(reverse, str)("home_url")   #Esta se modifica en el metodo get_succes_url
+
+    def get_success_url(self):        
+        return reverse_lazy('establecimiento_detail_url',
+                            kwargs={'pk': self.object.id})
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(UpdateEstablecimiento, self).dispatch(*args, **kwargs)   
 
+    def get_context_data(self, **kwargs):
+        u"""
+            Se agregan los contexto de longitud y latitud
+        """
+        ctx = super(UpdateEstablecimiento, self).get_context_data(**kwargs)
+        pnt = GEOSGeometry(self.object.position) # WKT        
+        ctx['lng'] = pnt.y
+        ctx['lat'] = pnt.x
+
+        return ctx
+
+    def get_object(self, queryset=None):
+        u"""
+            Solo puede actualizar los datos un usuario organizacional dueño del
+            establecimiento o un usuario administrador
+
+            Returns:
+                Establecimiento object si es valido
+                Http404 si no es valido
+        """
+        if self.request.user.is_superuser:
+            #Si el usuario es administrador
+            obj = super(UpdateEstablecimiento, self).get_object()
+        else:            
+            #Si es organizacional
+            if self.request.user.is_organizacional:
+                obj = super(UpdateEstablecimiento, self).get_object()            
+                establecimientos=Establecimiento.objects.filter(administradores=self.request.user, id=obj.id)
+                if not establecimientos:
+                    raise Http404
+            else:
+                print "Intentando romper el sistema"
+                raise Http404
+        return obj
 
 
-class CrearEstablecimiento2(CreateViewVanilla):
-    model= Establecimiento
-    template_name = "establishment/create2.html"
-    content_type = None
-    form_class = CategoriasForm2
-    success_url = lazy(reverse, str)("home_url") 
 
-    def form_invalid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        return super(CrearEstablecimiento2, self).form_invalid(form)
+# class CrearEstablecimiento2(CreateViewVanilla):
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(CrearEstablecimiento2, self).dispatch(*args, **kwargs)   
+#     u"""
+#         DEPRECATE
+#         ---------
+
+#         Crear un establecimiento mediante JSON y AJAX
+#     """
+
+#     model= Establecimiento
+#     template_name = "establishment/create2.html"
+#     content_type = None
+#     form_class = CategoriasForm2
+#     success_url = lazy(reverse, str)("home_url") 
+
+#     def form_invalid(self, form):
+#         # This method is called when valid form data has been POSTed.
+#         # It should return an HttpResponse.
+#         return super(CrearEstablecimiento2, self).form_invalid(form)
+
+#     @method_decorator(login_required)
+#     def dispatch(self, *args, **kwargs):
+#         return super(CrearEstablecimiento2, self).dispatch(*args, **kwargs)   
 
 
-class Busqueda(TemplateView):
-    template_name = "establishment/busqueda.html"
+
+# class Busqueda(TemplateView):
+#     template_name = "establishment/busqueda.html"
 
 
 class Autocomplete(View):
 
-    def get(self, request, *args, **kwargs):
-        #print "ESTO LLEGA: ",request
+    u"""
+        Se encarga de autocompletar  la busqueda mediante JSON.
+    """
+
+    def get(self, request, *args, **kwargs):        
+        u"""
+            Se realizan los querys de la bsuqueda de la siguiente manera:
+            sqs--> Se buscan los nombres que coincidan con el caracter de busqueda
+            sq1--> Se buscan el email que coincidan con el caracter de busqueda
+            sqs--> Se buscan la pagina web que coincidan con el caracter de busqueda
+            sqs--> Se buscan la direccion que coincidan con el caracter de busqueda
+
+            TODO:
+                Se planea agregar Categorias y sub categorias en la busqueda.
+
+            Notes: 
+                Tener cudado en devolver un objecto JSON y no el de python,
+                ya que es propenso a ataque XSS.
+
+            Returns:
+                Objeto JSON con los resultados de las coincidencias
+        """
         q=request.GET.get('q', None)
-        print "query: ",q
         if q is not None and q != "":
             sqs = SearchQuerySet().autocomplete(nombre=q)[:10]
             sqs2 = SearchQuerySet().autocomplete(email=q)[:10]
@@ -433,7 +609,9 @@ class Autocomplete(View):
         return HttpResponse(the_data, content_type='application/json')
 
     def existe(self,establecimientos,id):
-        #Obtener los ids valido para no repetir informacion
+        """
+            Obtener los ids valido para no repetir informacion
+        """
         for element in establecimientos:
             print element
             if element.get('id')==str(id):
@@ -441,6 +619,9 @@ class Autocomplete(View):
         return False
 
     def get_establecimientis(self,establecimientos,sqs):
+        u"""
+            Se encarga de agregar nuevos resultado(Establecmientos) sin repetirlos
+        """
         for resultado in sqs:
             if not self.existe(establecimientos, resultado.pk):
                 temporal={'id':resultado.pk,'nombre':resultado.nombre,'address':resultado.address,
@@ -449,85 +630,232 @@ class Autocomplete(View):
 
         return establecimientos
 
-from .serializers import EstablecimientoSerializer, PaginatedEstablecimientoSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-# class  EstablecimientoCreateApiView(generics.CreateAPIView):
-#     queryset = Establecimiento.objects.all()
-#     serializer_class = EstablecimientoSerializer
-#     #permission_classes = (IsAdminUser,)
 
+class DeleteImagen(DeleteView):
 
-class EstablecimientoCreateApiView(APIView):
-    """
-    List all snippets, or create a new snippet.
+    u"""
+        Elimianr una imagen de un establecimiento
     """
 
-    def post(self, request, format=None):
-        serializer = EstablecimientoSerializer(data=request.DATA)
-        if serializer.is_valid():
-            print "IS VALID"
-            serializer.save()
-            print serializer.data
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-  
+    model=Imagen
+    success_url = '/home/'
 
-from apps.account_system.models import User
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-class CalificacionApiView(APIView):
+    def get_object(self, queryset=None):
+        u""" 
+            Se valida que el que elimine sea quien subió la imange,
+            un usuario organizacional o un usuario administrador.
 
-    authentication_classes = (  SessionAuthentication, BasicAuthentication,)
-
-    def get(self, request, pk,format=None):
-        print "ASDASASAS"
-        print request.user
-        print "DATA: ", pk
-        try: 
-            establecimiento = Establecimiento.objects.get(id=pk)
-            user=User.objects.get(id=request.user.id)                
-            calificacion_usuario= establecimiento.rating.get_rating_for_user(user) 
-            salida={
-                    "ratin_estableicimiento":establecimiento.rating.get_rating(),
-                    "rating_usuario":calificacion_usuario
-            }   
-        except Exception, e:            
-            try:                
-                salida={
-                    "ratin_estableicimiento":establecimiento.rating.get_rating(),
-                    "rating_usuario":0
-                }           
-            except Exception, e:                          
-                print "RESPONSE: ",salida 
-                salida={}
-                print "ERROR: ",e  
-
-        return Response(salida,status=status.HTTP_200_OK)
-
-    def post(self, request, pk,format=None):
-        print "ENTRADA NORMAL JAJAJ con id=",pk
-        try:                      
-            calificacion = request.DATA.get("calificacion")
-            respuesta=""
-            establecimiento = Establecimiento.objects.get(id=pk)
-            if calificacion:
-                calificacion=int(calificacion)
-                if calificacion>=1 and calificacion<=5 :                
-                    establecimiento.rating.add(score=calificacion, user=request.user, ip_address=request.META['REMOTE_ADDR'])
-                    respuesta="Calificacion realizada"
-                    return Response(respuesta, status=status.HTTP_201_CREATED)
+            Returns:
+                Establecimiento object si es valido.
+                Http404 raise si es invalido.
+        """
+        if self.request.user.is_superuser:
+            #Si el usuario es administrador
+            obj = super(DeleteImagen, self).get_object()
+        else:            
+            obj = super(DeleteImagen, self).get_object()
+            imagen = Imagen.objects.filter(usuarios=self.request.user,id=obj.id)
+            #Si el usuario es propietario de la imagen
+            if  imagen:
+                #Si hay coincidencias
+                pass
+            else:
+                #Si el usuario es dueno del establecimiento
+                if self.request.user.is_organizacional:
+                    establecimientos=Establecimiento.objects.filter(administradores=self.request.user)
+                    if establecimientos:
+                        obj = super(DeleteImagen, self).get_object()
+                    else:
+                        print "Intentando romper el sistema"
+                        raise Http404
                 else:
-                    respuesta="Valor no valido"     
-        except Exception, e:
-            print "EL ESTABLEcimiento no existe"
-            respuesta="Algo salio mal"
-            print e
+                    print "Intentando romper el sistema"
+                    raise Http404
+        print " SE BORRARA LA IMAGEN: ",obj.id
+        self.success_url=reverse_lazy('establecimiento_detail_url',
+                            kwargs={'pk': self.kwargs['est_id']})
+        return obj
 
-        return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
+    
+        
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DeleteImagen, self).dispatch(*args, **kwargs)
 
 
-class UploadField(View):
+class Solicitar(View):
+    u"""
+       Se encarga de crear una solicitud depenedindo de esta. 
+       Tiene los metodos GET y POST
+    """
+
+    def get(self, request,tipo_solicitud,establecimiento_id):
+        u"""
+            Se cargan los formularios dependiendo del tipo de solicitud;
+            0 --> Solicitud administracion establecimiento
+            1 --> Solicitud de edicion del establecimiento, se agrega 
+                  en el contexto el formulario de edicion y la longitud
+                  y latitud actuales del establecimiento.
+            2 --> Solicitud de eliminacion por repeticion
+            3 --> Solicitud de eliminacion por inexistencia.
+
+            En todas las solicitudes se agrega un formulario de solicitud.
+        """
+        if tipo_solicitud=='0':
+            formulario= SolicitudForm()
+        else: 
+            if tipo_solicitud=='1' and establecimiento_id:                
+                formulario= SolicitudForm()                
+                est=Establecimiento.objects.get(id=establecimiento_id)
+                lng=est.position.y
+                lat=est.position.x
+                formulario2= EstablecimientoTemporalForm(instance=est)
+                return render(request, 'establishment/solicitud.html', {
+                    'form':formulario, 'form2':formulario2,
+                    'lng':lng,'lat':lat
+                })
+            else: 
+                if tipo_solicitud=='2':
+                    formulario= SolicitudForm()
+                else: 
+                    if tipo_solicitud=='3':
+                        formulario= SolicitudForm()
+                    else:
+                        raise Http404               
+        
+        return render(request, 'establishment/solicitud.html', {'form':formulario})
+
+    def post(self, request,tipo_solicitud,establecimiento_id):
+        u"""
+            Dependiendo del request se realizan las acciones
+            0 --> Solicitud administracion establecimiento
+            1 --> Solicitud de edicion del establecimiento
+            2 --> Solicitud de eliminacion por repeticion
+            3 --> Solicitud de eliminacion por inexistencia.
+        """
+        if request.user.is_authenticated():
+
+            """Solicitud de administracion"""
+            if tipo_solicitud=='0':
+                formulario= SolicitudForm(request.POST)
+                if formulario.is_valid():
+                    self.create_solicitud("Administracion:\n"+formulario.cleaned_data['contenido'],
+                     request.user, establecimiento_id, "administracion")
+                    return redirect('/establecimientos/'+establecimiento_id+'/')
+            else: 
+                """Solictud de edicion del establecimiento"""
+                if tipo_solicitud=='1':
+                    formulario= SolicitudForm(request.POST)     
+                    formulario2= EstablecimientoTemporalForm(request.POST)#Establecimieto temporal
+                    if formulario2.is_valid():
+                        id_EstablecimientoTemporal=formulario2.save() 
+                        if formulario.is_valid():                       
+                            self.create_solicitud("Modificacion:\n"+formulario.cleaned_data['contenido'],
+                                request.user, establecimiento_id, "modificacion",id_EstablecimientoTemporal) 
+                            return redirect('/establecimientos/'+establecimiento_id+'/')   
+
+               
+                    pnt = GEOSGeometry(formulario2.cleaned_data['position']) # WKT
+                    lng=pnt.y
+                    lat=pnt.x
+                    formulario=SolicitudForm(data=request.POST)
+                    formulario2= EstablecimientoTemporalForm(data=request.POST)
+                    return render(request, 'establishment/solicitud.html', {
+                            'form':formulario, 'form2':formulario2,
+                            'lng':lng,'lat':lat
+                        })
+
+
+                else: 
+                    if tipo_solicitud=='2':
+                        formulario= SolicitudForm(request.POST)
+                        if formulario.is_valid():
+                            self.create_solicitud("Elimincion:\n"+formulario.cleaned_data['contenido'],
+                                request.user, establecimiento_id, "eliminacion")
+                            return redirect('/establecimientos/'+establecimiento_id+'/')
+                    else: 
+                        if tipo_solicitud=='3':
+                            formulario= SolicitudForm(request.POST)
+                            if formulario.is_valid():
+                                self.create_solicitud("Elimincion:\n"+formulario.cleaned_data['contenido'],
+                                request.user, establecimiento_id, "eliminacion")
+                            return redirect('/establecimientos/'+establecimiento_id+'/')
+                        else:
+                            raise Http404
+
+        formulario=SolicitudForm(data=request.POST)
+        formulario2= EstablecimientoTemporalForm(data=request.POST)
+        return render(request, 'establishment/solicitud.html', {
+                'form':formulario, 'form2':formulario2,
+            })
+
+   
+    def create_solicitud(self,contenido,user,establecimiento_id,tipo_solicitud,establecimientos_temporales=None):
+        u"""
+            Se crear un nueva solicitud dependiendo si es de edicion o de las demas.
+        """
+        if establecimientos_temporales is None:
+            Solicitud.objects.create(
+                    contenido=contenido,
+                    usuarios=user,
+                    establecimientos=Establecimiento.objects.get(id=establecimiento_id),
+                    tipo_solicitudes=TiposSolicitud.objects.get(nombre=tipo_solicitud)
+            )
+        else:
+            Solicitud.objects.create(
+                    contenido=contenido,
+                    usuarios=user,
+                    establecimientos=Establecimiento.objects.get(id=establecimiento_id),
+                    tipo_solicitudes=TiposSolicitud.objects.get(nombre=tipo_solicitud),
+                    establecimientos_temporales=establecimientos_temporales,
+            )
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(Solicitar, self).dispatch(*args, **kwargs)
+           
+
+
+
+class EstablecimientosPropios(ListView):
+    u"""
+        Carga los establecimientos propios de un usuario organizacional.
+    """
+
+    paginate_by = 10
+    model = Establecimiento
+    template_name = "establishment/list_own.html"
+    context_object_name = "establecimientos_propios" 
+
+    def get_context_data(self, **kwargs):
+        """
+            Se agrega el contexto del formulario de categorias 
+        """
+        context = super(EstablecimientosPropios, self).get_context_data(**kwargs)
+        #context['now'] = timezone.now()
+        context['form_categorias']=CategoriasFilterForm
+        return context
+
+    def get_queryset(self):
+        """
+            Se filtra los establecimientos por el propietario del request
+        """
+        query=Establecimiento.objects.filter(administradores=self.request.user)
+        return query
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(EstablecimientosPropios, self).dispatch(*args, **kwargs)
+
+
+
+class UploadImagenView(View):
+    u"""
+        DEPRECATE
+            ---------
+
+            Subir una imagen 
+    """
     def post(self, request,pk, *args, **kwargs):        
         form = UploadImageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -544,45 +872,152 @@ class UploadField(View):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(UploadField, self).dispatch(*args, **kwargs)   
+        return super(UploadImagenView, self).dispatch(*args, **kwargs)   
 
-class UploadField2(APIView):
+#########################################################################################################################
+#####################################################                 ###################################################
+#####################################################    APIS VIEWS   ###################################################
+#####################################################                 ###################################################
+#########################################################################################################################
+
+class EstablecimientoCreateApiView(APIView):
+    u"""
+        DEPRECATE
+        ---------
+
+        Crear un establecimiento mediante REST
+    """
+
+    def post(self, request, format=None):
+        serializer = EstablecimientoSerializer(data=request.DATA)
+        if serializer.is_valid():
+            print "IS VALID"
+            serializer.save()
+            print serializer.data
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
+
+
+class CalificacionApiView(APIView):
+
+    u"""
+        Calificar un establecimiento median JSON soportado por REST
+
+        Attributes:
+            authentication_classes (AthenticacionRest): Tipos de autenticacion para poder calificar
+    """
+
+    authentication_classes = (  SessionAuthentication, BasicAuthentication,)
+
+    def get(self, request, pk,format=None):
+        u"""
+            Obiene las calificaciones realizadas por un usuario en concreto y el procentaje total
+            de calificacines del establecimiento en concreto.
+
+            Returns:
+                Si todo es correcto retorna un objeto JSON con los datos, de lo contrario
+                retorna vacio
+        """        
+        
+        try: 
+            establecimiento = Establecimiento.objects.get(id=pk)
+            user=User.objects.get(id=request.user.id)                
+            calificacion_usuario= establecimiento.rating.get_rating_for_user(user) 
+            salida={
+                    "ratin_estableicimiento":int(establecimiento.rating.get_rating()),
+                    "rating_usuario":calificacion_usuario
+            }   
+        except Exception, e:            
+            try:                
+                salida={
+                    "ratin_estableicimiento":int(establecimiento.rating.get_rating()),
+                    "rating_usuario":0
+                }           
+            except Exception, e:                                          
+                salida={}
+                print "ERROR: ",e  
+
+        return Response(salida,status=status.HTTP_200_OK)
+
+    def post(self, request, pk,format=None):
+        u"""
+            Se modifica una calificacion si existe , de lo contrario se crea una nueva.
+
+            Returns:
+                Ok HTTP_201_CREATED si to salio bien, 
+                de lo contrario HTTP_400_BAD_REQUEST
+        """
+        
+        try:                      
+            calificacion = request.DATA.get("calificacion")
+            respuesta=""
+            establecimiento = Establecimiento.objects.get(id=pk)
+            if calificacion:
+                calificacion=int(calificacion)
+                if calificacion>=1 and calificacion<=5 :    
+                    recommender=EstablecimientosRecommender()            
+                    establecimiento.rating.add(score=calificacion, user=request.user, ip_address=request.META['REMOTE_ADDR'])
+                    recommender.precompute()
+                    respuesta="Calificacion realizada"
+                    return Response(respuesta, status=status.HTTP_201_CREATED)
+                else:
+                    respuesta="Valor no valido"     
+        except Exception, e:
+            print "El establecimiento no existe"
+            respuesta="Algo salio mal"
+            print e
+
+        return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class UploadImagenApiView(APIView):
+    u"""
+        Subir una imagen median REST por JSON
+    """
 
     authentication_classes = (  SessionAuthentication, BasicAuthentication,)
 
     def post(self, request, pk,format=None):
-
-        print "ENTRADA NORMAL JAJAJ"
+        u"""
+            Se valida que la imagen cumpla los requisitos (jpeg,pjpeg,png,jpg) menor o igual
+            a 5 MB, el usuario convencional no podra subir mas de 3 imagenes y el establecimientono 
+            no tendrá más de 8 imagenes
+        """
+        
         try:
-            print "DATA: ",request.DATA  
-            print "FILES: ",request.FILES
-            print pk
             establecimiento = Establecimiento.objects.get(id=pk)
             imagen_count=Imagen.objects.filter(usuarios=request.user,establecimientos=establecimiento).count()
-            if imagen_count <settings.MAX_UPLOAD_PER_USER:
-                if request.FILES:
-                    #imagen = request.FILES.get("imagen")
-                    imagen= request.FILES[u'file']
-                    size=int(imagen.size)
+            propietario=establecimiento.administradores.filter(id=request.user.id)
+            if establecimiento.imagen_set.count() < settings.MAX_IMAGES_PER_PLACE: 
+                if imagen_count <settings.MAX_UPLOAD_PER_USER or self.request.user.is_superuser or propietario:
+                    if request.FILES:
+                        #imagen = request.FILES.get("imagen")
+                        imagen= request.FILES[u'file']
+                        size=int(imagen.size)
 
-                    #validate content type
-                    main, sub = imagen.content_type.split('/')
-                    if not (main == 'image' and sub.lower() in ['jpeg', 'pjpeg', 'png', 'jpg']):
-                        respuesta={"error":'Please use a JPEG, JPG or PNG image.'}
-                    else:
-                        if size <= settings.MAX_UPLOAD_SIZE:
-                            respuesta=""
-                            
-                            element=Imagen(imagen=imagen,establecimientos=establecimiento,usuarios=request.user)    
-                            element.save()
-                            respuesta="OK"
-                            return Response(respuesta, status=status.HTTP_201_CREATED)
+                        #validate content type
+                        main, sub = imagen.content_type.split('/')
+                        if not (main == 'image' and sub.lower() in ['jpeg', 'pjpeg', 'png', 'jpg']):
+                            respuesta={"error":'Please use a JPEG, JPG or PNG image.'}
                         else:
-                            respuesta={"error":"La imagen no puede ser mayor a 5 MB"}
+                            if size <= settings.MAX_UPLOAD_SIZE:
+                                respuesta=""
+                                
+                                element=Imagen(imagen=imagen,establecimientos=establecimiento,usuarios=request.user)    
+                                element.save()
+                                respuesta="OK"
+                                return Response(respuesta, status=status.HTTP_201_CREATED)
+                            else:
+                                respuesta={"error":"La imagen no puede ser mayor a 5 MB"}
+                    else:
+                        respuesta={"error":"No subio nada"}
                 else:
-                    respuesta={"error":"No subio nada"}
+                    respuesta={"error":"Limite maximo de imagenes por usuario en este establecimiento"}
             else:
-                respuesta={"error":"Limite maximo de imagenes por usuario en este establecimiento"}
+                respuesta={"error":"Limite maximo de imagenes para el establecimiento"}
         except Exception, e:
             print "EL ESTABLEcimiento no existe"
             respuesta="Algo salio mal"
@@ -590,11 +1025,23 @@ class UploadField2(APIView):
 
         return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
 
-from django.contrib.gis.geos import Polygon
-from django.core.paginator import Paginator
+
 class EstablecimientosByBoung(APIView):
+    u"""
+        Se encarga de mostrar los establecimiento  que se encuentran en la zona visible
+        de google maps, esto lo realiza mediante los boungs  y una consulta del tipo
+        de base de datos geos. 
+
+        Todo se hace por JSON
+    """
 
     def get(self, request, format=None):
+        u"""
+            Obtiene los boung y realzia la consulta, ordena la consulta por rating_score
+
+            Returns:
+                JSON object.
+        """
         print request.GET
         # boung_data_x1 = request.GET.get("x1",None)
         # boung_data_y1 = request.GET.get("y1")
@@ -606,37 +1053,75 @@ class EstablecimientosByBoung(APIView):
         boung_data_x2 = request.GET.get("y2")
         boung_data_y2 = request.GET.get("x2")
 
+        
+
         number_page=request.GET.get("pagina",None)
         if number_page is None:
             number_page=1
 
-        print "boung_data_x1: ",boung_data_x1
-        print "boung_data_y1: ",boung_data_y1
-        print "boung_data_x2: ",boung_data_x2
-        print "boung_data_y1: ",boung_data_y2
+        # print "boung_data_x1: ",boung_data_x1
+        # print "boung_data_y1: ",boung_data_y1
+        # print "boung_data_x2: ",boung_data_x2
+        # print "boung_data_y1: ",boung_data_y2
         if boung_data_x1 is not None:
+
+            nombre=request.GET.get("nombre",None)
+            categoria=request.GET.get("categoria",None)
+            sub_categoria=request.GET.get("sub_categoria",None)
+
+            # print "Valores: "
+            # print "Nombre: ",nombre
+            # print "Categoria: ",categoria
+            # print "sub_categoria: ",sub_categoria
+
             box=Polygon.from_bbox((boung_data_x1,boung_data_y1,boung_data_x2,boung_data_y2))
             query=Establecimiento.objects.filter(position__within=box,visible=True).order_by('rating_score')
-
+            if nombre:
+                query=query.filter(nombre__icontains=nombre)            
+            if sub_categoria:
+                query=query.filter(sub_categorias=sub_categoria)
+            else:
+                if categoria:
+                    categoria=Categoria.objects.get(id=categoria)
+                    sub_cate=SubCategoria.objects.filter(categorias=categoria)
+                    query=query.filter(sub_categorias=sub_cate)
             paginator = Paginator(query, settings.ITEMS_PAGINATE)
             query=paginator.page(number_page)
             serializer=PaginatedEstablecimientoSerializer(query)
             salida=serializer.data
             print "Respuesta: ",salida
         else:
-            salida={"error":"None"}            
-
+            salida={"error":"None"}       
 
         return Response(salida,status=status.HTTP_200_OK)
 
 
-
+#########################################################################################################################
+#####################################################                 ###################################################
+#####################################################    SIGNALS      ###################################################
+#####################################################                 ###################################################
+#########################################################################################################################
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+from apps.externals.djangoratings.models import Vote, Score
 
 @receiver(pre_delete, sender=Imagen)
 def Imagen_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
-    print "ENTRO INSTANCIA"
+    u"""
+        Cuando una imagen se borrar tambíen se borrara en el disco.
+    """
     instance.imagen.delete(False)
-    print "SALIO INSTNCIO"
+
+@receiver(pre_delete, sender=Establecimiento)
+def establecimiento_delete(sender, instance, **kwargs):
+    u"""
+        Cuando una establecimiento se borra tambíen se borrara los votos
+    """
+    id_establecimiento=instance.id
+    Vote.objects.filter(object_id=id_establecimiento).delete()
+    Score.objects.filter(object_id=id_establecimiento).delete()
+    recommender=EstablecimientosRecommender()    
+    recommender.precompute()
+
+
+

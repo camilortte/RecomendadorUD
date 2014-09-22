@@ -1,15 +1,36 @@
-from apps.establishment_system.models  import SubCategoria, Establecimiento
+# -*- encoding: utf-8 -*-
+
+"""
+    
+    api.py: Tenemos las APIS REST del sistema de establecimientos
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
+#External apps
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+
+#Internal apps
+from apps.establishment_system.models  import SubCategoria, Establecimiento
+
+#Serializers
 from .serializers import SubCategoriaSerializer, EstablecimientoSerializer
 
- 
-    
-
+     
 class SubCategoriaViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+        API Rest de las subcategorias, requiere permisos para ver
     """
     queryset = SubCategoria.objects.all()
     serializer_class = SubCategoriaSerializer
@@ -37,11 +58,10 @@ class SubCategoriaViewSet(viewsets.ReadOnlyModelViewSet):
 
 class EstablecimientoViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+        DEPRECATE
+        ---------
+        API Rest de los establecimientos
     """
     queryset = Establecimiento.objects.all()
     serializer_class = EstablecimientoSerializer
-    #authentication_classes = (BasicAuthentication,)
-    #permission_classes = (IsAuthenticated,)
-
 

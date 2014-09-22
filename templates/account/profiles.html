@@ -1,0 +1,122 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% load bootstrap3 %}
+{% block head_title %}Acerca de...{%endblock head_title%}
+{% load static %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block styles %}
+.borde{
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #47a3da;
+    margin-bottom: 1em;
+}
+{% endblock styles %}
+
+
+
+
+{% block content %}
+    
+    <div class="row">
+        <br>
+        <div class="col-md-offset-1 col-md-10 col-md-offset-1 borde">
+            <div class="col-md-12">
+                    <div class="recomendacion">
+                        <div class="media">
+                          <div class="pull-left" href="">
+                            <br><br>
+                            <img class="media-object" src="{% avatar_url usuario 125 %}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+                          </div>
+                          
+
+                          <div class="media-body">    
+                            <h1>Perfil de {{usuario.username}}</h1>
+                            <hr>
+                            <h4>Nombre: <small>{{usuario.first_name}}</small></h4>
+                            <h4>Apellido: <small>{{usuario.last_name}}</small></h4>
+                            <h4>Email: <small>{{usuario.email}}</small></h4>
+                            <h4>Tipo de usuario: <small>{{usuario.tipos.tag}}</small></h4>
+                            <br>
+                            
+                            <h3 class="text-center">Datos de sesión</h3>
+                            <hr>
+                            <h4>Fecha de registro: <small>{{usuario.date_joined}}</small></h4>
+                            <h4>Ultimo vez visto: <small>{{usuario.last_login}}</small></h4>  
+
+
+                            <br>
+                            
+                            <h3 class="text-center">Historial de votos</h3>
+                            <hr>       
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Calificación</th>
+                                    <th>Fecha</th>           
+                                  </tr>
+                                </thead>
+                                <tbody>
+                            {% for voto in usuario.votes.all %}
+                                <tr>         
+                                    <td>{{ forloop.counter}}</td>                       
+                                    <td><h4><a href="{% url 'establecimiento_detail_url' voto.content_object.id%}">{{voto.content_object.nombre}}</a></h4></td>
+                                    <td>{{voto.score}}</td>
+                                    <td>{{voto.date_added}}</td>                                    
+                                </tr>
+                            {% endfor %}
+                                    </tbody>    
+                                </table>
+                            </div>
+
+                            <br>
+                            
+                            <h3 class="text-center">Historial de Comentarios</h3>
+                            <hr>       
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Comentadno en</th>
+                                    <th>Comentario</th>
+                                    <th>Fecha</th>          
+                                  </tr>
+                                </thead>
+                                <tbody>
+                            {% for comentario in usuario.comentario_set.all %}
+                                <tr>         
+                                    <td>{{ forloop.counter}}</td>                       
+                                    <td><h4><a href="{% url 'establecimiento_detail_url' comentario.post.id%}">{{comentario.post.nombre}}</a></h4></td>
+                                    <td>{{comentario.body}}</td>
+                                    <td>{{comentario.created}}</td>                                   
+                                </tr>
+                            {% endfor %}
+                                    </tbody>    
+                                </table>
+                            </div>
+              
+
+
+
+
+                    
+                        </div>
+                        </div>                 
+                    </div>                              
+            </div>
+        </div>
+    </div>
+    
+
+{% endblock content %}

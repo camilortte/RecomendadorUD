@@ -1,0 +1,63 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% load bootstrap3 %}
+{% block head_title %}Acerca de...{%endblock head_title%}
+{% load static %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+
+{% block styles %}
+.borde{
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #3C4FB3;
+    margin-bottom: 1em;
+}
+
+.llamar{
+    font-size: 1.em;
+}
+{% endblock styles %}
+
+
+
+
+{% block content %}
+    
+    <div class="row">
+        <br>
+        <div class="col-md-offset-1 col-md-10 col-md-offset-1">
+            <h1>Acerca de RecomendadorUD</h1>   
+            <br>
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+                <h2>¿Qué es recomendadorUD?</h2>
+                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <br>
+            </div>         
+
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+                <h2>¿Qué beneficios tiene?</h2>
+                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <br>
+            </div>   
+
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+                <h2>¿Soy propietario?</h2>
+                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <br>
+            </div>   
+
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+                <h2>¿Cómo puedo contribuir?</h2>
+                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <br>
+            </div>    
+        </div>
+    </div>
+    
+
+{% endblock content %}

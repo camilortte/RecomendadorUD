@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% load bootstrap3 %}
+{% load static %}
+{% load avatar_tags %}
+{% block scripts %}
+{% endblock scripts %}
+{% block styles %}
+{% endblock styles %}
+
+
+{% block content %}
+	<div class="row">
+		<br>
+		<a class="btn btn-primary" href="{% url 'profile_url' %}">&lt;&lt;Volver al perfil</a>
+		<br><br>
+        <div class="col-md-offset-1 col-md-10 col-md-offset-1 borde">
+        	<div class="col-md-6 col-ms-6 col-xs-6">
+        		<h3>{% trans "Tu avatar actual: " %}</h3>
+                <hr>		    
+			    {% if  avatars %}
+			    	<img  src="{% avatar_url user 150 %}" alt="{{request.user}}" >	    
+			    {% else %}
+			        <p>{% trans "No tienes ningun avatar" %}</p>
+			    {% endif %}	
+        	</div>
+			<h3>Sube un avatar</h3>
+            <hr>
+        	<div class="col-md-6 col-ms-6 col-xs-6">
+        		<form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">{% csrf_token %}    	
+			        {% bootstrap_form upload_avatar_form %}
+			        <input class="btn btn-primary" type="submit" value="{% trans "Subir imagen" %}" />
+			    </form>	
+        	</div>			
+		    
+		</div>
+    </div>
+{% endblock content %}
+

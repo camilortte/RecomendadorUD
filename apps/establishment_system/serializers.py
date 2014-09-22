@@ -1,3 +1,22 @@
+# -*- encoding: utf-8 -*-
+
+"""
+    
+    serializers.py: Clases encargadas de serializar modelos
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
+
 from apps.establishment_system.models import Categoria, SubCategoria, Establecimiento
 from rest_framework import serializers
 from rest_framework.pagination import PaginationSerializer

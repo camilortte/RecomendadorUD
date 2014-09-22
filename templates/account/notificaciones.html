@@ -1,0 +1,86 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% load bootstrap3 %}
+{% block head_title %}Acerca de...{%endblock head_title%}
+{% load static %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+{% load avatar_tags %}
+{% load humanize %}
+{% block styles %}
+.borde{
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #47a3da;
+    margin-bottom: 1em;
+}
+{% endblock styles %}
+
+
+
+
+{% block content %}
+    
+    <div class="row">
+        <br>
+        <div class="col-md-offset-1 col-md-10 col-md-offset-1 borde">
+            <div class="col-md-12">
+                    <div class="col-md-3">
+                        <br><br>
+                         <img  src="{% avatar_url user 150 %}" alt="{{user}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+                         <br><br>
+                         <a href="{% url 'profile_url'%}">Ir a mi perfil</a>
+                         <br><br>
+                         
+                    </div>                            
+                    <div class="col-md-9">
+                        <h1>Notificaciones</h1>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                          <li class="active"><a href="#home" role="tab" data-toggle="tab">No leidas ({{user.notifications.unread.count}})</a></li>
+                          <li><a href="#profile" role="tab" data-toggle="tab">Leidas ({{user.notifications.read.count}})</a></li>                          
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="home">
+                            {% if user.notifications.unread %}                            
+                                <h5><a href="{% url 'mark_as_read_all_url' %}">Marcar todas como leidas </a></h5>
+                                  {% for notification in user.notifications.unread %}
+                                      <li data-alert_id="1" class="alert_li">
+                                        <p class="alert_message">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:"" |truncatechars:30}}</a></p>
+                                        <a href="#" class="alert_message">{{ notification.description|default:"" |truncatechars:300}}<br>{{notification.timestamp |naturalday }}</a><br />
+                                        <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Marcar como leida</a>
+                                        <div class="clearfix"></div>
+                                      </li>
+                                  {% endfor %}
+                            {% else %}
+                                <h1><small>Bien. No tienes notificaciones sin leer.</small></h1>
+                            {% endif %}
+                          </div>
+                          <div class="tab-pane" id="profile">
+                            {% for notification in user.notifications.read %}
+                                  <li data-alert_id="1" class="alert_li">
+                                    <p class="alert_message">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:""}} </a></p>
+                                    <p class="alert_message">{{ notification.description|default:"" }} </p>          
+                                    <p>{{notification.timestamp |naturalday }}</p>
+                                    <div class="clearfix"></div>
+                                  </li>
+                              {% endfor %}
+
+                        </div>                          
+                        </div>
+                    </div>
+
+
+            </div>
+        </div>
+    </div>
+    
+
+{% endblock content %}

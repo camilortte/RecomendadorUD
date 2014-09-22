@@ -2,12 +2,14 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-% block head_title %
+{% load bootstrap3 %}
+{% block head_title %}Lugar{%endblock head_title%}
 {% load static %}
 {% block scripts %}
 
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
     <script src="{% static 'Gmaps/gmaps.js'%}"></script>
+
 {% endblock %}
 {% load static %}
 
@@ -99,7 +101,35 @@ body{
   <div class="row">
     <div class="col-xs-7 col-md-7 col-sm-7" id="left">
       <br><br>
-    
+    <div class="row">
+      <div class="col-md-12">
+
+      <div class="form-group"><label class="control-label" for="filtrado">Nombre</label>
+    <input class="form-control" type="text" id="filtrado" placeholder="Nombre del lugar"/>
+    </div>
+
+
+      {% bootstrap_form form_categorias %}
+
+      
+   
+
+<div class="form-group">
+  <button type="button" class="btn btn-primary btn-sm " id="boton_aplicar_filtro">
+  <span class="glyphicon glyphicon-filter"></span> Aplicar Filtro
+  </button>
+
+  <button type="button" class="btn btn-default  btn-sm  form-group" id="boton_limpiar">
+  <span class=""></span> Limpiar
+  </button>
+</div>
+
+
+
+
+      </div>
+        
+    </div>
     <div class="row" id="all_elements">
        <!-- Aca los items -->       
     </div>
@@ -118,6 +148,7 @@ body{
   </div>
 </div>
 
+ <script src="{% static 'js/update_categoria.js'%}"></script>   
 
 
 
@@ -127,10 +158,13 @@ var x1,y1,x2,y2,pagina=1;
 var pinColor = "47a3da";
 var markers=[];
 var actual_page=1;
+var nombre_input,subcategoria_iput,categoria_input;
 var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
         new google.maps.Size(21, 34),
         new google.maps.Point(0,0),
         new google.maps.Point(10, 34));
+
+
 
 function add_marker(lng,lat,id,nombre){
   console.log("Esto llega: "+lng+" , "+lat);
@@ -172,7 +206,9 @@ function send_data(){
  $.ajax({
       url: '/establecimiento/boung/',
       type: 'GET',
-      data: {"x1":x1,"x2":x2,"y1":y1,"y2":y2,"pagina":pagina},
+      data: {"x1":x1,"x2":x2,"y1":y1,
+      "y2":y2,"pagina":pagina, "nombre":nombre_input,
+      "categoria":categoria_input,"sub_categoria":subcategoria_iput},
       dataType: 'json',
       success: function(response) {
         console.log("succes");
@@ -360,7 +396,6 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
     $(item).appendTo("#all_elements");
 
 
-   
 }
 //cargando datos
 // $(document).on({
@@ -369,6 +404,25 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
 // });
 
 // }
+
+
+  $('#boton_aplicar_filtro').click(function(){
+      nombre_input=$('#filtrado').val();
+      categoria_input=$('#categoria').val();
+      subcategoria_iput=$('#id_sub_categorias').val();
+      send_data();
+  })
+
+  $('#boton_limpiar').click(function(){
+    console.log("limpiando");
+      $('#filtrado').val(null);
+      $('#categoria option[value=""]').attr("selected",true);
+      $( "#categoria" ).trigger( "click" );
+      nombre_input=null;
+      categoria_input=null;
+      subcategoria_iput=null;
+      send_data();
+  })
 
 </script>
 

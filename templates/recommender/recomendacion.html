@@ -1,0 +1,120 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% load bootstrap3 %}
+{% load static %}
+	
+{% block scripts %}
+ <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
+    
+     <script src="{% static 'Gmaps/gmaps.js'%}"></script>
+
+{% endblock scripts %}
+{% block styles %}
+.recomendacion{
+	border-style: double;
+	border-color: #47a3da;
+	border-radius: 7px;
+	padding: 0.5em;
+	margin-bottom: 2em;
+}
+{% endblock styles %}
+
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="text-center">Segun tus criterios te recomendamos</h1>
+		<br><br>
+		<div class="col-md-12 contenedir">
+				{% if recomendaciones %}					
+					{% for recomendacion in recomendaciones  %}
+						<div class="col-md-6">
+							<div class="col-md-12">
+							<div class="recomendacion">
+								<div class="media">
+								  <a class="pull-left" href="{% url 'establecimiento_detail_url' recomendacion.id %}">
+								    <img class="media-object" src="{% static 'img/icon_place.png'%}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+								  </a>
+								  <div class="media-body">
+								    <a href="{% url 'establecimiento_detail_url' recomendacion.id %}"><h4 class="media-heading">
+							{{recomendacion.nombre|title}}	</h4></a>
+			                {% if recomendacion.email  %}
+			                <h4><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{recomendacion.email}}</small></h4>    
+			                {% endif %}
+			                {% if recomendacion.web_page %}
+			                <h4><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white">{{recomendacion.web_page}}</small></h4>
+			                {% endif %}
+			                <h4><span class="glyphicon glyphicon-map-marker"></span>  Dirección:  <small class="small-white">{{recomendacion.address}}</small></h4>
+			                {% if recomendacion.telefono %}
+			                    <h4><span class="glyphicon glyphicon-phone-alt"></span>  Telefono:  <small class="small-white">{{recomendacion.telefono}}</small></h4>    
+			                {% endif %}
+			                
+			                <input type="hidden" id="latitude_{{recomendacion.id}}" value="{{recomendacion.position.y}}">
+			                <input type="hidden" id="longitude_{{recomendacion.id}}" value ="{{recomendacion.position.x}}">
+			                
+			                {% if recomendacion.description%}
+				                <h4><span class="
+				                glyphicon glyphicon-comment"></span>  Descripción:  </h4><p class="text-justify">
+				                     {{recomendacion.description}}
+				                </p>
+				            {%endif%}
+			                <br><br><br>							  
+								</div>
+								</div>                 
+							</div>								
+							</div>
+						</div>
+
+					{% endfor %}
+				{% endif %}
+		</div>
+	</div>
+</div>
+
+<script>
+	$( document ).ready(function() {
+    var heights = $(".recomendacion").map(function() {
+        return $(this).height();
+    }).get(),
+
+    maxHeight = Math.max.apply(null, heights);
+
+    $(".recomendacion").height(maxHeight);
+});
+
+	
+
+
+
+lista=$( ".contenedir" ).children()
+for (var i = lista.length - 1; i >= 0; i--) {	
+	imagen=$(lista[i]).find("img")
+	id=imagen.attr("id")
+
+	$(lista[i]).find("img").attr("id")
+	latitude=$(lista[i]).find("#latitude_"+id).val()
+	longitude=$(lista[i]).find("#longitude_"+id).val()
+
+	console.log("Latitude:"+latitude)
+	console.log("Longitude; "+longitude)
+
+	url = GMaps.staticMapURL({
+	  size: [128,228],
+	  lat: latitude,	
+	  lng: longitude,
+	  markers: [
+	    {lat: latitude, lng:longitude,
+	      color: 'blue'}
+	  ]
+	});
+
+	imagen.attr('src', url)
+
+};
+
+</script>
+
+{% endblock content %}

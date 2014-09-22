@@ -3,21 +3,108 @@
 {% load i18n %}
 {% load notifications_tags %}
 {% block head_title %}{% trans "HomeView" %}{% endblock %}
-
+{% load bootstrap3 %}
 {% load static %}
+	
+{% block scripts %}
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"></script>
 
+ <script src="{% static 'Gmaps/gmaps.js'%}"></script>
 
+{% endblock scripts %}
+{% block styles %}
+     .map { height: 30em; }
 
+     .borde{
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #47a3da;
+    margin-bottom: 1em;
+}
+{% endblock styles %}
 
 {% block content %}
+
+	<div class="row">		
+		<div class="well col-md-4 col-sm-12 col-xs-12 borde">		
+			<div class="float">
+			<h2>Ten en cuenta</h2>	
+			<ul>
+				<li><p class="text-justify">Procura ingresar todos los datos que puedas.</p></li>
+				<li><p class="text-justify">La ubicación debe ser lo más exacta posible.</p></li>
+				<li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+				<li><p class="text-justify">No ingreses información falsa</p></li>
+				<li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+			</ul>
+		</div>		
+
+			
+		</div>
+		<div class="col-md-8 col-sm-12	 col-xs-12">
+			<h1 class="text-center">Crear un lugar</h1>
+			
+			<form action="" method="post">{% csrf_token %}
+				{% bootstrap_form form %}
+				<div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
+		            <div class="map" id="id_mapa"></div>
+		        </div>
+		        <input type="hidden" id="latitude" value='{{lng}}'>
+		        <input type="hidden" id="longitude" value='{{lat}}'>
+			    <button type="submit" class="btn btn-success">{% trans "Crear" %}</button>
+			</form>	
+			<br><br>
+		</div>
+		</div>
+
+	<script src="{% static 'js/update_categoria.js'%}"></script>  
+	<script>
+
+	if($('#latitude').val()==''){
+		$('#latitude').val(4.578845);
+	}
+
+	if($('#longitude').val()==''){
+		$('#longitude').val(lng=-74.157155);	
+	}
+
+var mapa= new GMaps({
+  div: '#id_mapa',
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+    zoom: 16,
+});
+
+var myMarker = mapa.addMarker({
+  lat: $('#latitude').val(),
+  lng: $('#longitude').val(),
+  draggable:true,
+});
+
+$('#id_position').hide();
+$('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
+
+google.maps.event.addListener(myMarker, 'dragend', function() {
+    console.log("TErminado: ");
+    $('#latitude').val(myMarker.getPosition().lat());
+    $('#longitude').val(myMarker.getPosition().lng());
+    $('#id_position').val("POINT ("+myMarker.getPosition().lng()+" "+myMarker.getPosition().lat()+")");
+
+     
+  });
+
+
+
+    </script> 
 	
-	<form action="" method="post">{% csrf_token %}
-	    {{ form.as_p }}
-	    <input type="submit" value="Create" />
-	    <input type="button" value="Create with ajax" id="botn" />
-	</form>
+{% endblock content %}
+
+ 
 
 
+
+ {% comment %}
+ 	
 	<script>
 
 		// using jQuery
@@ -91,8 +178,4 @@
 		});
 
 	</script>
-{% endblock content %}
-
-  {% block scripts %}
-    <script src="{% static 'js/update_categoria.js'%}"></script>        
-  {% endblock  %}
+ {% endcomment %}

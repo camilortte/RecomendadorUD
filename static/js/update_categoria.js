@@ -1,6 +1,7 @@
 
 $('#categoria').click(function() {
 
+        console.log("categoria clic");
         // using jQuery
             function getCookie(name) {
                 var cookieValue = null;
@@ -24,7 +25,7 @@ $('#categoria').click(function() {
             type: 'GET',
             dataType: 'json',
             success: function(response) {   
-                $('#id_sub_categorias').empty().append('-------');
+                $('#id_sub_categorias').empty().append('<option value="" >----Todas----</option>');
                 for (var i = response.length - 1; i >= 0; i--) {
                     console.log(response[i].tag);
                     $('#id_sub_categorias').append('<option value="'+response[i].id+'">'+response[i].tag +'</option>');
@@ -35,9 +36,9 @@ $('#categoria').click(function() {
                 console.log("ERROR");
                 //location.reload();
             },
-                beforeSend: function(xhr, settings) {
-                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
+            beforeSend: function(xhr, settings) {
+                  xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
         });
 
 
