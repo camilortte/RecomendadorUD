@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load notifications_tags %}
 {% load bootstrap3 %}
-{% block head_title %}Acerca de...{%endblock head_title%}
+{% block head_title %}{% trans "Notificaciones" %}{%endblock head_title%}
 {% load static %}
 {% block scripts %}
 {% endblock %}
@@ -42,20 +42,20 @@
 
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                          <li class="active"><a href="#home" role="tab" data-toggle="tab">No leidas ({{user.notifications.unread.count}})</a></li>
-                          <li><a href="#profile" role="tab" data-toggle="tab">Leidas ({{user.notifications.read.count}})</a></li>                          
+                          <li class="active"><a href="#home" role="tab" data-toggle="tab">No leídas ({{user.notifications.unread.count}})</a></li>
+                          <li><a href="#profile" role="tab" data-toggle="tab">Leídas ({{user.notifications.read.count}})</a></li>                          
                         </ul>
 
                         <!-- Tab panes -->
                         <div class="tab-content">
                           <div class="tab-pane active" id="home">
                             {% if user.notifications.unread %}                            
-                                <h5><a href="{% url 'mark_as_read_all_url' %}">Marcar todas como leidas </a></h5>
+                                <h5><a href="{% url 'mark_as_read_all_url' %}">Marcar todas como leídas </a></h5>
                                   {% for notification in user.notifications.unread %}
                                       <li data-alert_id="1" class="alert_li">
                                         <p class="alert_message">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:"" |truncatechars:30}}</a></p>
                                         <a href="#" class="alert_message">{{ notification.description|default:"" |truncatechars:300}}<br>{{notification.timestamp |naturalday }}</a><br />
-                                        <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Marcar como leida</a>
+                                        <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Marcar como leída</a>
                                         <div class="clearfix"></div>
                                       </li>
                                   {% endfor %}

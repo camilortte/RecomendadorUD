@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block head_title %}{% trans "RecomendadorUD-Crear" %}{% endblock %}
 {% load bootstrap3 %}
 {% load static %}
 	
@@ -44,15 +44,20 @@
 		<div class="col-md-8 col-sm-12	 col-xs-12">
 			<h1 class="text-center">Crear un lugar</h1>
 			
-			<form action="" method="post">{% csrf_token %}
+			<form action="" method="post" role="form">{% csrf_token %}				
 				{% bootstrap_form form %}
+
 				<div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
 		            <div class="map" id="id_mapa"></div>
 		        </div>
 		        <input type="hidden" id="latitude" value='{{lng}}'>
 		        <input type="hidden" id="longitude" value='{{lat}}'>
+		        <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
 			    <button type="submit" class="btn btn-success">{% trans "Crear" %}</button>
 			</form>	
+
+		
+		
 			<br><br>
 		</div>
 		</div>
@@ -92,6 +97,13 @@ google.maps.event.addListener(myMarker, 'dragend', function() {
 
      
   });
+
+$(document).ready(function(){
+ $(':input[required]:visible').each(function(){
+               $(this).prev('label').after(' * ');
+        });
+});
+
 
 
 

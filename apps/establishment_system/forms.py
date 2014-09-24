@@ -44,15 +44,20 @@ class EstablecimientoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):   
         super(EstablecimientoForm, self).__init__(*args, **kwargs)             
+        print "Esot trae kwargs: ",kwargs
         try:
             sub_categorias=kwargs.get('instance').sub_categorias  
+            try:                    
+                sub_categorias = kwargs.get('data').get('sub_categorias')
+            except Exception, e:
+                print e
             
         except Exception, e:                    
             print "ERROR: ", e   
             try:
-                sub_categorias=args[0]['sub_categorias']
+                sub_categorias=args[0]['sub_categorias']                
             except Exception, e:
-                try:
+                try:                    
                     sub_categorias = kwargs.get('data').get('sub_categorias')
                 except Exception, e:
                     print e

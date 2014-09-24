@@ -210,7 +210,7 @@ class Solicitud(models.Model):
     establecimientos= models.ForeignKey(Establecimiento)
     fecha_creada = models.DateTimeField(_('Fecha'), default=timezone.now)
     tipo_solicitudes  = models.ForeignKey(TiposSolicitud)
-    contenido = models.TextField(_(('Breve descripción de por que envia la solicitud').decode('utf-8')),max_length=500,null=True,blank=True)
+    contenido = models.TextField(_(('Descripción de la solicitud').decode('utf-8')),max_length=500,null=True,blank=True)
     establecimientos_temporales = models.ForeignKey(EstablecimientoTemporal, null=True, blank=True)    
     #establecimiento_duplicado = 
     aprobar = models.BooleanField(_('Aprobar'), default=False,

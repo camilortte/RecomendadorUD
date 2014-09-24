@@ -3,7 +3,7 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block head_title %}{% trans "Detalle" %}{% endblock %}
 {% load imagekit %}
 {% load bootstrap3 %}
 {% load mathfilters %}
@@ -22,7 +22,7 @@
     <link href="{% static 'fancybox/jquery.fancybox.css'%}" rel="stylesheet">
     <script src="{% static 'jquery-file-upload/js/vendor/jquery.ui.widget.js'%}"></script>
 
-    <script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js"></script>
+    <script src="{% static 'javascript-loadm-image/load-image.all.min.js'%}"></script>
     <!-- The Canvas to Blob plugin is included for image resizing functionality -->
     <script src="http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
     <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
@@ -76,7 +76,16 @@
 }
     
 
-
+.blanck-space{
+    width:245px; 
+    height:147px;
+    border-width: 2px;
+    border-color:#47a3da;
+    border-style: solid;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 147px;  
+}
 
 
 
@@ -132,7 +141,9 @@
                                 <input type="submit" value=""/>
                             </span>
                     <a href="#" class="thumbnail">
-                        <img src="http://placehold.it/750x450" alt="125x125">
+                        <div class="blanck-space" >
+                            <h4>Espacio libre</h4>
+                        </div>
                     </a>
                 </div>
             {% endfor %}
@@ -223,10 +234,9 @@
                 {% endif %}
                 
                 <div>
-                    <br>
-                    <h3>Solicitar</h3>
-                    {{propietario}}
+                    <br>                    
                     {% if not propietario %}
+                        <h3>Solicitar</h3>
 
                         {% if request.user.is_authenticated  %}
                         <h4 class="text-left">
@@ -405,22 +415,25 @@
         openEffect  : 'none',
         closeEffect : 'none'
     });
-});
 
-map = new GMaps({
-  div: '#map-canvas',
-  zoom: 16,
-  lat: $('#latitude').val(),
-  lng: $('#longitude').val(),
-  scrollwheel: false
-});
+    map = new GMaps({
+      div: '#map-canvas',
+      zoom: 16,
+      lat: ($('#latitude').val()),
+      lng: ($('#longitude').val()),
+      scrollwheel: false
+    });
+
+
 
     map.addMarker({
-  lat: $('#latitude').val(),
-  lng: $('#longitude').val()
+      lat: ($('#latitude').val()),
+      lng: ($('#longitude').val())
+    });
 });
 
-  
+
+
 
 
     </script>

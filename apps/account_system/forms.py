@@ -6,7 +6,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from parsley.decorators import parsleyfy
 from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
-
+from django.conf import settings
 
 
 ##############################Forms CustomUser#################################################################
@@ -172,7 +172,7 @@ class SignupFormSocial(SingupFormSoialAccount):
 class EditAccountForm(forms.ModelForm):    
     first_name=forms.CharField(label='Nombres', min_length=3, max_length=100,required=True)
     last_name=forms.CharField(label='Apellidos', min_length=3, max_length=100,required=True)
-    username=forms.CharField(label='Nombre de usuario', min_length=6, max_length=100,required=True)
+    username=forms.CharField(label='Nombre de usuario', min_length=settings.ACCOUNT_USERNAME_MIN_LENGTH, max_length=30,required=True)
     class Meta:
         model = User
         fields = ('username','email','first_name', 'last_name')#,'password1', 'password2')

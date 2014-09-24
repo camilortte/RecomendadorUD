@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 {% load url from future %}
 {% load i18n %}
-{% block head_title %}{% trans "Update my profile account" %}{% endblock %}
+{% block head_title %}{% trans "Actualizar perfil" %}{% endblock %}
 {% load bootstrap3 %}
 
 
@@ -13,11 +13,12 @@
             <p class="text-center"><h1>Actualización de datos</h1></p>
         	<form  class="form-horizontal login" role="form" data-parsley-validate method="POST" >{% csrf_token %}  
                   {% bootstrap_form form %}
+                  <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
                   <button type="submit" class="btn btn-success">{% trans "Actualizar datos" %}</button>                                        
             </form>   
             <br>            
             {% if not social_accounts %}
-                <a class="btn btn-primary btn-sm" href="{% url 'change_password_url' %}">Cambiar contraseña</a> 
+                <a class="btn btn-primary btn-sm" href="{% url 'account_set_password' %}">Cambiar contraseña</a> 
             {% else %}
                  <p class="text-justify">Cuentas conectadas: </p>
                 {% for cuenta in social_accounts %}
@@ -32,4 +33,12 @@
         </div>
     </div>
 
+
+<script>
+  $(document).ready(function(){
+  $(':input[required]:visible').each(function(){
+                 $(this).prev('label').after(' * ');
+          });
+  });
+</script>
 {% endblock %}

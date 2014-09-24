@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block head_title %}{% trans "Editar" %}{% endblock %}
 {% load static %}   
 {% load bootstrap3 %}
 {% block scripts %}
@@ -28,6 +28,7 @@
         <input type="hidden" id="longitude" value='{{lat}}'>
         <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
         <br><br>
+        <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
         <button type="submit" class="btn btn-success">{% trans "Actualizar" %}</button>
     </form>
 
@@ -60,6 +61,11 @@ google.maps.event.addListener(myMarker, 'dragend', function() {
      
   });
 
+$(document).ready(function(){
+ $(':input[required]:visible').each(function(){
+               $(this).prev('label').after(' * ');
+        });
+});
   
     </script>
 

@@ -43,6 +43,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from notifications import notify
 
 #Internal apps
 from apps.account_system.models import User
@@ -146,17 +147,20 @@ class DetalleEstablecimientoView(DetailView):
 
     def can_upload_image(self):
         """
-            Se envargad de validar si es posible subir otra imagen
+            Se encarga de validar si es posible subir otra imagen
         """
-        if self.object.imagen_set.all().count() >= settings.MAX_IMAGES_PER_PLACE:
-            return False
-        else:
-            if self.request.user.is_superuser or self.object.administradores.filter(id=self.request.user.id):
-                return True
+        if self.request.user.is_authenticated():
+            if self.object.imagen_set.all().count() >= settings.MAX_IMAGES_PER_PLACE:
+                return False
             else:
-                if Imagen.objects.filter(usuarios=self.request.user).count() >= settings.MAX_UPLOAD_PER_USER:
-                    return False
-        return True
+                if self.request.user.is_superuser or self.object.administradores.filter(id=self.request.user.id):
+                    return True
+                else:
+                    if Imagen.objects.filter(usuarios=self.request.user).count() >= settings.MAX_UPLOAD_PER_USER:
+                        return False
+            return True
+        else:
+            return False
 
 
 class JSONMixin(object):
@@ -520,7 +524,7 @@ class UpdateEstablecimiento(UpdateView):
             obj = super(UpdateEstablecimiento, self).get_object()
         else:            
             #Si es organizacional
-            if self.request.user.is_organizacional:
+            if self.request.user.is_organizacional():
                 obj = super(UpdateEstablecimiento, self).get_object()            
                 establecimientos=Establecimiento.objects.filter(administradores=self.request.user, id=obj.id)
                 if not establecimientos:
@@ -573,8 +577,8 @@ class Autocomplete(View):
             Se realizan los querys de la bsuqueda de la siguiente manera:
             sqs--> Se buscan los nombres que coincidan con el caracter de busqueda
             sq1--> Se buscan el email que coincidan con el caracter de busqueda
-            sqs--> Se buscan la pagina web que coincidan con el caracter de busqueda
-            sqs--> Se buscan la direccion que coincidan con el caracter de busqueda
+            sqs2--> Se buscan la pagina web que coincidan con el caracter de busqueda
+            sqs3--> Se buscan la direccion que coincidan con el caracter de busqueda
 
             TODO:
                 Se planea agregar Categorias y sub categorias en la busqueda.
@@ -592,14 +596,25 @@ class Autocomplete(View):
             sqs2 = SearchQuerySet().autocomplete(email=q)[:10]
             sqs3 = SearchQuerySet().autocomplete(web_page=q)[:10]
             sqs4 = SearchQuerySet().autocomplete(address=q)[:10]        
+            sqs5 = SearchQuerySet().autocomplete(sub_categorias=q)[:10]        
+            #sqs5 = SearchQuerySet().autocomplete(tag=q)[:10]    
             
             establecimientos=[]
             establecimientos=self.get_establecimientis(establecimientos, sqs)
             establecimientos=self.get_establecimientis(establecimientos, sqs2)
             establecimientos=self.get_establecimientis(establecimientos, sqs3)
             establecimientos=self.get_establecimientis(establecimientos, sqs4)
-        else:
-            establecimientos =[]
+            establecimientos=self.get_establecimientis(establecimientos, sqs5)
+            establecimientos=self.get_establecimientis(establecimientos, sqs5)
+        else:            
+            # categoria=Categoria.objects.filter(tag__icontains=q)
+            # sub_cate=SubCategoria.objects.filter(categorias=categoria)
+            # query=establecimientos.objects.filter(sub_categorias=sub_cate)
+            # if query:
+            #     establecimientos=query
+            # else:
+            #     establecimientos =[]
+            establecimientos= []
 
         # Make sresult.ure you return a JSON object, not a bare list.
         # Otherwise, you could be vulnerable to an XSS attack.
@@ -733,8 +748,10 @@ class Solicitar(View):
             2 --> Solicitud de eliminacion por repeticion
             3 --> Solicitud de eliminacion por inexistencia.
         """
-        if request.user.is_authenticated():
-
+        enviada=False
+        tipo=""
+        id_EstablecimientoTemporal=None
+        if request.user.is_authenticated():            
             """Solicitud de administracion"""
             if tipo_solicitud=='0':
                 formulario= SolicitudForm(request.POST)
@@ -751,7 +768,7 @@ class Solicitar(View):
                         id_EstablecimientoTemporal=formulario2.save() 
                         if formulario.is_valid():                       
                             self.create_solicitud("Modificacion:\n"+formulario.cleaned_data['contenido'],
-                                request.user, establecimiento_id, "modificacion",id_EstablecimientoTemporal) 
+                                request.user, establecimiento_id, "modificacion",id_EstablecimientoTemporal)                             
                             return redirect('/establecimientos/'+establecimiento_id+'/')   
 
                
@@ -782,6 +799,25 @@ class Solicitar(View):
                             return redirect('/establecimientos/'+establecimiento_id+'/')
                         else:
                             raise Http404
+
+        # if enviada and tipo != "":
+        #     notify.send(
+        #         request.user,
+        #         recipient= request.user,
+        #         verb="Solicitud Enviada",                    
+        #         description="Hola "+request.user.first_name+" para informarte que estamos mirando tu"\
+        #         "e solicitud de "+tipo+", gracias por tu paciencia.",
+        #         timestamp=datetime.now()
+        #     ) 
+        #     if id_EstablecimientoTemporal:
+        #         self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
+        #              request.user, establecimiento_id, tipo)
+        #     else:
+        #         self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
+        #              request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
+            
+        #     return redirect('/establecimientos/'+establecimiento_id+'/')
+            
 
         formulario=SolicitudForm(data=request.POST)
         formulario2= EstablecimientoTemporalForm(data=request.POST)
@@ -951,20 +987,22 @@ class CalificacionApiView(APIView):
         
         try:                      
             calificacion = request.DATA.get("calificacion")
-            respuesta=""
-            establecimiento = Establecimiento.objects.get(id=pk)
+            respuesta=""            
+            establecimiento = Establecimiento.objects.get(id=pk)            
             if calificacion:
                 calificacion=int(calificacion)
                 if calificacion>=1 and calificacion<=5 :    
-                    recommender=EstablecimientosRecommender()            
-                    establecimiento.rating.add(score=calificacion, user=request.user, ip_address=request.META['REMOTE_ADDR'])
+                    recommender=EstablecimientosRecommender()                                
+                    establecimiento.rating.add(score=calificacion, user=request.user, ip_address=request.META['REMOTE_ADDR'])                    
+                    print "bINE1"
                     recommender.precompute()
                     respuesta="Calificacion realizada"
+                    print "bINE2"
                     return Response(respuesta, status=status.HTTP_201_CREATED)
                 else:
                     respuesta="Valor no valido"     
         except Exception, e:
-            print "El establecimiento no existe"
+            print "El establecimiento nno existe"
             respuesta="Algo salio mal"
             print e
 

@@ -6,7 +6,7 @@ from django.db.models import signals
 from apps.recommender_system.models import EstablecimientosRecommender
 from .models import User
 from django.db.models.signals import post_save
-
+from notifications import notify
 # When account is created via social, fire django-allauth signal to populate Django User record.
  
 @receiver(user_signed_up)
@@ -66,5 +66,10 @@ def email_confirmed(sender,**kwargs):
 
 
 @receiver(post_save, sender = User)
-def pre_category_save(sender, **kwargs):
-    print "Pre SAAAAAAAAAAAAAAAAAAAAAAAVE"
+def pre_category_save(sender, **kwargs):    
+    print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss"
+    print "Esto llega en post-save: ",sender
+    print "Esto llega en post-save: ",kwargs
+
+
+   

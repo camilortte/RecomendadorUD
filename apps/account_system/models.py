@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 import re
+from datetime import datetime
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         UserManager)
 from django.core.mail import send_mail
@@ -8,7 +9,9 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.http import urlquote
-
+from django.db import IntegrityError
+#External apps
+from notifications import notify
 
 class Tipo(models.Model):
 
@@ -38,9 +41,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[
             validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')
         ])
-    first_name=models.CharField(_('First name'), max_length=100, blank=True)
-    last_name=models.CharField(_('Last name'),max_length=100,blank=True)
-    email= models.EmailField(_('Email address'), max_length=254, unique=True, blank=False, 
+    first_name=models.CharField(_('Nombre'), max_length=100, blank=True)
+    last_name=models.CharField(_('Apellido'),max_length=100,blank=True)
+    email= models.EmailField(_('E-mail'), max_length=254, unique=True, blank=False, 
         help_text='Ingresa un correo')
 
     is_staff = models.BooleanField(_('staff status'), default=False,
@@ -99,8 +102,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.change_to_admin()
         
         
-
-        
         return super(User, self).save(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -108,20 +109,45 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def change_to_admin(self):
         self.is_staff = True
-        self.is_superuser = True
+        self.is_superuser = True        
+        self.notificar_cambio_de_tipo("user_administrator")
+        
 
     def change_to_register(self):
         self.is_staff = False
-        self.is_superuser = False
+        self.is_superuser = False        
+        self.notificar_cambio_de_tipo("user_register")
+        print "Continua normal"
+        
+
 
     def change_to_organizational(self):
         self.is_staff = False
         self.is_superuser = False
+        
+        self.notificar_cambio_de_tipo("user_organizational")
+        
 
+    def notificar_cambio_de_tipo(self,tag):
+        try:
+            self.tipos=Tipo.objects.get(name=tag)
+            # notify.send(
+            #     self,
+            #     recipient= self,
+            #     verb="Camibio de rol",                    
+            #     description="Hola, para notificarte que ya eres "+self.tipos.tag,
+            #     timestamp=datetime.now()
+            # ) 
+        except Exception,e:
+            print "ERROR ----------> ",e
+            
+        
         
     def is_organizacional(self):
         if(self.tipos.name=="user_organizational"):
             return True
+        else:
+            return False
 
 
 # class Notificacion(models.Model):

@@ -160,10 +160,11 @@ class Base(Configuration):
 
     # Internationalization
 
-    LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'es-CO'
+    #LANGUAGE_CODE = 'us-en'
     TIME_ZONE = 'America/Bogota'
     USE_I18N = True
-    USE_L10N = True
+    USE_L10N = False
     USE_TZ = True
 
     # Static files (CSS, JavaScript, Images)

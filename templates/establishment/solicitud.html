@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load i18n %}
 {% load notifications_tags %}
-{% block head_title %}{% trans "HomeView" %}{% endblock %}
+{% block head_title %}{% trans "Solicitudes" %}{% endblock %}
 {% load bootstrap3 %}
 {% load static %}   
 
@@ -16,26 +16,74 @@
 
 {% block styles %}
      .map { height: 30em; }
+
+          .borde{
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #47a3da;
+   
 {% endblock styles %}
 
 
 {% block content %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class=" col-md-4 col-sm-12 col-xs-12 ">   
+          <h1>Ten encuenta  </h1>
+          <div class="well col-md-12 borde">
+          <h4>Solicitud modificación</h4>  
+          <ul>
+            <p class="text-justify">Si tu solicitud es de modificación ten en cuenta:</p>
+            <li><p class="text-justify">Procura ingresar todos los datos que puedas.</p></li>
+            <li><p class="text-justify">La ubicación debe ser lo más exacta posible.</p></li>
+            <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+            <li><p class="text-justify">No ingreses información falsa</p></li>
+            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+          </ul>
+        </div>    
+
+        <div class="well col-md-12 borde">
+          <h4>Solicitud es de administración</h4>  
+          <ul>
+            <p class="text-justify"> Si tu solicitud es de administración ten en cuenta: </p>
+            <li><p class="text-justify">Ingresa los campos requeridos.</p></li>            
+            <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+            <li><p class="text-justify">Al enviar la información se llevara un proceso sobre tu solicitud, nosotros nos comunicaremos con tigo a partir de la información proporcionada en tu perfil</p></li>
+            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+          </ul>
+        </div> 
+
+        <div class="well col-md-12 borde">
+          <h4>Solicitud eliminación</h4>  
+          <ul>
+            <li><p class="text-justify">Ingresa los campos requeridos y una breve descripción</p></li>
+            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+          </ul>
+        </div> 
+
+      </div>
+        <div class="col-md-8">
+          <form action="" method="POST">{% csrf_token %}
+            {% if form2 %}
+                {% bootstrap_form form2%}
+                <div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
+                    <div class="map" id="id_mapa"></div>
+                </div>
+                <input type="hidden" id="latitude" value='{{lng}}'>
+                <input type="hidden" id="longitude" value='{{lat}}'>
+                <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
+                <br><br>
+                <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
+                 <hr>
+            {% endif %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-success">{% trans "Enviar" %}</button>
+        </form>
+        </div>
+      </div>
+    </div>
     
-    <form action="" method="POST">{% csrf_token %}
-        {% if form2 %}
-            {% bootstrap_form form2%}
-            <div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
-                <div class="map" id="id_mapa"></div>
-            </div>
-            <input type="hidden" id="latitude" value='{{lng}}'>
-            <input type="hidden" id="longitude" value='{{lat}}'>
-            <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
-            <br><br>
-             <hr>
-        {% endif %}
-        {% bootstrap_form form %}
-        <button type="submit" class="btn btn-success">{% trans "Enviar" %}</button>
-    </form>
 
     <script src="{% static 'js/update_categoria.js'%}"></script>   
 
@@ -67,6 +115,11 @@ google.maps.event.addListener(myMarker, 'dragend', function() {
      
   });
 
+$(document).ready(function(){
+ $(':input[required]:visible').each(function(){
+               $(this).prev('label').after(' * ');
+        });
+});
   
     </script>
 

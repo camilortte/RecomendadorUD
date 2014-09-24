@@ -15,11 +15,16 @@
 
 
 """
+from datetime import datetime
+
 #Django
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages, admin
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+
+#External apps
+from notifications import notify
 
 #Models
 from .models import (
@@ -144,19 +149,55 @@ class SolicitudAdmin(admin.ModelAdmin):
                         print "ELIMINACION"            
                         if self.aprobar_eliminacion(request,form,obj):
                             obj.save()
+                            saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
+                            +form.cleaned_data['tipo_solicitudes'].tag+" fue aprobada.".decode('utf-8')
+                            notify.send(
+                                        request.user,
+                                        recipient= obj.usuarios,
+                                        verb="Solicitud aprobada",                    
+                                        description=saludo,
+                                        timestamp=datetime.now()
+                                    ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='modificacion':
                         print "MODIFICACION"
                         if self.aprobar_modificacion(request,form,obj):      
                             obj.save()
+                            saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
+                            +form.cleaned_data['tipo_solicitudes'].tag+" fue aprobada.".decode('utf-8')
+                            notify.send(
+                                        request.user,
+                                        recipient= obj.usuarios,
+                                        verb="Solicitud aprobada",                    
+                                        description=saludo,
+                                        timestamp=datetime.now()
+                                    ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='administracion':
                         print "Administracion"
                         if self.aprobar_administracion(request,form,obj):                            
                             obj.save()
+                            saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
+                            +form.cleaned_data['tipo_solicitudes'].tag+" fue aprobada.".decode('utf-8')
+                            notify.send(
+                                        request.user,
+                                        recipient= obj.usuarios,
+                                        verb="Solicitud aprobada",                    
+                                        description=saludo,
+                                        timestamp=datetime.now()
+                                    ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='desactivacion':
                         print "desactivacion"
                         if self.aprobar_desactivacon(request,form,obj):     
                             print "ENTRO SAVE"                       
                             obj.save()
+                            saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
+                            +form.cleaned_data['tipo_solicitudes'].tag+" fue aprobada.".decode('utf-8')
+                            notify.send(
+                                        request.user,
+                                        recipient= obj.usuarios,
+                                        verb="Solicitud aprobada",                    
+                                        description=saludo,
+                                        timestamp=datetime.now()
+                                    ) 
 
             except Exception, e:                                
                 print "No se peude editar ",e     
@@ -272,8 +313,17 @@ class SolicitudAdmin(admin.ModelAdmin):
                 self.message_user(request,
                         _(("Se aprobó la solicitud, el usuario "+str(obj.usuarios)+" ya es administrador de "+str(obj.establecimientos)).decode("utf-8")),
                          level=messages.INFO, extra_tags='', fail_silently=False)
+
+                if not obj.usuarios.is_organizacional() and  not obj.usuarios.is_superuser:
+                    obj.usuarios.change_to_organizational()
+                    obj.usuarios.save()
+                    print "El usuario",obj.usuarios,"Se cambia a usuario organizacional"
+                else:   
+                    print "Mierda"
+
                 return True
             else:
+                print "No se pudo, Carajo"
                 self.message_user(request,
                         ("No Se aprobó la solicitud, el usuario "+str(obj.usuarios)+" es ahora administrador de "+str(obj.establecimientos)).decode("utf-8"),
                          level=messages.ERROR, extra_tags='', fail_silently=False)

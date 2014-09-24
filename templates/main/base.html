@@ -2,6 +2,7 @@
 {% load notifications_tags %}
 {% load avatar_tags %}
 {% load humanize %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,11 +175,11 @@ a.alert_message:hover{color : grey}
           <div style="display:none" class="alert_list">
             {% for notification in notifications %}  
               <li data-alert_id="1" class="alert_li">
-                <p class="alert_message">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:"" |truncatechars:30}}</a> -
+                <p class="alert_message ">{{ notification.verb|default:"" |truncatechars:50}} - De <a href="{% url 'profiles_url' notification.actor.id %}">{{ notification.actor|default:"" |truncatechars:30}}</a> -
                   {{notification.timestamp |naturalday }}
                 </p>                
-                <a href="#" class="alert_message">{{ notification.description|default:"" |truncatechars:300}} </a><br>
-                <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Leida</a>
+                <a href="#" class="alert_message text-justify">{{ notification.description|default:"" |truncatechars:300}} </a><br>
+                <a href="{% url 'mark_as_read_only' %}?id={{notification.id}}" class="turn_off_alert">Marcar como leída</a>
                 <div class="clearfix"></div>
               </li>
             {% endfor %}    
@@ -215,7 +216,7 @@ a.alert_message:hover{color : grey}
           <ul class="dropdown-menu" role="menu" >
             <li><a href="{% url 'profile_url'%}"><span class="glyphicon glyphicon-user"></span> Perfil</a></li>
             <li class="divider"></li>
-            <li><a href="{% url 'update_profile_url' %}"><span class="glyphicon glyphicon-cog"></span> UpdateAccount</a></li>
+            <li><a href="{% url 'update_profile_url' %}"><span class="glyphicon glyphicon-cog"></span> {% trans "Actualizar perfil" %}</a></li>
             <li><a href="{% url 'logout_url' %}"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
           </ul>
         </li>   
@@ -236,8 +237,8 @@ a.alert_message:hover{color : grey}
 
           
             <input style="width:100%;" type="text" class="form-control typeahead" id="id_qs" name="q" autocomplete='off' placeholder="Search">
-          
-            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+
+            <span class="input-group-addon" id="enviar_form"><span class="glyphicon glyphicon-search"></span></span>
 
           </div>
         </div>
