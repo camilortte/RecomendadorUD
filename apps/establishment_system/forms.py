@@ -30,6 +30,7 @@ from .models import (
 
 
 
+
 class EstablecimientoForm(forms.ModelForm):
     """
         Formuilario de adicion de establecimeintos
@@ -43,8 +44,7 @@ class EstablecimientoForm(forms.ModelForm):
 
 
     def __init__(self, *args, **kwargs):   
-        super(EstablecimientoForm, self).__init__(*args, **kwargs)             
-        print "Esot trae kwargs: ",kwargs
+        super(EstablecimientoForm, self).__init__(*args, **kwargs)          
         try:
             sub_categorias=kwargs.get('instance').sub_categorias  
             try:                    
@@ -78,6 +78,7 @@ class EstablecimientoForm(forms.ModelForm):
     class Meta:
         model = Establecimiento
         fields=['nombre','email','web_page','telefono','address','description','position','categorias','sub_categorias']
+
 
 
 class EstablecimientoAdminForm(forms.ModelForm):
@@ -183,39 +184,49 @@ class EstablecimientoTemporalForm(forms.ModelForm):
         Formulario del establecimiento temporal 
     """
     telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
-                                error_message = ("Numero de telefono invalido."),required=False)
-    categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),cache_choices=True,
+                                error_message = ("Numero de telefono invalido."))   
+    categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),
         widget=forms.Select(attrs={'id': 'categoria'}))
-    sub_categorias= forms.ModelChoiceField(queryset=SubCategoria.objects.none(),cache_choices=True
-         )
+    sub_categorias= forms.ModelChoiceField(queryset=SubCategoria.objects.none())
     position = forms.CharField(widget=forms.HiddenInput())
-    class Meta:
-        model=EstablecimientoTemporal
-        fields=['nombre','email','telefono','web_page','address','description','categorias','sub_categorias','position']
 
 
-    def __init__(self, *args, **kwargs):     
-        super(EstablecimientoTemporalForm, self).__init__(*args, **kwargs)   
+    def __init__(self, *args, **kwargs):   
+        super(EstablecimientoTemporalForm, self).__init__(*args, **kwargs)          
         try:
-            sub_categorias=kwargs.get('instance').sub_categorias         
-            
+            sub_categorias=kwargs.get('instance').sub_categorias  
+            try:                    
+                sub_categorias = kwargs.get('data').get('sub_categorias')
+            except Exception, e:
+                print e
             
         except Exception, e:                    
             print "ERROR: ", e   
             try:
-                sub_categorias=args[0]['sub_categorias']
+                sub_categorias=args[0]['sub_categorias']                
             except Exception, e:
-                sub_categorias = kwargs.get('data').get('sub_categorias')
+                try:                    
+                    sub_categorias = kwargs.get('data').get('sub_categorias')
+                except Exception, e:
+                    print e
+                    return None
         try:
             categoria=SubCategoria.objects.get(id=sub_categorias.id)
         except Exception, e:
             categoria=SubCategoria.objects.get(id=sub_categorias)
         
-        categoria=Categoria.objects.get(id=categoria.categorias.id)
+        
+        categoria=Categoria.objects.get(id=categoria.categorias.id)        
         query=Categoria.objects.all()
         query2=SubCategoria.objects.filter(categorias=categoria.id)
-        self.fields['categorias']= forms.ModelChoiceField(queryset=query, initial=categoria.id)  
+        self.fields['categorias']= forms.ModelChoiceField(queryset=query, initial=categoria.id,widget=forms.Select(attrs={'id': 'categoria'}))  
         self.fields['sub_categorias']= forms.ModelChoiceField(queryset=query2, initial=sub_categorias) 
+
+            
+    class Meta:
+        model = EstablecimientoTemporal
+        fields=['nombre','email','web_page','telefono','address','description','position','categorias','sub_categorias']
+
 
 
 

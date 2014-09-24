@@ -698,6 +698,7 @@ class DeleteImagen(DeleteView):
         return super(DeleteImagen, self).dispatch(*args, **kwargs)
 
 
+from datetime import datetime as mydatetime
 class Solicitar(View):
     u"""
        Se encarga de crear una solicitud depenedindo de esta. 
@@ -756,9 +757,8 @@ class Solicitar(View):
             if tipo_solicitud=='0':
                 formulario= SolicitudForm(request.POST)
                 if formulario.is_valid():
-                    self.create_solicitud("Administracion:\n"+formulario.cleaned_data['contenido'],
-                     request.user, establecimiento_id, "administracion")
-                    return redirect('/establecimientos/'+establecimiento_id+'/')
+                    enviada=True
+                    tipo="administracion"
             else: 
                 """Solictud de edicion del establecimiento"""
                 if tipo_solicitud=='1':
@@ -767,56 +767,55 @@ class Solicitar(View):
                     if formulario2.is_valid():
                         id_EstablecimientoTemporal=formulario2.save() 
                         if formulario.is_valid():                       
-                            self.create_solicitud("Modificacion:\n"+formulario.cleaned_data['contenido'],
-                                request.user, establecimiento_id, "modificacion",id_EstablecimientoTemporal)                             
-                            return redirect('/establecimientos/'+establecimiento_id+'/')   
-
-               
-                    pnt = GEOSGeometry(formulario2.cleaned_data['position']) # WKT
-                    lng=pnt.y
-                    lat=pnt.x
-                    formulario=SolicitudForm(data=request.POST)
-                    formulario2= EstablecimientoTemporalForm(data=request.POST)
-                    return render(request, 'establishment/solicitud.html', {
-                            'form':formulario, 'form2':formulario2,
-                            'lng':lng,'lat':lat
-                        })
+                            enviada=True
+                            tipo="modificacion"
+                        else:               
+                            pnt = GEOSGeometry(formulario2.cleaned_data['position']) # WKT
+                            lng=pnt.y
+                            lat=pnt.x
+                            formulario=SolicitudForm(data=request.POST)
+                            formulario2= EstablecimientoTemporalForm(data=request.POST)
+                            return render(request, 'establishment/solicitud.html', {
+                                    'form':formulario, 'form2':formulario2,
+                                    'lng':lng,'lat':lat
+                                })
 
 
                 else: 
                     if tipo_solicitud=='2':
                         formulario= SolicitudForm(request.POST)
                         if formulario.is_valid():
-                            self.create_solicitud("Elimincion:\n"+formulario.cleaned_data['contenido'],
-                                request.user, establecimiento_id, "eliminacion")
-                            return redirect('/establecimientos/'+establecimiento_id+'/')
+                            enviada=True
+                            tipo="eliminacion"
                     else: 
                         if tipo_solicitud=='3':
                             formulario= SolicitudForm(request.POST)
                             if formulario.is_valid():
-                                self.create_solicitud("Elimincion:\n"+formulario.cleaned_data['contenido'],
-                                request.user, establecimiento_id, "eliminacion")
-                            return redirect('/establecimientos/'+establecimiento_id+'/')
+                                enviada=True
+                                tipo="eliminacion"
                         else:
                             raise Http404
 
-        # if enviada and tipo != "":
-        #     notify.send(
-        #         request.user,
-        #         recipient= request.user,
-        #         verb="Solicitud Enviada",                    
-        #         description="Hola "+request.user.first_name+" para informarte que estamos mirando tu"\
-        #         "e solicitud de "+tipo+", gracias por tu paciencia.",
-        #         timestamp=datetime.now()
-        #     ) 
-        #     if id_EstablecimientoTemporal:
-        #         self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
-        #              request.user, establecimiento_id, tipo)
-        #     else:
-        #         self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
-        #              request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
-            
-        #     return redirect('/establecimientos/'+establecimiento_id+'/')
+        if enviada and tipo != "":
+            notify.send(
+                request.user,
+                recipient= request.user,
+                verb="Solicitud Enviada",                    
+                description="Hola "+request.user.first_name+" para informarte que estamos mirando tu"\
+                "e solicitud de "+tipo+", gracias por tu paciencia.",
+                timestamp=mydatetime.now()
+            ) 
+            print "Esto es establecimiento_idtemporassssssssssssssssssssssssssssssssssssssssssssssssssssss"
+            print id_EstablecimientoTemporal
+            if not id_EstablecimientoTemporal:                
+                self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
+                     request.user, establecimiento_id, tipo)
+            else:
+                print "SI tiene id establcimeinto temporal: ",id_EstablecimientoTemporal
+                self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
+                     request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
+
+            return redirect('/establecimientos/'+establecimiento_id+'/')
             
 
         formulario=SolicitudForm(data=request.POST)
