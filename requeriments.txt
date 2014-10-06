@@ -28,4 +28,3 @@ google-api-python-client==1.2
 gunicorn==0.14.3
 lxml==3.2.0
 redis==2.10.3
-xapian-haystack==2.0.0
