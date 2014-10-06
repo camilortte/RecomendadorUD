@@ -68,7 +68,7 @@ class Base(Configuration):
         'rest_framework',
         #'selectable', #http://django-selectable.readthedocs.org/en/latest/admin.html
         'autocomplete_light',
-        'queued_search', #https://github.com/toastdriven/queued_search
+        #'queued_search', #https://github.com/toastdriven/queued_search
         'bootstrap3', #https://github.com/dyve/django-bootstrap3
         'mathfilters',#https://github.com/dbrgn/django-mathfilters
         'django.contrib.gis',        
