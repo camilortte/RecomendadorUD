@@ -1,7 +1,6 @@
 Cython==0.19
 Divisi2==2.2.5
 django==1.6
-cryptography==0.3
 django-admin-tools==0.5.2
 django-allauth==0.17.0
 django-avatar==2.0
