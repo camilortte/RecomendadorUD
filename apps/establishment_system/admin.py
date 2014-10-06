@@ -373,7 +373,7 @@ from django.contrib.gis.geos import GEOSGeometry
 class EstablecimientoAdmin(admin.OSMGeoAdmin): 
     g = GEOSGeometry('POINT (-74.157175 4.578896)') # Set map center 
     g.set_srid(4326) 
-    g.transform(900913) 
+    #g.transform(900913) 
     default_lon = int(g.x) 
     default_lat = int(g.y) 
     default_zoom = 11 
