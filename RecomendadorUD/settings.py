@@ -72,7 +72,7 @@ class Base(Configuration):
         'bootstrap3', #https://github.com/dyve/django-bootstrap3
         'mathfilters',#https://github.com/dbrgn/django-mathfilters
         'django.contrib.gis',        
-        'recommends',
+        'apps.externals.recommends',
         #'recommends.storages.redis',
         'apps.recommender_system',
         'avatar', #http://django-avatar.readthedocs.org/en/latest/

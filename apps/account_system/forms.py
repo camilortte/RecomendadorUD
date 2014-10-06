@@ -4,7 +4,6 @@ from .models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.utils.translation import ugettext, ugettext_lazy as _
 from parsley.decorators import parsleyfy
-from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
 from django.conf import settings
 
@@ -211,9 +210,6 @@ class MyValidatedForm(forms.Form):
 #             pass
 #         else:
 #             raise ValidationError(u'Selecciona una opción valida.')
-
-
-
 
 
 

@@ -32,7 +32,7 @@ from .models import (
 
 
 class EstablecimientoForm(forms.ModelForm):
-    """
+    u"""
         Formuilario de adicion de establecimeintos
     """    
     telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
@@ -82,7 +82,7 @@ class EstablecimientoForm(forms.ModelForm):
 
 
 class EstablecimientoAdminForm(forms.ModelForm):
-    """
+    u"""
         Formulario de establecimientos para el admin de django. 
     """
     telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
@@ -135,7 +135,7 @@ class EstablecimientoAdminForm(forms.ModelForm):
 
 
 class ComentarioForm(forms.ModelForm):    
-    """
+    u"""
         Formulario para crear comentarios
     """
     body= forms.CharField(label="Comentario",min_length=5,  widget=forms.Textarea, 
@@ -147,7 +147,7 @@ class ComentarioForm(forms.ModelForm):
 
 
 class SolicitudAdminForm(forms.ModelForm):
-    """
+    u"""
         TODO
         ----
         Formulario de solicitud en el administrador
@@ -157,7 +157,7 @@ class SolicitudAdminForm(forms.ModelForm):
 
 
 class SolicitudForm(forms.ModelForm):
-    """
+    u"""
         TODO
         ----
         Formulario de solicitud en el administrador
@@ -169,7 +169,7 @@ class SolicitudForm(forms.ModelForm):
 
 
 class CategoriasFilterForm(forms.Form):
-    """
+    u"""
         Formulario de categorias y subcategorias para el filtro mediante AJAX
     """
     categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),cache_choices=True,
@@ -180,7 +180,7 @@ class CategoriasFilterForm(forms.Form):
 
 
 class EstablecimientoTemporalForm(forms.ModelForm):
-    """
+    u"""
         Formulario del establecimiento temporal 
     """
     telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
@@ -240,7 +240,7 @@ class EstablecimientoSearchForm(SearchForm):
 
 
 class UploadImageForm(forms.ModelForm):        
-    """
+    u"""
         Formulario para subir imagenes.
     """
     class Meta:

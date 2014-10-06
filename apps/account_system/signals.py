@@ -65,11 +65,5 @@ def email_confirmed(sender,**kwargs):
 
 
 
-@receiver(post_save, sender = User)
-def pre_category_save(sender, **kwargs):    
-    print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss"
-    print "Esto llega en post-save: ",sender
-    print "Esto llega en post-save: ",kwargs
-
 
    

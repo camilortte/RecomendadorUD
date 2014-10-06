@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
-from django.db import models
 import re
-from datetime import datetime
+#from datetime import datetime
+
+from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         UserManager)
 from django.core.mail import send_mail
@@ -9,17 +10,24 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.http import urlquote
-from django.db import IntegrityError
+
 #External apps
-from notifications import notify
+#from notifications import notify
 
 class Tipo(models.Model):
+    """
+        Modelo referente al tipo de usuario, este puede ser:
+
+        * Usuaio registrado
+        * Usuario Organizacional
+        * Usuario Administrador
+
+    """
 
     name=models.CharField(_('Name'), max_length=30, unique=True,
         help_text=_('Nombre tag Tipo de usuario'),editable=False)
     tag=models.CharField(_('Tag'), max_length=30, unique=True,
         help_text=_('Tipo de usuario'))
-
 
     class Meta:
         verbose_name = _('Tipo')

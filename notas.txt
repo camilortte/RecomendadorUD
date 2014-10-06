@@ -23,6 +23,19 @@
 --> Graficar modelos
 	python manage.py graph_models -a -g -o mis_modelos.png
 
+--> Generando diagramas de clases
+	--> Recomendacion
+ 	pyreverse -o png -p RecomendadorUD_recommends_class  RecomendadorUD/apps/recommender_system/ /usr/local/lib/python2.7/dist-packages/recsys/ RecomendadorUD/apps/externals/recommends/  --only-classnames
+
+	pyreverse -o png -p RecomendadorUD_recommends  RecomendadorUD/apps/recommender_system/ /usr/local/lib/python2.7/dist-packages/recsys/ RecomendadorUD/apps/externals/recommends/  
+
+	--> Total
+	pyreverse -o pdf -p RecomendadorUD_all_classnames  RecomendadorUD/ /usr/local/lib/python2.7/dist-packages/recsys/ /usr/local/lib/python2.7/dist-packages/allauth/  --only-classnames
+
+	pyreverse -o pdf -p RecomendadorUD_all  RecomendadorUD/ /usr/local/lib/python2.7/dist-packages/recsys/ /usr/local/lib/python2.7/dist-packages/allauth/ 
+
+
+
 --> Eliminar base de datos de una app
 	python manage.py sqlclear establishment_system | python manage.py dbshell
 

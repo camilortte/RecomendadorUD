@@ -1,0 +1,253 @@
+table	django_admin_log	django_admin_log	2	CREATE TABLE "django_admin_log" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "action_time" datetime NOT NULL,
+    "user_id" integer NOT NULL,
+    "content_type_id" integer,
+    "object_id" text,
+    "object_repr" varchar(200) NOT NULL,
+    "action_flag" smallint unsigned NOT NULL,
+    "change_message" text NOT NULL
+)
+table	auth_permission	auth_permission	3	CREATE TABLE "auth_permission" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(50) NOT NULL,
+    "content_type_id" integer NOT NULL,
+    "codename" varchar(100) NOT NULL,
+    UNIQUE ("content_type_id", "codename")
+)
+table	auth_group_permissions	auth_group_permissions	5	CREATE TABLE "auth_group_permissions" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "group_id" integer NOT NULL,
+    "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id"),
+    UNIQUE ("group_id", "permission_id")
+)
+table	auth_group	auth_group	9	CREATE TABLE "auth_group" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(80) NOT NULL UNIQUE
+)
+table	django_content_type	django_content_type	11	CREATE TABLE "django_content_type" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(100) NOT NULL,
+    "app_label" varchar(100) NOT NULL,
+    "model" varchar(100) NOT NULL,
+    UNIQUE ("app_label", "model")
+)
+table	django_session	django_session	13	CREATE TABLE "django_session" (
+    "session_key" varchar(40) NOT NULL PRIMARY KEY,
+    "session_data" text NOT NULL,
+    "expire_date" datetime NOT NULL
+)
+table	django_site	django_site	15	CREATE TABLE "django_site" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "domain" varchar(100) NOT NULL,
+    "name" varchar(50) NOT NULL
+)
+table	account_emailaddress	account_emailaddress	17	CREATE TABLE "account_emailaddress" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL,
+    "email" varchar(75) NOT NULL UNIQUE,
+    "verified" bool NOT NULL,
+    "primary" bool NOT NULL
+)
+table	account_emailconfirmation	account_emailconfirmation	19	CREATE TABLE "account_emailconfirmation" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "email_address_id" integer NOT NULL REFERENCES "account_emailaddress" ("id"),
+    "created" datetime NOT NULL,
+    "sent" datetime,
+    "key" varchar(64) NOT NULL UNIQUE
+)
+table	socialaccount_socialapp_sites	socialaccount_socialapp_sites	21	CREATE TABLE "socialaccount_socialapp_sites" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "socialapp_id" integer NOT NULL,
+    "site_id" integer NOT NULL REFERENCES "django_site" ("id"),
+    UNIQUE ("socialapp_id", "site_id")
+)
+table	socialaccount_socialapp	socialaccount_socialapp	24	CREATE TABLE "socialaccount_socialapp" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "provider" varchar(30) NOT NULL,
+    "name" varchar(40) NOT NULL,
+    "client_id" varchar(100) NOT NULL,
+    "secret" varchar(100) NOT NULL,
+    "key" varchar(100) NOT NULL
+)
+table	socialaccount_socialaccount	socialaccount_socialaccount	25	CREATE TABLE "socialaccount_socialaccount" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL,
+    "provider" varchar(30) NOT NULL,
+    "uid" varchar(255) NOT NULL,
+    "last_login" datetime NOT NULL,
+    "date_joined" datetime NOT NULL,
+    "extra_data" text NOT NULL,
+    UNIQUE ("provider", "uid")
+)
+table	socialaccount_socialtoken	socialaccount_socialtoken	28	CREATE TABLE "socialaccount_socialtoken" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "app_id" integer NOT NULL REFERENCES "socialaccount_socialapp" ("id"),
+    "account_id" integer NOT NULL REFERENCES "socialaccount_socialaccount" ("id"),
+    "token" text NOT NULL,
+    "token_secret" text NOT NULL,
+    "expires_at" datetime,
+    UNIQUE ("app_id", "account_id")
+)
+table	account_system_tipo	account_system_tipo	30	CREATE TABLE "account_system_tipo" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(30) NOT NULL UNIQUE,
+    "tag" varchar(30) NOT NULL UNIQUE
+)
+table	account_system_user_groups	account_system_user_groups	34	CREATE TABLE "account_system_user_groups" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL,
+    "group_id" integer NOT NULL REFERENCES "auth_group" ("id"),
+    UNIQUE ("user_id", "group_id")
+)
+table	account_system_user_user_permissions	account_system_user_user_permissions	36	CREATE TABLE "account_system_user_user_permissions" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL,
+    "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id"),
+    UNIQUE ("user_id", "permission_id")
+)
+table	account_system_user	account_system_user	39	CREATE TABLE "account_system_user" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "password" varchar(128) NOT NULL,
+    "last_login" datetime NOT NULL,
+    "is_superuser" bool NOT NULL,
+    "username" varchar(30) NOT NULL UNIQUE,
+    "first_name" varchar(100) NOT NULL,
+    "last_name" varchar(100) NOT NULL,
+    "email" varchar(254) NOT NULL UNIQUE,
+    "is_staff" bool NOT NULL,
+    "is_active" bool NOT NULL,
+    "date_joined" datetime NOT NULL,
+    "tipos_id" integer NOT NULL REFERENCES "account_system_tipo" ("id")
+)
+table	djangoratings_vote	djangoratings_vote	43	CREATE TABLE "djangoratings_vote" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id"),
+    "object_id" integer unsigned NOT NULL,
+    "key" varchar(32) NOT NULL,
+    "score" integer NOT NULL,
+    "user_id" integer REFERENCES "account_system_user" ("id"),
+    "ip_address" char(15) NOT NULL,
+    "cookie" varchar(32),
+    "date_added" datetime NOT NULL,
+    "date_changed" datetime NOT NULL,
+    UNIQUE ("content_type_id", "object_id", "key", "user_id", "ip_address", "cookie")
+)
+table	djangoratings_score	djangoratings_score	45	CREATE TABLE "djangoratings_score" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id"),
+    "object_id" integer unsigned NOT NULL,
+    "key" varchar(32) NOT NULL,
+    "score" integer NOT NULL,
+    "votes" integer unsigned NOT NULL,
+    UNIQUE ("content_type_id", "object_id", "key")
+)
+table	djangoratings_similaruser	djangoratings_similaruser	48	CREATE TABLE "djangoratings_similaruser" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "from_user_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "to_user_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "agrees" integer unsigned NOT NULL,
+    "disagrees" integer unsigned NOT NULL,
+    "exclude" bool NOT NULL,
+    UNIQUE ("from_user_id", "to_user_id")
+)
+table	djangoratings_ignoredobject	djangoratings_ignoredobject	51	CREATE TABLE "djangoratings_ignoredobject" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id"),
+    "object_id" integer unsigned NOT NULL,
+    UNIQUE ("content_type_id", "object_id")
+)
+table	notifications_notification	notifications_notification	53	CREATE TABLE "notifications_notification" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "level" varchar(20) NOT NULL,
+    "recipient_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "unread" bool NOT NULL,
+    "actor_content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id"),
+    "actor_object_id" varchar(255) NOT NULL,
+    "verb" varchar(255) NOT NULL,
+    "description" text,
+    "target_content_type_id" integer REFERENCES "django_content_type" ("id"),
+    "target_object_id" varchar(255),
+    "action_object_content_type_id" integer REFERENCES "django_content_type" ("id"),
+    "action_object_object_id" varchar(255),
+    "timestamp" datetime NOT NULL,
+    "public" bool NOT NULL
+)
+table	avatar_avatar	avatar_avatar	55	CREATE TABLE "avatar_avatar" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "primary" bool NOT NULL,
+    "avatar" varchar(1024) NOT NULL,
+    "date_uploaded" datetime NOT NULL
+)
+table	establishment_system_categoria	establishment_system_categoria	57	CREATE TABLE "establishment_system_categoria" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "nombre" varchar(50) NOT NULL UNIQUE,
+    "tag" varchar(100) NOT NULL
+)
+table	establishment_system_subcategoria	establishment_system_subcategoria	59	CREATE TABLE "establishment_system_subcategoria" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "nombre" varchar(50) NOT NULL UNIQUE,
+    "tag" varchar(100) NOT NULL,
+    "categorias_id" integer NOT NULL REFERENCES "establishment_system_categoria" ("id")
+)
+table	establishment_system_establecimiento_administradores	establishment_system_establecimiento_administradores	62	CREATE TABLE "establishment_system_establecimiento_administradores" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "establecimiento_id" integer NOT NULL,
+    "user_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    UNIQUE ("establecimiento_id", "user_id")
+)
+table	establishment_system_establecimiento	establishment_system_establecimiento	64	CREATE TABLE "establishment_system_establecimiento" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "nombre" varchar(100) NOT NULL UNIQUE,
+    "email" varchar(75),
+    "web_page" varchar(200),
+    "address" varchar(100) NOT NULL UNIQUE,
+    "description" text,
+    "telefono" varchar(15),
+    "sub_categorias_id" integer NOT NULL REFERENCES "establishment_system_subcategoria" ("id"),
+    "visible" bool NOT NULL,
+    "rating_votes" integer unsigned NOT NULL,
+    "rating_score" integer NOT NULL
+, "position" POINT NOT NULL DEFAULT '')
+table	establishment_system_imagen	establishment_system_imagen	68	CREATE TABLE "establishment_system_imagen" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "imagen" varchar(100) NOT NULL,
+    "establecimientos_id" integer NOT NULL REFERENCES "establishment_system_establecimiento" ("id"),
+    "date_uploaded" datetime NOT NULL,
+    "usuarios_id" integer NOT NULL REFERENCES "account_system_user" ("id")
+)
+table	establishment_system_comentario	establishment_system_comentario	70	CREATE TABLE "establishment_system_comentario" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "created" datetime NOT NULL,
+    "author_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "body" text NOT NULL,
+    "post_id" integer NOT NULL REFERENCES "establishment_system_establecimiento" ("id"),
+    "ip_address" char(39),
+    "is_public" bool NOT NULL
+)
+table	establishment_system_tipossolicitud	establishment_system_tipossolicitud	71	CREATE TABLE "establishment_system_tipossolicitud" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "nombre" varchar(100) NOT NULL,
+    "tag" varchar(100) NOT NULL
+)
+table	establishment_system_establecimientotemporal	establishment_system_establecimientotemporal	73	CREATE TABLE "establishment_system_establecimientotemporal" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "nombre" varchar(100) NOT NULL,
+    "email" varchar(75),
+    "web_page" varchar(200),
+    "address" varchar(100) NOT NULL,
+    "description" text,
+    "sub_categorias_id" integer NOT NULL REFERENCES "establishment_system_subcategoria" ("id")
+, "position" POINT NOT NULL DEFAULT '')
+table	establishment_system_solicitud	establishment_system_solicitud	74	CREATE TABLE "establishment_system_solicitud" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "usuarios_id" integer NOT NULL REFERENCES "account_system_user" ("id"),
+    "establecimientos_id" integer NOT NULL REFERENCES "establishment_system_establecimiento" ("id"),
+    "fecha_creada" datetime NOT NULL,
+    "tipo_solicitudes_id" integer NOT NULL REFERENCES "establishment_system_tipossolicitud" ("id"),
+    "contenido" text,
+    "establecimientos_temporales_id" integer REFERENCES "establishment_system_establecimientotemporal" ("id"),
+    "aprobar" bool NOT NULL
+)

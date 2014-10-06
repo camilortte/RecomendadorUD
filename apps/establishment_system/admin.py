@@ -37,7 +37,7 @@ from .forms import EstablecimientoAdminForm
 
 
 class CommentAdmin(admin.ModelAdmin):
-    """
+    u"""
         Clase encargada de presentar los comentarios en el admin
     """
     raw_id_fields = ('author','post' )
@@ -54,7 +54,7 @@ class ImagenInline(admin.StackedInline):
 
 
 class SolicitudAdmin(admin.ModelAdmin):
-    """
+    u"""
         Clase encargada de presentar las solicitudes en el admin
     """
 
@@ -339,7 +339,7 @@ class SolicitudAdmin(admin.ModelAdmin):
 
 
 class ImagenAdmin(admin.ModelAdmin):
-    """
+    u"""
         Clase encargada de presentar las imagines en el admin
     """
     list_display = ('id','imagen_thumbnail','establecimientos','date_uploaded','usuarios')       
@@ -370,7 +370,7 @@ from django.contrib.gis import admin
 from django.contrib.gis.geos import GEOSGeometry
 
 
-class GoogleAdmin(admin.OSMGeoAdmin): 
+class EstablecimientoAdmin(admin.OSMGeoAdmin): 
     g = GEOSGeometry('POINT (-74.157175 4.578896)') # Set map center 
     g.set_srid(4326) 
     g.transform(900913) 
@@ -397,4 +397,4 @@ class GoogleAdmin(admin.OSMGeoAdmin):
         )
 
 
-admin.site.register(Establecimiento, GoogleAdmin) 
+admin.site.register(Establecimiento, EstablecimientoAdmin) 
