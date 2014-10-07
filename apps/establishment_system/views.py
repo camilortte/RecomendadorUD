@@ -1154,11 +1154,13 @@ def establecimiento_delete(sender, instance, **kwargs):
     u"""
         Cuando una establecimiento se borra tambíen se borrara los votos
     """
+    print "Entrada en el predelete"
     id_establecimiento=instance.id
     Vote.objects.filter(object_id=id_establecimiento).delete()
     Score.objects.filter(object_id=id_establecimiento).delete()
     recommender=EstablecimientosRecommender()    
     recommender.precompute()
+    print "Precompute al final del delete"
 
 
 

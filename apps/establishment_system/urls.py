@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+	# -*- encoding: utf-8 -*-
 
 """
     
@@ -63,7 +63,7 @@ urlpatterns = patterns('',
 	url(r'^api2/', include(router.urls)),
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),	
 
-	url(r'^solicitud/(?P<tipo_solicitud>\d+)/(?P<establecimiento_id>\d)/$',Solicitar.as_view(),name='solicitud_url'),
+	url(r'^solicitud/(?P<tipo_solicitud>\d+)/(?P<establecimiento_id>\d+)/$',Solicitar.as_view(),name='solicitud_url'),
 	
 	#url(r'^buscar/$', Busqueda.as_view(), name='buscar_url'), 
 	#url(r'^establecimiento/create_api/$', EstablecimientoCreateApiView.as_view(model=Establecimiento), name='user-list')

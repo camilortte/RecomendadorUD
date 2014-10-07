@@ -376,6 +376,10 @@ $(document).on({
 }, ".mierda"); //pass the element as an argument to .on
 
 function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
+  if (descripcion.length>100) {
+      descripcion=descripcion.substring(0, 100)+"...";
+  };
+    
     var item= "\
     <div class='col-md-6 mierda' id='"+id+"'> \
               <a href='/establecimientos/"+id+"' >\
