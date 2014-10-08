@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 class RecomendacionView(TemplateView):
     template_name = 'recommender/recomendacion.html'    
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):        
         context = super(RecomendacionView, self).get_context_data(**kwargs)
         #context['now'] = timezone.now()
         context['recomendaciones']=self.obtener_recomendacion(self.request.user)

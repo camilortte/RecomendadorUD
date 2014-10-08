@@ -93,3 +93,13 @@ python manage.py convert_to_south myap
                 {% endif %}
             {% endfor %}
         </ul>
+
+
+
+
+--> Para instalar postgresql con portgis use:
+
+http://wiki.openstreetmap.org/wiki/PostGIS/Installation#Ubuntu_14.04_LTS_2
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04
+http://www.hackido.com/2014/04/setting-up-postgres-for-local.html
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn

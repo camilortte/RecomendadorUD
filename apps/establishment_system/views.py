@@ -909,11 +909,11 @@ class UploadImagenView(View):
     def dispatch(self, *args, **kwargs):
         return super(UploadImagenView, self).dispatch(*args, **kwargs)   
 
-#########################################################################################################################
-#####################################################                 ###################################################
-#####################################################    APIS VIEWS   ###################################################
-#####################################################                 ###################################################
-#########################################################################################################################
+#################################################################################################
+#####################################################                 ###########################
+#####################################################    APIS VIEWS   ###########################
+#####################################################                 ###########################
+#################################################################################################
 
 class EstablecimientoCreateApiView(APIView):
     u"""
@@ -991,12 +991,17 @@ class CalificacionApiView(APIView):
             if calificacion:
                 calificacion=int(calificacion)
                 if calificacion>=1 and calificacion<=5 :    
-                    recommender=EstablecimientosRecommender()                                
-                    establecimiento.rating.add(score=calificacion, user=request.user, ip_address=request.META['REMOTE_ADDR'])                    
-                    print "bINE1"
-                    recommender.precompute()
+                    recommender=EstablecimientosRecommender()        
+                    establecimiento.rating.add(
+                        score=calificacion, 
+                        user=request.user, 
+                        ip_address=request.META['REMOTE_ADDR']
+                        )                                                         
+                    recommender.precompute()                    
+                    print "Esto es despues de recommender"
                     respuesta="Calificacion realizada"
                     print "bINE2"
+                    print "Todo bien"
                     return Response(respuesta, status=status.HTTP_201_CREATED)
                 else:
                     respuesta="Valor no valido"     
@@ -1004,7 +1009,7 @@ class CalificacionApiView(APIView):
             print "El establecimiento nno existe"
             respuesta="Algo salio mal"
             print e
-
+        print "Hasta acá todo bien"
         return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -1133,11 +1138,11 @@ class EstablecimientosByBoung(APIView):
         return Response(salida,status=status.HTTP_200_OK)
 
 
-#########################################################################################################################
-#####################################################                 ###################################################
-#####################################################    SIGNALS      ###################################################
-#####################################################                 ###################################################
-#########################################################################################################################
+###########################################################################################
+#####################################################                 #####################
+#####################################################    SIGNALS      #####################
+#####################################################                 #####################
+###########################################################################################
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from apps.externals.djangoratings.models import Vote, Score

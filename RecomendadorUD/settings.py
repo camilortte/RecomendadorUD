@@ -403,17 +403,26 @@ class Dev(Base):
     #('debug_toolbar.middleware.DebugToolbarMiddleware',) + Base.MIDDLEWARE_CLASSES
 
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.spatialite',  #'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'base.db'),#'db.sqlite3'),
-            'ATOMIC_REQUESTS': True
-        }
+        # 'default': {
+        #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',  #'django.db.backends.sqlite3',
+        #     'NAME': os.path.join(BASE_DIR, 'base.db'),#'db.sqlite3'),
+        #     'ATOMIC_REQUESTS': True
+        # }
         # ,        
         # 'spatial': {
         #     'NAME': os.path.join(BASE_DIR, 'spatial.db'),
         #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',        
         #     'ATOMIC_REQUESTS': True    
         # }
+
+        'default': {
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',  #'django.db.backends.sqlite3',
+            'NAME': "recomendadorUD_database",
+            'USER': 'postgres',
+            'PASSWORD': 'recomendadorUD',
+            'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+            'PORT': '5432',               
+        }
     }
     
       

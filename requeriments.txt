@@ -23,8 +23,6 @@ djangorestframework==2.3.14
 djrill==1.1.1
 epydoc==3.0.1
 gensim==0.10.1
-gevent==0.13.8
 google-api-python-client==1.2
 gunicorn==0.14.3
-lxml==3.2.0
 redis==2.10.3
