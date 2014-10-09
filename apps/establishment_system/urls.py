@@ -22,7 +22,7 @@ from .views import (DetalleEstablecimientoView, CommentCreateView,
 	UpdateEstablecimiento,  
 	Autocomplete, EliminarComentario, EstablecimientoCreateApiView, 
 	CalificacionApiView, UploadImagenView, UploadImagenApiView, EstablecimientosByBoung, 
-	DeleteImagen, Solicitar, EstablecimientosPropios)
+	DeleteImagen, Solicitar, EstablecimientosPropios, BusquedarView)
 from rest_framework import routers
 from .api import SubCategoriaViewSet, EstablecimientoViewSet
 from django.contrib import admin
@@ -39,7 +39,7 @@ router.register(r'establecimientos', EstablecimientoViewSet)
 urlpatterns = patterns('',  	
 	url(r'^establecimientos/(?P<pk>\d+)/upload/$', UploadImagenView.as_view(), name='establecimiento_upload_image_url'),   
 
-	url(r'^establecimientos/(?P<pk>\d+)/$', DetalleEstablecimientoView.as_view(), name='establecimiento_detail_url'),   
+	url(r'^establecimientos/(?P<pk>\d+)/$',DetalleEstablecimientoView.as_view(), name='establecimiento_detail_url'),   
 	url(r'^establecimientos/$', Establecimientoslist.as_view(),		name='establecimientos_list_url'),  	 
 	url(r'^establecimientos/create/$', CrearEstablecimiento.as_view(), 
 			name='establecimiento_create_url'),   
@@ -50,9 +50,9 @@ urlpatterns = patterns('',
 	url(r'^establecimiento/create_api/$', EstablecimientoCreateApiView.as_view(), name='user-list'),
 	url(r'^establecimiento/calificar/(?P<pk>[0-9]+)/$', CalificacionApiView.as_view(), name='calificar_url'),	
 	url(r'^establecimiento/boung/$', EstablecimientosByBoung.as_view(), name='establecimientos_by_boung_url'),	
+	url(r'^establecimiento/busqueda/$', BusquedarView.as_view(), name='busqueda_establecimiento_url'),
 	url(r'^imagen/delete/(?P<pk>\d+)/(?P<est_id>\d+)/$', 
-			DeleteImagen.as_view(), name='eliminar_imagen_url'), 
-	
+			DeleteImagen.as_view(), name='eliminar_imagen_url'), 	
 	url(r'^comments/delete/(?P<establecimiento_id>\d+)/(?P<comentario_id>\d+)/$', 
 			EliminarComentario.as_view(), name='eliminar_comentario_url'),  
 	url( r'^comments/post/(?P<pk>\d+)$', CommentCreateView.as_view(),name='crear_comentario_url' ),

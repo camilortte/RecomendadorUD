@@ -15,6 +15,8 @@
 
 
 """
+from urlparse import urlparse
+
 
 #Django
 from django import forms
@@ -35,13 +37,17 @@ class EstablecimientoForm(forms.ModelForm):
     u"""
         Formuilario de adicion de establecimeintos
     """    
-    telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
+    telefono = forms.RegexField(label=_(u"Teléfono"),regex=r'^\+?1?\d{7,15}$', 
                                 error_message = ("Numero de telefono invalido."))   
-    categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),
+    categorias = forms.ModelChoiceField(label="Categoria",queryset=Categoria.objects.all(),
         widget=forms.Select(attrs={'id': 'categoria'}))
-    sub_categorias= forms.ModelChoiceField(queryset=SubCategoria.objects.none())
+    sub_categorias= forms.ModelChoiceField(label="SubCategoria",queryset=SubCategoria.objects.none())
     position = forms.CharField(widget=forms.HiddenInput())
-
+    address = forms.CharField(label=_(u"Dirección"),
+        help_text=_(u"Dirección del establecimiento"),
+        min_length=4)
+    email=forms.EmailField(label=_(u"Dirección de correo electrónico"),required=False)
+    description=forms.CharField(label=_(u"Descripción"),widget = forms.Textarea, min_length=10,required=False)
 
     def __init__(self, *args, **kwargs):   
         super(EstablecimientoForm, self).__init__(*args, **kwargs)          
@@ -79,6 +85,10 @@ class EstablecimientoForm(forms.ModelForm):
         model = Establecimiento
         fields=['nombre','email','web_page','telefono','address','description','position','categorias','sub_categorias']
 
+
+    
+    def hasNumbers(self,inputString):
+        return any(char.isdigit() for char in inputString)
 
 
 class EstablecimientoAdminForm(forms.ModelForm):
@@ -162,6 +172,13 @@ class SolicitudForm(forms.ModelForm):
         ----
         Formulario de solicitud en el administrador
     """
+
+    contenido = forms.CharField(
+        label=_(('Descripción de la solicitud').decode('utf-8')),
+        max_length=500,
+        required=False,
+        help_text="Si lo consideras necesarios puedes ingresar un comentario, pero no es obligatorio.",
+        widget = forms.Textarea)
     class Meta:
         model= Solicitud
         fields=['contenido']

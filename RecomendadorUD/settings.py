@@ -78,7 +78,8 @@ class Base(Configuration):
         'avatar', #http://django-avatar.readthedocs.org/en/latest/
     )
 
-    
+    MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
     NEW_RELIC_CONFIG_FILE="newrelic.ini"
     AVATAR_DEFAULT_URL="https://pbs.twimg.com/profile_images/497122002138714113/rlyHDPED_bigger.png"
     #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
@@ -134,7 +135,7 @@ class Base(Configuration):
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',    
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',            
         #'drealtime.middleware.iShoutCookieMiddleware',
         #'simple_history.middleware.HistoryRequestMiddleware',
     )
@@ -200,6 +201,7 @@ class Base(Configuration):
         'django.core.context_processors.media',
         'django.core.context_processors.static',
         'django.core.context_processors.request',
+        'django.contrib.messages.context_processors.messages',
         'django.contrib.auth.context_processors.auth',
         "apps.establishment_system.context_processors.notificaciones",
         "allauth.account.context_processors.account",

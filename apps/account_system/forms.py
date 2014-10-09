@@ -8,12 +8,16 @@ from notifications.models import Notification
 from django.conf import settings
 
 
-##############################Forms CustomUser#################################################################
+##############################Forms CustomUser########################################################
 class CustomUserCreationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given username and
     password.
     """
+
+    MIN_CHARS_FIRST_NAME=3
+    MIN_CHARS_LAST_NAME=3
+
     error_messages = {
         'duplicate_username': _("A user with that username already exists."),
         'password_mismatch': _("The two password fields didn't match."),
@@ -54,6 +58,36 @@ class CustomUserCreationForm(forms.ModelForm):
             raise forms.ValidationError(
                 self.error_messages['password_mismatch'])
         return password2
+
+    def clean_first_name(self):
+        diccionario_limpio = self.cleaned_data      
+        nombre = diccionario_limpio.get('first_name')     
+
+        if len(first_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo nombre debe ser mayor de "+
+                self.MIN_CHARS_FIRST_NAME+ 
+                " caracteres")
+        elif self.hasNumbers(first_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return first_name 
+
+    def clean_last_name(self):
+        diccionario_limpio = self.cleaned_data      
+        apellido = diccionario_limpio.get('last_name')     
+
+        if len(last_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo apellido debe ser mayor de "+
+                self.MIN_CHARS_LAST_NAME+ 
+                " caracteres")
+        elif self.hasNumbers(last_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return last_name 
+
+    def hasNumbers(self,inputString):
+        return any(char.isdigit() for char in inputString)
+
 
     def save(self, commit=True):
         print "Entro"
@@ -98,10 +132,14 @@ class CustomUserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
-##############################Forms Allauth################################################################# 
+##############################Forms Allauth######################################################
 
 #Extencion para el account signup 
 class SignupExtendForm(forms.Form):
+
+    MIN_CHARS_FIRST_NAME=3
+    MIN_CHARS_LAST_NAME=3
+
     first_name = forms.CharField(max_length=200, label='Nombres',required=True)
     last_name = forms.CharField(max_length=200, label='Apellidos',required=True)
 
@@ -113,10 +151,39 @@ class SignupExtendForm(forms.Form):
     class Meta:
         model = User 
 
+    def clean_first_name(self):
+        diccionario_limpio = self.cleaned_data      
+        first_name = diccionario_limpio.get('first_name')     
+
+        if len(first_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo nombre debe ser mayor de "+
+                str(self.MIN_CHARS_FIRST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(first_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return first_name 
+
+    def clean_last_name(self):
+        diccionario_limpio = self.cleaned_data      
+        last_name = diccionario_limpio.get('last_name')     
+
+        if len(last_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo apellido debe ser mayor de "+
+                str(self.MIN_CHARS_LAST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(last_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return last_name 
+
+    def hasNumbers(self,inputString):
+        return any(char.isdigit() for char in inputString)
 
 
-#Estas llamadas deben realizarse en este orden debido a que la clase SignuPExtendForm se usa posterioromente
-# en la llamada de las librerias
+
+#Estas llamadas deben realizarse en este orden debido a que la clase
+# SignuPExtendForm se usa posterioromente en la llamada de las librerias
 from allauth.utils import set_form_field_order
 from allauth.account.forms import   PasswordField, SetPasswordField
 from allauth.account.forms import LoginForm
@@ -171,7 +238,11 @@ class SignupFormSocial(SingupFormSoialAccount):
 class EditAccountForm(forms.ModelForm):    
     first_name=forms.CharField(label='Nombres', min_length=3, max_length=100,required=True)
     last_name=forms.CharField(label='Apellidos', min_length=3, max_length=100,required=True)
-    username=forms.CharField(label='Nombre de usuario', min_length=settings.ACCOUNT_USERNAME_MIN_LENGTH, max_length=30,required=True)
+    username=forms.CharField(
+        label='Nombre de usuario', 
+        min_length=settings.ACCOUNT_USERNAME_MIN_LENGTH, 
+        max_length=30,
+        required=True)
     class Meta:
         model = User
         fields = ('username','email','first_name', 'last_name')#,'password1', 'password2')

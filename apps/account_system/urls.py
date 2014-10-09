@@ -22,7 +22,8 @@ from .views import (
     LoginViewWithCustomForm,RegistroConvencioanl, 
     RegistroSocial, ProfileUpdate,ProfileUser,
     PorfilesUsers, NotificacionesView,
-    MarcarTodasNotificacionesLeidas, MarcarNotificacionLeida)
+    MarcarTodasNotificacionesLeidas, MarcarNotificacionLeida,
+    ChangePassCustom)
 
 urlpatterns = patterns('',    
 
@@ -34,7 +35,8 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/', 'django.contrib.auth.views.logout',{'next_page': 'home_url'},name='logout_url'),    
     url(r'^accounts/notifications/', NotificacionesView.as_view() ,name='notificaciones_url'),
     url(r'^accounts/update/',ProfileUpdate.as_view(), name='update_profile_url'),                 
-    url(r'^accounts/', include('allauth.urls')),        
+    url(r'^accounts/password/change/',ChangePassCustom.as_view(), name='update_pass_url'),                     
+    url(r'^accounts/', include('allauth.urls')),            
     url('', include('django.contrib.auth.urls', namespace='auth')),  
     url(r'^avatar/', include('avatar.urls')),       
     url(r'^mark_as_read_all/$', MarcarTodasNotificacionesLeidas.as_view(), name='mark_as_read_all_url'),

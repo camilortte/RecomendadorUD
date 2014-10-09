@@ -75,19 +75,18 @@ class Establecimiento(models.Model):
     """
         Modelo de establecimientos
     """
-
     nombre= models.CharField(_('Nombre'),max_length=100,null=False,blank=False,
-        help_text='Nombre legal del Establecimiento ',unique=True)
-    email= models.EmailField(_('Emial'),null=True,blank=True,
-        help_text='Correo electronico del Establecimiento',unique=False)
-    web_page=models.URLField(_('Pagina web'),null=True,blank=True, unique=False, 
-        help_text='Direccion de la pagina web ')
-    address= models.CharField(_('Direccion'),max_length=100,null=False,blank=False,
-        help_text='Direccion del establecimiento',unique=True)
-    description=models.TextField(_('Descripcion'),null=True,blank=True,
-        help_text='Una breve descripcion del establecimiento', unique=False)
-    telefono= models.CharField(_('Telefono'),max_length=15,null=True,blank=True,
-        help_text='Numero de telefono',unique=False)
+        help_text='Nombre legal del Establecimiento. ',unique=True)
+    email= models.EmailField(_('Email'),null=True,blank=True,
+        help_text=u'Correo electrónico del Establecimiento',unique=False)
+    web_page=models.URLField(_(u'URL Página web'),null=True,blank=True, unique=False, 
+        help_text=u'Dirección URL de la página web Ej:http://www.ejemplo.com ')
+    address= models.CharField(_(u'Dirección'),max_length=100,null=False,blank=False,
+        help_text=u'Dirección del establecimiento ',unique=True)
+    description=models.TextField(_(u'Descripción'),null=True,blank=True,
+        help_text=u'Una breve descripción del establecimiento', unique=False)
+    telefono= models.CharField(_(u'Teléfono'),max_length=15,null=True,blank=True,
+        help_text='Numero de teléfono',unique=False)
     #longitud=models.FloatField(_('Longitud'), null=True, blank=False,help_text='Longitud')
     #latitud=models.FloatField(_('Latitud'),null=True, blank=False,help_text='Latitud')
     #position = GeopositionField()
@@ -95,7 +94,7 @@ class Establecimiento(models.Model):
     objects = models.GeoManager()
     administradores= models.ManyToManyField(User,blank=True,null=True)
     sub_categorias=models.ForeignKey(SubCategoria)
-    visible = models.BooleanField(_('Is visible'), default=True,
+    visible = models.BooleanField(_('Es visible'), default=True,
         help_text=_('El establecimiento es visible'))
     rating = RatingField(range=5,can_change_vote = True) # 5 possible rating values, 1-5
     class Meta:
@@ -144,8 +143,7 @@ class Comentario(models.Model):
     post = models.ForeignKey(Establecimiento)     
     ip_address = models.GenericIPAddressField(_('IP address'), unpack_ipv4=True, blank=True, null=True)
     is_public = models.BooleanField(_('is public'), default=True,
-                    help_text=_('Uncheck this box to make the comment effectively ' \
-                                'disappear from the site.'))
+                    help_text=_('Si el comentario es visible '))
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.post, self.body[:60]))
@@ -178,14 +176,14 @@ class EstablecimientoTemporal(models.Model):
     
     nombre= models.CharField(_('Nombre'),max_length=100,null=False,blank=False,
         help_text='Nombre legal del Establecimiento ',unique=False)
-    email= models.EmailField(_('Emial'),null=True,blank=True,
-        help_text='Correo electronico del Establecimiento',unique=False)
-    web_page=models.URLField(_('Pagina web'),null=True,blank=True, unique=False, 
-        help_text='Direccion de la pagina web ')
-    address= models.CharField(_('Direccion'),max_length=100,null=False,blank=False,
-        help_text='Direccion del establecimiento',unique=False)
-    description=models.TextField(_('Descripcion'),null=True,blank=True,
-        help_text='Una breve descripcion del establecimiento', unique=False)
+    email= models.EmailField(_('Email'),null=True,blank=True,
+        help_text=u'Correo electrónico del Establecimiento',unique=False)
+    web_page=models.URLField(_(u'Página web'),null=True,blank=True, unique=False, 
+        help_text=u'Dirección de la página web ')
+    address= models.CharField(_(u'Dirección'),max_length=100,null=False,blank=False,
+        help_text=u'Dirección del establecimiento',unique=False)
+    description=models.TextField(_(u'Descripción'),null=True,blank=True,
+        help_text=u'Una breve descripción del establecimiento', unique=False)
     position =models.PointField() # GeopositionField()
     sub_categorias=models.ForeignKey(SubCategoria)
     objects = models.GeoManager()

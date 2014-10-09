@@ -80,8 +80,6 @@
     width:245px; 
     height:147px;
     border-width: 2px;
-    border-color:#47a3da;
-    border-style: solid;
     text-align: center;
     vertical-align: middle;
     line-height: 147px;  
@@ -129,7 +127,7 @@
                         </form>                    
                     {% endif %}                       
                     <a class="fancybox thumbnail" rel="gallery1" href="{{MEDIA_URL}}{{imagen.imagen}}" title="{{imagen.imagen}}">
-                    <img src="{{imagen.imagen_thumbnail.url}}" alt="{{imagen.imagen}}" />
+                    <img class="img-responsive"  src="{{imagen.imagen_thumbnail.url}}" alt="{{imagen.imagen}}"/>
                     </a>    
                 </div>    
                 {% endif %}                
@@ -140,10 +138,8 @@
                     <span class="close">                            
                                 <input type="submit" value=""/>
                             </span>
-                    <a href="#" class="thumbnail">
-                        <div class="blanck-space" >
-                            <h4>Espacio libre</h4>
-                        </div>
+                    <a  class="thumbnail">
+                        <img class="img-responsive blanck-space" src="{% static 'img/default_imgest.jpg'%}" alt="{{x}}"/>
                     </a>
                 </div>
             {% endfor %}
@@ -189,7 +185,7 @@
                 <h3><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{object.email}}</small></h3>    
                 {% endif %}
                 {% if object.web_page %}
-                <h3><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white">{{object.web_page}}</small></h3>
+                <h3><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white"><a style="color:white;" href="{{object.web_page}}">{{object.web_page}}</a></small></h3>
                 {% endif %}
                 <h3><span class="glyphicon glyphicon-map-marker"></span>  Dirección:  <small class="small-white">{{object.address}}</small></h3>
                 {% if object.telefono %}
@@ -328,8 +324,7 @@
                 </div>
 
             {% else %}
-                <h2>Nada por aquí</h2>
-                <p class="text-justify">Nadie a dado su opinión, se tu el primero.</p>
+                <h2>Nadie a dado su opinión, se tu el primero :D.</h2>
             {% endif %}
             
             

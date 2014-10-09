@@ -36,6 +36,9 @@
   <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
   <link href="{% static 'Bootstrap-3-Typeahead/typeaheadjs.css'%}" rel="stylesheet">
 
+  <link href="{% static 'bootstrap-notify/bootstrap-notify.css'%}">
+  <script src="{% static 'bootstrap-notify/bootstrap-notify.js'%}"></script>    
+
   <style>
     h1 {
         text-align: center;
@@ -228,7 +231,7 @@ a.alert_message:hover{color : grey}
       </ul>
 
 
-      <form class="navbar-form autocomplete-me" role="search" method="post" action="/buscar/"> {%csrf_token%}          
+      <form class="navbar-form autocomplete-me" role="search" method="get" action="{% url 'busqueda_establecimiento_url' %}" id="search_form"> {%csrf_token%}          
         <div class="form-group" style="display:inline;">
           <div  class="input-group" id="remote">         
           <!--   
@@ -291,8 +294,12 @@ a.alert_message:hover{color : grey}
 </nav>
 
 
+
   <div class="container" >
-  <div class="main"   >  
+  <div class="main"   >      
+      <div   style="display:none;" id="notification_content">{% if messages %}<ul class="messages">{% for message in messages %}<li {% if message.tags %} class="{{message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}</ul>{% endif %}</div>
+    <div class='notifications top-left class="col-md-offset-1 col-md-10 col-md-offset-1'></div><br>
+
     {% block content %}{% endblock %}
   </div>
 </div>
@@ -399,8 +406,23 @@ a.alert_message:hover{color : grey}
 
 });
 
+if ($('#notification_content').html()){
+      $('.top-left').notify({
+        message: { html:  $('#notification_content').html()},
+        fadeOut: { enabled: true, delay: 5000 }
+      }).show(); // for the ones that aren't closable and don't fade out there is a .hide() function.
+    }
 
+$('#enviar_form').click(function(){
+  $('#search_form').submit()
+})
 
+$("#id_qs").keypress(function(event) {
+    if (event.which == 13) {
+        event.preventDefault();
+        $('#search_form').submit()
+    }
+});
 
 
     </script>

@@ -29,41 +29,66 @@
 {% block content %}
     <div class="row">
       <div class="col-md-12">
+
+        
+
         <div class=" col-md-4 col-sm-12 col-xs-12 ">   
           <h1>Ten encuenta  </h1>
-          <div class="well col-md-12 borde">
-          <h4>Solicitud modificación</h4>  
-          <ul>
-            <p class="text-justify">Si tu solicitud es de modificación ten en cuenta:</p>
-            <li><p class="text-justify">Procura ingresar todos los datos que puedas.</p></li>
-            <li><p class="text-justify">La ubicación debe ser lo más exacta posible.</p></li>
-            <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
-            <li><p class="text-justify">No ingreses información falsa</p></li>
-            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
-          </ul>
-        </div>    
 
-        <div class="well col-md-12 borde">
-          <h4>Solicitud es de administración</h4>  
-          <ul>
-            <p class="text-justify"> Si tu solicitud es de administración ten en cuenta: </p>
-            <li><p class="text-justify">Ingresa los campos requeridos.</p></li>            
-            <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
-            <li><p class="text-justify">Al enviar la información se llevara un proceso sobre tu solicitud, nosotros nos comunicaremos con tigo a partir de la información proporcionada en tu perfil</p></li>
-            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
-          </ul>
-        </div> 
+          {% if tipo_solicitud == '0' %}
+                <div class="well col-md-12 borde">
+              <h4>Solicitud  de administración</h4>  
+              <ul>
+                <p class="text-justify"> Si tu solicitud es de administración ten en cuenta: </p>
+                <li><p class="text-justify">Ingresa los campos requeridos.</p></li>            
+                <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+                <li><p class="text-justify">Al enviar la información se llevara un proceso sobre tu solicitud, nosotros nos comunicaremos con tigo a partir de la información proporcionada en tu perfil</p></li>
+                <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+              </ul>
+            </div> 
+          {%endif%}
+          {% if tipo_solicitud == '1' %}
+              <div class="well col-md-12 borde">
+            <h4>Solicitud modificación</h4>  
+            <ul>
+              <p class="text-justify">Si tu solicitud es de modificación ten en cuenta:</p>
+              <li><p class="text-justify">Procura ingresar todos los datos que puedas.</p></li>
+              <li><p class="text-justify">La ubicación debe ser lo más exacta posible.</p></li>
+              <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+              <li><p class="text-justify">No ingreses información falsa</p></li>
+              <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+            </ul>
+          </div>   
+          {%endif%}
+          {% if tipo_solicitud == '2' or tipo_solicitud == '3'  %}              
+            <div class="well col-md-12 borde">
+              <h4>Solicitud eliminación</h4>  
+              <ul>
+                <li><p class="text-justify">Ingresa los campos requeridos y una breve descripción</p></li>
+                <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
+              </ul>
+            </div> 
+          {%endif%}
 
-        <div class="well col-md-12 borde">
-          <h4>Solicitud eliminación</h4>  
-          <ul>
-            <li><p class="text-justify">Ingresa los campos requeridos y una breve descripción</p></li>
-            <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
-          </ul>
-        </div> 
+
 
       </div>
         <div class="col-md-8">
+
+
+          {% if tipo_solicitud == '0' %}
+            <h2 class="text-center">Crear solictud para administrar el lugar <a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{establecimiento.nombre |title}}</a></h2>
+          {%endif%}
+          {% if tipo_solicitud == '1' %}
+            <h2 class="text-center">Crear solictud para editar el lugar <a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{establecimiento.nombre |title}}</a></h2>
+          {%endif%}
+          {% if tipo_solicitud == '2' %}
+            <h2 class="text-center">Crear solictud para eliminar el lugar <a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{establecimiento.nombre |title}}</a></h2>
+          {%endif%}
+          {% if tipo_solicitud == '3' %}
+            <h2 class="text-center">Crear solictud para eliminar el lugar <a href="{% url 'establecimiento_detail_url' establecimiento.id%}">{{establecimiento.nombre |title}}</a></h2>
+          {%endif%}
+
           <form action="" method="POST">{% csrf_token %}
             {% if form2 %}
                 {% bootstrap_form form2%}

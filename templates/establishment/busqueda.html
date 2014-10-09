@@ -1,104 +1,104 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Autocomplete Example</title>
-</head>
-<body>
-  <h1>Autocomplete Example</h1>
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% block head_title %}{% trans "RecomendadorUD-Crear" %}{% endblock %}
+{% load bootstrap3 %}
+{% load static %}
+  
+{% block scripts %}
+{% endblock scripts %}
 
-  <form method="post" action="/buscar/" class="autocomplete-me"> {%csrf_token%}
-    <input type="text" id="id_q" name="q" autocomplete='off'>
-    <input type="submit" value="Search!">
-  </form>
+{% block styles %}
+.custo-input-group{
+  width: 110%;
+}
+{% endblock styles %}
+{% block content %}
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script type="text/javascript">
-    // In a perfect world, this would be its own library file that got included
-    // on the page and only the ``$(document).ready(...)`` below would be present.
-    // But this is an example.
-    var Autocomplete = function(options) {
-      this.form_selector = options.form_selector
-      this.url = options.url || '/buscar_json'
-      this.delay = parseInt(options.delay || 300)
-      this.minimum_length = parseInt(options.minimum_length || 3)
-      this.form_elem = null
-      this.query_box = null
-    }
+<div class="row">
+  <div class="col-md-offset-1 col-md-10 col-md-offset-1">
+      <h1>Busqueda</h1>       
+      <form id="search-form" class="navbar-form" method="get" role="search" action=".">
+        <div class="input-group custo-input-group">
+          <input type="text" class="form-control" placeholder="Search" name="q" id="search_input">
+          <div class="input-group-btn">
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button>
+          </div>
+        </div>    
+      </form>
+      <br><br>
+  </div>
 
-    Autocomplete.prototype.setup = function() {
-      var self = this
+  <div class="col-md-offset-1 col-md-10 col-md-offset-1">
 
-      this.form_elem = $(this.form_selector)
-      this.query_box = this.form_elem.find('input[name=q]')
+    {% for dato in datos  %}
 
-      // Watch the input box.
-      this.query_box.on('keyup', function() {
-        var query = self.query_box.val()
+      <div class="row">
+        <div class="col-md-3">
+          {% if dato.imagen_set.first %}
+          <img class="img-responsive" src="{{dato.imagen_set.first.imagen_thumbnail.url}}" alt="{{dato.nombre}}" />
 
-        if(query.length < self.minimum_length) {
-          return false
-        }
+          {%else%}
+            <img class="img-responsive" src="{% static 'img/default_imgest.jpg'%}" alt="{{dato.nombre}}" />
+          {%endif%}
+        </div>
 
-        self.fetch(query)
-      })
+        <div class="col-md-9">
+          <h3><a href="{% url 'establecimiento_detail_url' dato.id%}"> {{dato.nombre | title}}</a> </h3>
+          <h5>{{dato.sub_categorias.categorias | title}} | {{dato.sub_categorias |title}}</h5>
+          <p class="text-justify">{{dato.description}}</p>
+          <br>
 
-      // On selecting a result, populate the search field.
-      // this.form_elem.on('click', '.ac-result', function(ev) {
-      //   self.query_box.val($(this).text())
-      //   $('.ac-results').remove()
-      //   return false
-      // })
-    }
+        </div>
+      </div>
+      <hr>
+    {% endfor %}
 
-    Autocomplete.prototype.fetch = function(query) {
-      var self = this
+     <ul class="pagination ">        
+            {% if datos.has_previous %}                
+                <li><a href="?page={{ datos.previous_page_number }}&q={{query}}">&laquo;</a></li>
+            {% endif %}
 
-      $.ajax({
-        url: this.url
-      , data: {
-          'q': query
-        }
-      , success: function(data) {
-          self.show_results(data)
-        }
-      })
-    }
+            
+            <li><a href="#">{{ datos.number }} de {{ datos.paginator.num_pages }}</a></li>
+            
 
-    Autocomplete.prototype.show_results = function(data) {
-      // Remove any existing results.
-      $('.ac-results').remove()
-      console.log("data results: "+data.results);
-      var results = data.results || []
-      var results_wrapper = $('<div class="ac-results"></div>')
-      var base_elem = $('<div class="result-wrapper"><a href="#" class="ac-result"></a></div>')
+            {% if datos.has_next %}                
+                <li><a href="?page={{ datos.next_page_number }}&q={{query}}">&raquo;</a></li>
+            {% endif %}
+        
+    </ul>
 
-      if(results.length > 0) {
-        for(var res_offset in results) {
-        	console.log(res_offset);
-          var elem = base_elem.clone()
-          // Don't use .html(...) here, as you open yourself to XSS.
-          // Really, you should use some form of templating.
-          elem.find('.ac-result').text(results[res_offset].nombre)
-          elem.find('.ac-result').attr( "href", '/establecimientos/'+results[res_offset].id)
-          results_wrapper.append(elem)
-        }
+    
+      
+  </div>
+
+
+
+  
+</div>
+  
+<script type="text/javascript"> 
+
+  function getUrlParameter(sParam)
+  {
+      var sPageURL = window.location.search.substring(1);
+      var sURLVariables = sPageURL.split('&');
+      for (var i = 0; i < sURLVariables.length; i++) 
+      {
+          var sParameterName = sURLVariables[i].split('=');
+          if (sParameterName[0] == sParam) 
+          {
+              return sParameterName[1];
+          }
       }
-      else {
-        var elem = base_elem.clone()
-        elem.text("No results found.")
-        results_wrapper.append(elem)
-      }
+  }  
 
-      this.query_box.after(results_wrapper)
-    }
+  $('#search_input').val(decodeURIComponent(getUrlParameter('q')).replace(/\+/g," "));
 
-    $(document).ready(function() {
-      window.autocomplete = new Autocomplete({
-        form_selector: '.autocomplete-me'
-      })
-      window.autocomplete.setup()
-    })
-  </script>
-</body>
-</html>
+</script>
+  
+{% endblock content %}
+
+ 

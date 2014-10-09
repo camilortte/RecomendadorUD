@@ -103,3 +103,13 @@ http://wiki.openstreetmap.org/wiki/PostGIS/Installation#Ubuntu_14.04_LTS_2
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04
 http://www.hackido.com/2014/04/setting-up-postgres-for-local.html
 https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn
+
+--> Despues de todo
+sudo -i -u postgres
+createdb recomendadorUD_database
+psql recomendadorUD_database
+
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_topology;
+\q
+exit

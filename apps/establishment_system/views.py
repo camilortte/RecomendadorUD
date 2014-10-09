@@ -22,15 +22,17 @@ import json
 
 #Django
 from django.shortcuts import render,redirect
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.http import HttpResponse, Http404,HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 from django.forms import DateField
 from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers  import reverse_lazy , lazy,reverse
+from django.contrib import messages
 from django.views.generic import (
     DetailView, CreateView , ListView, UpdateView,
     DeleteView)
@@ -80,6 +82,7 @@ class DetalleEstablecimientoView(DetailView):
 
     template_name = "establishment/detail.html"
     model= Establecimiento
+
 
     def get_context_data(self, **kwargs):
         u"""
@@ -162,6 +165,9 @@ class DetalleEstablecimientoView(DetailView):
         else:
             return False
 
+    @method_decorator(cache_control(must_revalidate=True, no_cache=True, no_store=True)) 
+    def dispatch(self, *args, **kwargs):
+        return super(DetalleEstablecimientoView, self).dispatch(*args, **kwargs)
 
 class JSONMixin(object):
 
@@ -275,6 +281,7 @@ class CommentCreateView(JSONMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
+        messages.success(self.request, u"Comentario creado.") 
         return self.render_to_response(self.get_context_data(form=form))
 
 
@@ -363,6 +370,7 @@ class EliminarComentario(DeleteView):
             comentario=Comentario.objects.get(id=comentario_id)
             comentario.delete()
                             
+        messages.success(self.request, u"Establecimiento Eliminado.") 
         self.success_url = reverse('establecimiento_detail_url', kwargs={'pk': establecimiento_id})
         return HttpResponseRedirect(self.success_url)
         
@@ -408,7 +416,10 @@ class CrearEstablecimiento(CreateViewVanilla):
     form_class = EstablecimientoForm
     success_url = lazy(reverse, str)("home_url")   #Esta se modifica en el metodo get_succes_url
 
+    
+
     def get_success_url(self):        
+        messages.success(self.request, u"Establecimiento creado.")  
         return reverse_lazy('establecimiento_detail_url',
                             kwargs={'pk': self.object.id})
 
@@ -492,6 +503,7 @@ class UpdateEstablecimiento(UpdateView):
     success_url = lazy(reverse, str)("home_url")   #Esta se modifica en el metodo get_succes_url
 
     def get_success_url(self):        
+        messages.success(self.request, u"Establecimiento Actualizado.") 
         return reverse_lazy('establecimiento_detail_url',
                             kwargs={'pk': self.object.id})
 
@@ -590,22 +602,28 @@ class Autocomplete(View):
             Returns:
                 Objeto JSON con los resultados de las coincidencias
         """
+        print "Entra a Autocomplete"
         q=request.GET.get('q', None)
         if q is not None and q != "":
-            sqs = SearchQuerySet().autocomplete(nombre=q)[:10]
-            sqs2 = SearchQuerySet().autocomplete(email=q)[:10]
-            sqs3 = SearchQuerySet().autocomplete(web_page=q)[:10]
-            sqs4 = SearchQuerySet().autocomplete(address=q)[:10]        
-            sqs5 = SearchQuerySet().autocomplete(sub_categorias=q)[:10]        
-            #sqs5 = SearchQuerySet().autocomplete(tag=q)[:10]    
+
+            print "\n\n---> Esto llega: ",q
+
+            sqs = SearchQuerySet().autocomplete(nombre__icontains=q)[:10]
+            sqs = SearchQuerySet().autocomplete(nombre=q)[:10]            
+            print "ANtes: ",sqs
+            # sqs2 = SearchQuerySet().autocomplete(email=q)[:10]
+            # sqs3 = SearchQuerySet().autocomplete(web_page=q)[:10]
+            # sqs4 = SearchQuerySet().autocomplete(address=q)[:10]        
+            # sqs5 = SearchQuerySet().autocomplete(sub_categorias=q)[:10]        
+            # sqs5 = SearchQuerySet().autocomplete(tag=q)[:10]    
             
             establecimientos=[]
             establecimientos=self.get_establecimientis(establecimientos, sqs)
-            establecimientos=self.get_establecimientis(establecimientos, sqs2)
-            establecimientos=self.get_establecimientis(establecimientos, sqs3)
-            establecimientos=self.get_establecimientis(establecimientos, sqs4)
-            establecimientos=self.get_establecimientis(establecimientos, sqs5)
-            establecimientos=self.get_establecimientis(establecimientos, sqs5)
+            # establecimientos=self.get_establecimientis(establecimientos, sqs2)
+            # establecimientos=self.get_establecimientis(establecimientos, sqs3)
+            # establecimientos=self.get_establecimientis(establecimientos, sqs4)
+            # establecimientos=self.get_establecimientis(establecimientos, sqs5)
+            # establecimientos=self.get_establecimientis(establecimientos, sqs5)
         else:            
             # categoria=Categoria.objects.filter(tag__icontains=q)
             # sub_cate=SubCategoria.objects.filter(categorias=categoria)
@@ -628,7 +646,6 @@ class Autocomplete(View):
             Obtener los ids valido para no repetir informacion
         """
         for element in establecimientos:
-            print element
             if element.get('id')==str(id):
                 return True
         return False
@@ -653,7 +670,7 @@ class DeleteImagen(DeleteView):
     """
 
     model=Imagen
-    success_url = '/home/'
+    success_url = reverse_lazy('home_url')
 
     def get_object(self, queryset=None):
         u""" 
@@ -687,6 +704,7 @@ class DeleteImagen(DeleteView):
                     print "Intentando romper el sistema"
                     raise Http404
         print " SE BORRARA LA IMAGEN: ",obj.id
+        messages.success(self.request, u"Imagen eliminada.") 
         self.success_url=reverse_lazy('establecimiento_detail_url',
                             kwargs={'pk': self.kwargs['est_id']})
         return obj
@@ -717,6 +735,7 @@ class Solicitar(View):
 
             En todas las solicitudes se agrega un formulario de solicitud.
         """
+        establecimiento=Establecimiento.objects.get(id=establecimiento_id)
         if tipo_solicitud=='0':
             formulario= SolicitudForm()
         else: 
@@ -728,7 +747,9 @@ class Solicitar(View):
                 formulario2= EstablecimientoTemporalForm(instance=est)
                 return render(request, 'establishment/solicitud.html', {
                     'form':formulario, 'form2':formulario2,
-                    'lng':lng,'lat':lat
+                    'lng':lng,'lat':lat,
+                    'tipo_solicitud':tipo_solicitud,
+                    'establecimiento':establecimiento
                 })
             else: 
                 if tipo_solicitud=='2':
@@ -739,7 +760,11 @@ class Solicitar(View):
                     else:
                         raise Http404               
         
-        return render(request, 'establishment/solicitud.html', {'form':formulario})
+        return render(request, 'establishment/solicitud.html', 
+            {'form':formulario, 
+                'tipo_solicitud':tipo_solicitud,
+                'establecimiento':establecimiento
+            })
 
     def post(self, request,tipo_solicitud,establecimiento_id):
         u"""
@@ -815,6 +840,7 @@ class Solicitar(View):
                 self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
                      request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
 
+            messages.success(self.request, u"Solicitud enviada.") 
             return redirect('/establecimientos/'+establecimiento_id+'/')
             
 
@@ -908,6 +934,57 @@ class UploadImagenView(View):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(UploadImagenView, self).dispatch(*args, **kwargs)   
+
+from django.db.models import Q
+class BusquedarView(TemplateView):
+    template_name = "establishment/busqueda.html"
+
+    def get(self, request, *args, **kwargs):
+        q=request.GET.get('q',None)      
+        if q is not None:
+            establecimientos=Establecimiento.objects.filter(
+                Q(nombre__icontains=q) | Q(email__icontains=q) | 
+                Q(address__icontains=q) | Q(email__icontains=q) | 
+                Q(sub_categorias__icontains=SubCategoria.objects.filter(tag__icontains=q)))
+
+            
+            paginator = Paginator(establecimientos, 20)
+            page = request.GET.get('page')
+            try:
+                establecimientos = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                establecimientos = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                establecimientos = paginator.page(paginator.num_pages)
+        else:
+            establecimientos=None
+
+        return render(request, "establishment/busqueda.html",{'datos':establecimientos,'query':q})
+
+    
+    def existe(self,establecimientos,id):
+        """
+            Obtener los ids valido para no repetir informacion
+        """
+        for element in establecimientos:
+            if element.get('id')==str(id):
+                return True
+        return False
+
+    def get_establecimientis(self,establecimientos,sqs):
+        u"""
+            Se encarga de agregar nuevos resultado(Establecmientos) sin repetirlos
+        """
+        for resultado in sqs:
+            if not self.existe(establecimientos, resultado.pk):
+                temporal={'id':resultado.pk,'nombre':resultado.nombre,'address':resultado.address,
+                        'web_page':resultado.web_page,'email':resultado.email,'sub_categorias':resultado.sub_categorias}
+                establecimientos.append(temporal)
+
+        return establecimientos
+
 
 #################################################################################################
 #####################################################                 ###########################

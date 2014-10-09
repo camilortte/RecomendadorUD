@@ -22,8 +22,9 @@ from .models import Establecimiento, Categoria
 
 
 class EstablecimientoIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+    text = indexes.CharField(document=True)
     nombre =  indexes.EdgeNgramField(model_attr='nombre')
+    #nombre_auto =  indexes.EdgeNgramField(model_attr='nombre')
     email =  indexes.EdgeNgramField(model_attr='email')
     web_page = indexes.EdgeNgramField(model_attr='web_page')
     address= indexes.EdgeNgramField(model_attr='address')    
@@ -39,6 +40,11 @@ class EstablecimientoIndex(indexes.SearchIndex, indexes.Indexable):
         # the manufacturer when indexing
         return self.get_model().objects.all().select_related('sub_categorias')
 
+    # def search(self):
+    #     if hasattr(self,'cleaned_data') and self.cleaned_data['q']:
+    #         self.cleaned_data['q']=self.cleaned_data['q'].encode('translit/one/ascii', 'replace')
+    #     sqs = super(RtSearchForm, self).search()
+    #     return sqs
 
 class CategoriaIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)

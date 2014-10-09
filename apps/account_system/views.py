@@ -25,11 +25,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View, TemplateView
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse,lazy
+from django.core.urlresolvers import reverse,lazy, reverse_lazy
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 #External apps
 from notifications import notify
-from allauth.account.views import LoginView, SignupView, PasswordSetView
+from allauth.account.views import LoginView, SignupView, PasswordSetView, PasswordChangeView
 from allauth.socialaccount.views import SignupView as SignupSocialAccountView
 from allauth.socialaccount.models import SocialAccount
 
@@ -76,7 +77,7 @@ class ProfileUpdate(UpdateView):
     model = User
     form_class = EditAccountForm
     template_name = 'account/edit_my_profile_user.html'
-    success_url="/home/"
+    success_url=reverse_lazy("update_profile_url")
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -94,7 +95,14 @@ class ProfileUpdate(UpdateView):
 
     @method_decorator(login_required(login_url='home_url'))
     def dispatch(self, *args, **kwargs):
+        print "ARGS: ",args
+        print "kwargs: ",kwargs
         return super(ProfileUpdate, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self,*args, **kwargs):                
+        messages.success(self.request, u"Perfil  actualizado correctamente.")  
+        return super(ProfileUpdate, self).get_success_url(*args, **kwargs)
+     
 
 
 class ChangePass(PasswordSetView):
@@ -186,7 +194,11 @@ class NotificacionesView(TemplateView):
         return super(NotificacionesView, self).dispatch(*args, **kwargs)
 
  
+class ChangePassCustom(PasswordChangeView):
+    success_url = reverse_lazy("update_profile_url")
 
+    def get_success_url(self,*args, **kwargs):                
+        return super(ChangePassCustom, self).get_success_url(*args, **kwargs)
 
 #########################################################################################################################
 #####################################################                 ###################################################
