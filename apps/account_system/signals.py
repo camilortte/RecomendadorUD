@@ -7,6 +7,9 @@ from apps.recommender_system.models import EstablecimientosRecommender
 from .models import User
 from django.db.models.signals import post_save
 from notifications import notify
+from avatar.models import Avatar
+import urllib, cStringIO
+from PIL import Image
 # When account is created via social, fire django-allauth signal to populate Django User record.
  
 @receiver(user_signed_up)
@@ -65,5 +68,13 @@ def email_confirmed(sender,**kwargs):
 
 
 
+# def change_imagen(url,user):    
+#     avatar = Avatar(user=user, primary=True)
+#     file = cStringIO.StringIO(urllib.urlopen(url).read())
+#     image_file = Image.open(file) 
+#     avatar.avatar.save(user.name+user.id, image_file)
+#     avatar.save()
+#     #avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
 
-   
+
+#    https://graph.facebook.com/10203117078182580/picture?type=square&height=600&width=600&return_ssl_resources=1

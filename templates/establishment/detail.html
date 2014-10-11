@@ -185,7 +185,7 @@
                 <h3><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{object.email}}</small></h3>    
                 {% endif %}
                 {% if object.web_page %}
-                <h3><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white"><a style="color:white;" href="{{object.web_page}}">{{object.web_page}}</a></small></h3>
+                <h3><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white"><a style="color:white;" href="{{object.web_page}}" target="_blank">{{object.web_page}}</a></small></h3>
                 {% endif %}
                 <h3><span class="glyphicon glyphicon-map-marker"></span>  Dirección:  <small class="small-white">{{object.address}}</small></h3>
                 {% if object.telefono %}
@@ -324,7 +324,7 @@
                 </div>
 
             {% else %}
-                <h2>Nadie a dado su opinión, se tu el primero :D.</h2>
+                <h2>Nadie a dado su opinión, se el primero :D.</h2>
             {% endif %}
             
             

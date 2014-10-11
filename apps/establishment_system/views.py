@@ -1037,13 +1037,13 @@ class CalificacionApiView(APIView):
             user=User.objects.get(id=request.user.id)                
             calificacion_usuario= establecimiento.rating.get_rating_for_user(user) 
             salida={
-                    "ratin_estableicimiento":int(establecimiento.rating.get_rating()),
+                    "ratin_estableicimiento":round(establecimiento.rating.get_rating(),1),
                     "rating_usuario":calificacion_usuario
             }   
         except Exception, e:            
             try:                
                 salida={
-                    "ratin_estableicimiento":int(establecimiento.rating.get_rating()),
+                    "ratin_estableicimiento":round(establecimiento.rating.get_rating(),1),
                     "rating_usuario":0
                 }           
             except Exception, e:                                          

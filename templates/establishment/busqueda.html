@@ -55,8 +55,13 @@
       <hr>
     {% endfor %}
 
-     <ul class="pagination ">        
+    {% if datos %}
+     <ul class="pagination ">            
+
             {% if datos.has_previous %}                
+                {% if datos.previous_page_number != 1 %}                
+                    <li><a href="?page=1&q={{query}}">1</a></li>
+                {% endif %}
                 <li><a href="?page={{ datos.previous_page_number }}&q={{query}}">&laquo;</a></li>
             {% endif %}
 
@@ -64,11 +69,18 @@
             <li><a href="#">{{ datos.number }} de {{ datos.paginator.num_pages }}</a></li>
             
 
-            {% if datos.has_next %}                
+            {% if datos.has_next %}  
                 <li><a href="?page={{ datos.next_page_number }}&q={{query}}">&raquo;</a></li>
-            {% endif %}
-        
+                {% if datos.next_page_number != datos.paginator.num_pages %}                
+                    <li><a href="?page={{datos.paginator.num_pages}}&q={{query}}">{{datos.paginator.num_pages}}</a></li>
+                {% endif %}
+            {% endif %}        
     </ul>
+    {%else%}
+    <h3 class="text-center">Lo sentimos: No encontramos ninguna coincidencia para el termino "{{query}}"</h3>
+    <img class="img-responsive center-block" src="{% static 'img/not_results_found.png'%}"  alt="Not found">
+    <br><br>
+    {% endif%}
 
     
       

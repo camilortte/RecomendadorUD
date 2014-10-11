@@ -38,7 +38,7 @@ class EstablecimientoForm(forms.ModelForm):
         Formuilario de adicion de establecimeintos
     """    
     telefono = forms.RegexField(label=_(u"Teléfono"),regex=r'^\+?1?\d{7,15}$', 
-                                error_message = ("Numero de telefono invalido."))   
+                                error_message = ("Numero de telefono invalido."),required=False)   
     categorias = forms.ModelChoiceField(label="Categoria",queryset=Categoria.objects.all(),
         widget=forms.Select(attrs={'id': 'categoria'}))
     sub_categorias= forms.ModelChoiceField(label="SubCategoria",queryset=SubCategoria.objects.none())
@@ -177,7 +177,7 @@ class SolicitudForm(forms.ModelForm):
         label=_(('Descripción de la solicitud').decode('utf-8')),
         max_length=500,
         required=False,
-        help_text="Si lo consideras necesarios puedes ingresar un comentario, pero no es obligatorio.",
+        help_text="Detalla tu solicitud.",
         widget = forms.Textarea)
     class Meta:
         model= Solicitud
@@ -201,7 +201,7 @@ class EstablecimientoTemporalForm(forms.ModelForm):
         Formulario del establecimiento temporal 
     """
     telefono = forms.RegexField(regex=r'^\+?1?\d{7,15}$', 
-                                error_message = ("Numero de telefono invalido."))   
+                                error_message = ("Numero de telefono invalido."), required=False)   
     categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),
         widget=forms.Select(attrs={'id': 'categoria'}))
     sub_categorias= forms.ModelChoiceField(queryset=SubCategoria.objects.none())

@@ -99,6 +99,15 @@ li.alert_li:hover{background-color:#eee}
 .turn_off_alert{float:right;margin-bottom :1px}
 a.alert_message{color : grey}
 a.alert_message:hover{color : grey}
+
+
+
+
+.izq{
+  margin-left: 0px;
+  padding-left: 3px;
+}
+
   {% block styles %}
     
   {% endblock styles %}
@@ -133,9 +142,9 @@ a.alert_message:hover{color : grey}
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand navbar-left" href="#" id="showLeftPush">
-            <div class="row">               
-             <div class="col-md-9 col-sm-9 col-xs-9">RecomendadorUD</div>
-             <div class="col-md-3 col-sm-3 col-xs-3"><span id="icon_menu" class="glyphicon glyphicon-th"></span></div>
+            <div class="row">                            
+             <div class="col-md-3 col-sm-3 col-xs-3 " id="icon_menu"><span  class="glyphicon glyphicon-th-list"></span></div>
+             <div class="col-md-9 col-sm-9 col-xs-9 izq">RecomendadorUD</div>
 
            </div>
          </a>
@@ -281,12 +290,12 @@ a.alert_message:hover{color : grey}
     <br>
   </a>  
   <a href="{% url 'home_url' %}"><span class="glyphicon glyphicon-home"></span> Inicio</a>
-  <a href="{% url 'establecimientos_list_url' %}"><span class="glyphicon glyphicon-search"></span> Buscar Lugares</a>  
+  <a href="{% url 'establecimientos_list_url' %}"><span class="glyphicon glyphicon-map-marker"></span> Mapa de Lugares</a>  
   {% if request.user.is_authenticated %}
     {% if  user.is_organizacional or user.is_superuser%}
       <a href="{% url 'establecimientos_propios_ur'%}"><span class="glyphicon glyphicon-briefcase"></span> Mis Lugares</a>
     {% endif %}
-      <a href="{% url 'recmendacion_url'%}"><span class="glyphicon glyphicon-thumbs-up"></span> ¡Recomiendame!</a> 
+      <a href="{% url 'recmendacion_url'%}"><span class="glyphicon glyphicon-thumbs-up"></span> ¡Te recomendamos!</a> 
       <a href="{% url 'establecimiento_create_url' %}"><span class="glyphicon glyphicon-ok"></span>  Crear lugar</a>         
   {% else %}
 
@@ -297,8 +306,10 @@ a.alert_message:hover{color : grey}
 
   <div class="container" >
   <div class="main"   >      
+    <div class="row">
       <div   style="display:none;" id="notification_content">{% if messages %}<ul class="messages">{% for message in messages %}<li {% if message.tags %} class="{{message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}</ul>{% endif %}</div>
-    <div class='notifications top-left class="col-md-offset-1 col-md-10 col-md-offset-1'></div><br>
+      </div>
+    <div class='notifications top-left class="col-md-offset-1 col-md-10 col-md-offset-1'></div>
 
     {% block content %}{% endblock %}
   </div>

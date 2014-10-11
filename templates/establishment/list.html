@@ -175,7 +175,7 @@ function add_marker(lng,lat,id,nombre){
     animation: google.maps.Animation.DROP,
     id:id,
     infoWindow: {
-      content: '<h4><a href="/establecimientos/'+id+'">'+nombre+'</h4>'
+      content: '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;"><h4><a href="/establecimientos/'+id+'">'+nombre+'</h4></div>'
     },
   }));  
 

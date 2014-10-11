@@ -80,7 +80,7 @@ class Establecimiento(models.Model):
     email= models.EmailField(_('Email'),null=True,blank=True,
         help_text=u'Correo electrónico del Establecimiento',unique=False)
     web_page=models.URLField(_(u'URL Página web'),null=True,blank=True, unique=False, 
-        help_text=u'Dirección URL de la página web Ej:http://www.ejemplo.com ')
+        help_text=u'Dirección URL de la página web Ej: http://www.ejemplo.com ')
     address= models.CharField(_(u'Dirección'),max_length=100,null=False,blank=False,
         help_text=u'Dirección del establecimiento ',unique=True)
     description=models.TextField(_(u'Descripción'),null=True,blank=True,

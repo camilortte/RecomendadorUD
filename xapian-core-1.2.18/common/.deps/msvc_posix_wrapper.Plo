@@ -1,6 +1,0 @@
-common/msvc_posix_wrapper.lo: common/msvc_posix_wrapper.cc \
- /usr/include/stdc-predef.h config.h
-
-/usr/include/stdc-predef.h:
-
-config.h:

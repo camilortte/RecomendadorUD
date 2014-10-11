@@ -34,8 +34,8 @@ class SubCategoriaViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = SubCategoria.objects.all()
     serializer_class = SubCategoriaSerializer
-    authentication_classes = (  SessionAuthentication, BasicAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    #authentication_classes = (  SessionAuthentication, BasicAuthentication,)
+    #permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """

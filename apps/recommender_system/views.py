@@ -3,8 +3,7 @@ from apps.recommender_system.models import EstablecimientosRecommender
 from apps.establishment_system.models import Establecimiento
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
-
+from apps.externals.djangoratings.models import Vote
 
 
 class RecomendacionView(TemplateView):
@@ -23,16 +22,19 @@ class RecomendacionView(TemplateView):
             result=[]
             print "tenemos resultados: ",recomendaciones         
             for recomendacion in recomendaciones:
-                result.append(recomendaciones.object)
+                print "Esto es recomendaciones: ",recomendaciones
+                result.append(recomendacion.object)
             recomendaciones=result
+
             recomendaciones_leng=len(recomendaciones)
             if recomendaciones_leng <10:
-                query=Establecimiento.objects.all().order_by('rating_score')
+                query=Establecimiento.objects.all().order_by('-rating_score')
                 for establecimiento in query:
-                    if establecimiento not in recomendacion:
-                        recomendaciones.append(establecimiento)
-                        if len(recomendaciones)>=10:
-                            break
+                    if establecimiento not in recomendaciones:
+                        if not Vote.objects.filter(object_id=establecimiento.id,user=user.id):
+                            recomendaciones.append(establecimiento)
+                            if len(recomendaciones)>=10:
+                                break
                
         else:
             print "No tenemos resultadso"

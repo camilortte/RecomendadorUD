@@ -81,7 +81,8 @@ class Base(Configuration):
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
     NEW_RELIC_CONFIG_FILE="newrelic.ini"
-    AVATAR_DEFAULT_URL="https://pbs.twimg.com/profile_images/497122002138714113/rlyHDPED_bigger.png"
+    AVATAR_DEFAULT_URL="/img/default_profile.png"    
+    AVATAR_GRAVATAR_BACKUP=False
     #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
     #HAYSTACK_SIGNAL_PROCESSOR = 'apps.establishment_system.signals.QueuedSignalProcessor'
     HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
@@ -375,7 +376,7 @@ class Dev(Base):
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
     TEMPLATE_DEBUG = True    
-    DEBUG_TOOLBAR_PATCH_SETTINGS = True
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
     SOCIALACCOUNT_EMAIL_VERIFICATION =None
     ACCOUNT_EMAIL_VERIFICATION =None

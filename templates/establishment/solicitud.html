@@ -39,9 +39,7 @@
                 <div class="well col-md-12 borde">
               <h4>Solicitud  de administración</h4>  
               <ul>
-                <p class="text-justify"> Si tu solicitud es de administración ten en cuenta: </p>
-                <li><p class="text-justify">Ingresa los campos requeridos.</p></li>            
-                <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
+                <p class="text-justify"> Ten en cuenta: </p>
                 <li><p class="text-justify">Al enviar la información se llevara un proceso sobre tu solicitud, nosotros nos comunicaremos con tigo a partir de la información proporcionada en tu perfil</p></li>
                 <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
               </ul>
@@ -51,11 +49,10 @@
               <div class="well col-md-12 borde">
             <h4>Solicitud modificación</h4>  
             <ul>
-              <p class="text-justify">Si tu solicitud es de modificación ten en cuenta:</p>
+              <p class="text-justify">Ten en cuenta:</p>
               <li><p class="text-justify">Procura ingresar todos los datos que puedas.</p></li>
-              <li><p class="text-justify">La ubicación debe ser lo más exacta posible.</p></li>
-              <li><p class="text-justify">La información debe ser clara y correcta.</p></li>
-              <li><p class="text-justify">No ingreses información falsa</p></li>
+              <li><p class="text-justify">La ubicación debe ser exacta.</p></li>
+              <li><p class="text-justify">La información debe ser veridica.</p></li>              
               <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
             </ul>
           </div>   
@@ -64,7 +61,8 @@
             <div class="well col-md-12 borde">
               <h4>Solicitud eliminación</h4>  
               <ul>
-                <li><p class="text-justify">Ingresa los campos requeridos y una breve descripción</p></li>
+                <p class="text-justify"> Ten en cuenta: </p>
+                <li><p class="text-justify">Si tu solicitud es por duplicidad, ingresa el link o nombre del lugar que se repite.</p></li>                
                 <li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
               </ul>
             </div> 
@@ -99,7 +97,9 @@
                 <input type="hidden" id="longitude" value='{{lat}}'>
                 <!--<textarea id="id_position" class="vWKTField required" cols="150" rows="10" name="position"></textarea>-->
                 <br><br>
+                {% if tipo_solicitud == '1' %}
                 <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
+                {%endif%}
                  <hr>
             {% endif %}
             {% bootstrap_form form %}

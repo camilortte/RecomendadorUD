@@ -9,7 +9,7 @@
 {% endblock %}
 {% load static %}
 {% load avatar_tags %}
-
+{% load imagekit %}
 {% block styles %}
 .borde{
     border-style: solid;
@@ -33,12 +33,13 @@
                         <div class="media">
                           <div class="pull-left" href="">
                             <br><br>
+                            
                             <img class="media-object" src="{% avatar_url user 125 %}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
                             <a class="media-object" href="{% url 'avatar_change' %}">Cambiar imagen</a>
                           </div>
                           
 
-                          <div class="media-body">    
+                          <div class="media-body">                                
                             <h1>Perfil de {{request.user.username}}</h1>
                             <hr>
                             <h4>Nombre: <small>{{request.user.first_name}}</small></h4>
