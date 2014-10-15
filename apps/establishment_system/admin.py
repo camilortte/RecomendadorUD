@@ -42,9 +42,13 @@ class CommentAdmin(admin.ModelAdmin):
         Clase encargada de presentar los comentarios en el admin
     """
     raw_id_fields = ('author','post' )
-    list_filter = ('author', 'post', 'ip_address', 'is_public',)
+    list_display= ('author', 'post', 'body', 'is_public',)
+    list_filter = ('is_public',)
     search_fields = ('author', 'post', )
     ordering = ('author',)
+
+    class Meta:
+        model = Comentario
 
 
 class ImagenInline(admin.StackedInline):
@@ -352,14 +356,45 @@ class ImagenAdmin(admin.ModelAdmin):
     class Meta:
         model=Imagen
 
+class CategoriasAdmin(admin.ModelAdmin):
+    u"""
+        Clase encargada de presentar las caegorias en el admin
+    """
+    list_display = ('id','tag',)  
+    search_fields = ('tag', )
+
+    class Meta:
+        model=Categoria
+
+class SubCategoriasAdmin(admin.ModelAdmin):
+    u"""
+        Clase encargada de presentar las caegorias en el admin
+    """
+    list_display = ('id','tag','categorias',)       
+    list_filter = ('categorias', )
+    search_fields = ('nombre', 'tag', 'categorias',)
+
+    class Meta:
+        model=SubCategoria
+
+class TipoSolicitudAdmin(admin.ModelAdmin):
+    u"""
+        Clase encargada de presentar las caegorias en el admin
+    """
+    list_display = ('id','tag',)       
+    list_filter = ('tag', )
+    search_fields = ('nombre', 'tag', )
+
+    class Meta:
+        model=TiposSolicitud
 
 
-admin.site.register(Categoria)
-admin.site.register(SubCategoria)
+admin.site.register(Categoria, CategoriasAdmin)
+admin.site.register(SubCategoria, SubCategoriasAdmin)
 admin.site.register(Imagen,ImagenAdmin)
 admin.site.register(EstablecimientoTemporal)
 admin.site.register(Solicitud, SolicitudAdmin)
-admin.site.register(TiposSolicitud)
+admin.site.register(TiposSolicitud,TipoSolicitudAdmin)
 admin.site.register(Comentario, CommentAdmin)
 
 

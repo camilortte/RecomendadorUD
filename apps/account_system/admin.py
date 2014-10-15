@@ -171,14 +171,16 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class NotificationsAdmin(admin.ModelAdmin):
-    list_display = ['id']
-    ordering = ['id']
+    list_display = ('id','actor','recipient','verb','timestamp')
+    list_filter = ('verb',)
+    search_fields = ('actor', 'recipient', 'verb',)
+
     #raw_id_fields = ('author', )
     form = NotificationForm
 
     class Meta:
         model = Notification
-        ordering = ('-timestamp', )
+        ordering = ('+timestamp', )
 
     def save_model(self, request, obj, form, change):
         """

@@ -6,6 +6,8 @@ TODO:
 --> Fondo en cada establecimiento
 --> Retroceder al iniciar sesión
 
+--> el boung , enviar solo cuando se mueve 
+
 
 --> Pagnia 404
 --> Pagina 500
@@ -13,7 +15,3 @@ TODO:
 --> Variables del entorno
 --> Contrasena en redis
 --> Usuario en postgresql
-
---> el boung , enviar solo cuando se mueve 
---> Adiministración notificaciones categorias y subcategorias
-
