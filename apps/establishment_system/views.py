@@ -159,7 +159,7 @@ class DetalleEstablecimientoView(DetailView):
                 if self.request.user.is_superuser or self.object.administradores.filter(id=self.request.user.id):
                     return True
                 else:
-                    if Imagen.objects.filter(usuarios=self.request.user).count() >= settings.MAX_UPLOAD_PER_USER:
+                    if Imagen.objects.filter(usuarios=self.request.user,establecimientos=self.object).count() >= settings.MAX_UPLOAD_PER_USER:
                         return False
             return True
         else:
@@ -267,8 +267,8 @@ class CommentCreateView(JSONMixin, CreateView):
         # setup the form
         # we can use get_form this time as we no longer need to set the data property
         form = self.get_form(self.form_class)
-        print "KAWARGS: ",kwargs
-        print "ARGS; ",args
+        # print "KAWARGS: ",kwargs
+        # print "ARGS; ",args
         self.establecimiento_id=kwargs['pk']
         self.success_url=reverse('establecimiento_detail_url',kwargs={'pk':self.establecimiento_id})   
         form.instance.author = self.request.user
@@ -307,6 +307,45 @@ class CommentCreateView(JSONMixin, CreateView):
     def dispatch(self, *args, **kwargs):
         return super(CommentCreateView, self).dispatch(*args, **kwargs)
 
+class EliminarEstablecimiento(DeleteView):
+    u"""
+        Clase encargada de eliminar un establecimiento solo por el usuario
+        propietario 
+    """
+    model = Establecimiento    
+    success_url=reverse_lazy('establecimientos_propios_ur')
+
+    def get_object(self, queryset=None):
+        u"""             
+            Validamos que el objeto que se eliminará sea propiedad del
+            usuario que lo elminará
+
+            Returns:
+                Context si el usuario es quien eliminara su propio establecimiento
+                Http404 si es un usuario invalido intentnaod eliminar.
+        """
+        establecimiento_id= self.kwargs['pk']
+        
+        establecimiento=Establecimiento.objects.filter(id=establecimiento_id,administradores=self.request.user.id)
+
+        if establecimiento and (self.request.user.is_organizacional or self.request.user.is_superuser ):
+            context = super(EliminarEstablecimiento, self).get_object(queryset=None)
+            print "Si puede eliminar"
+            return context
+        #De lo contrario
+        else:
+            print "No puede elimianr el comentario y esta intentando joder el sistema"
+            raise Http404
+
+    def delete(self, request, *args, **kwargs):            
+        ctx= super(EliminarEstablecimiento, self).delete(request,*args, **kwargs)
+        messages.success(self.request, u"Establecimiento Eliminado.") 
+        return ctx
+                            
+                
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(EliminarEstablecimiento, self).dispatch(*args, **kwargs)
 
 
 class EliminarComentario(DeleteView):
@@ -320,7 +359,7 @@ class EliminarComentario(DeleteView):
             model (Model): Modelo que se usará.
     """
 
-    model = Comentario        
+    model = Comentario    
 
     def get_object(self, queryset=None):
         u"""             
@@ -357,20 +396,21 @@ class EliminarComentario(DeleteView):
             Returns:
                 HttpResponseRedirect A el establecimiento que alojó el comentario.
         """    
-        comentario_id = self.kwargs['comentario_id'] 
+        comentario_id = self.kwargs['comentario_id']         
         establecimiento_id = self.kwargs['establecimiento_id'] 
-        comentario=Comentario.objects.filter(author=request.user,
-            post=Establecimiento.objects.get(id=establecimiento_id),
-            id=comentario_id)
-        #No esta vacio
-        if  comentario:
-            if comentario[0].author.id==request.user.id:
-                comentario[0].delete()
         if request.user.is_superuser:
             comentario=Comentario.objects.get(id=comentario_id)
             comentario.delete()
+        else:            
+            comentario=Comentario.objects.filter(author=request.user,
+                post=Establecimiento.objects.get(id=establecimiento_id),
+                id=comentario_id)
+            #No esta vacio
+            if  comentario:
+                if comentario[0].author.id==request.user.id:
+                    comentario[0].delete()
                             
-        messages.success(self.request, u"Establecimiento Eliminado.") 
+        messages.success(self.request, u"Comentario Eliminado.") 
         self.success_url = reverse('establecimiento_detail_url', kwargs={'pk': establecimiento_id})
         return HttpResponseRedirect(self.success_url)
         
@@ -424,11 +464,26 @@ class CrearEstablecimiento(CreateViewVanilla):
                             kwargs={'pk': self.object.id})
 
     def form_invalid(self, form):
+        print "Esto llega en form: ",form
         return super(CrearEstablecimiento, self).form_invalid(form)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CrearEstablecimiento, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        u"""
+            Se agregan los contexto de longitud y latitud
+        """
+        ctx = super(CrearEstablecimiento, self).get_context_data(**kwargs)
+        form=kwargs.get('form')
+        position= form.instance.position
+        print "ESto es posotion", position
+        if position is not None:
+            pnt = GEOSGeometry(position) # WKT        
+            ctx['lng'] = pnt.y
+            ctx['lat'] = pnt.x
+        return ctx
 
 #################NO SE PARA QUE SE USA#########################################<------------------------------------------------------------------------------------------------------------------------------------
 class RecargarDatosEstablecimiento(TemplateViewVanilla):

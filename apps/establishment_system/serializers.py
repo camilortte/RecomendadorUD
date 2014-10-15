@@ -17,7 +17,7 @@
 
 """
 
-from apps.establishment_system.models import Categoria, SubCategoria, Establecimiento
+from apps.establishment_system.models import Categoria, SubCategoria, Establecimiento, Imagen
 from rest_framework import serializers
 from rest_framework.pagination import PaginationSerializer
 
@@ -31,14 +31,35 @@ class SubCategoriaSerializer(serializers.HyperlinkedModelSerializer):
         model = SubCategoria
         fields = ('url', 'id', 'nombre', 'tag')
 
+class ImagenSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Imagen
+        fields = ('imagen',)
+
+
 
 class EstablecimientoSerializer(serializers.HyperlinkedModelSerializer):
     #sub_categorias = SubCategoriaSerializer('url')
     sub_categorias = serializers.PrimaryKeyRelatedField()
+    imagen_set = serializers.RelatedField(many=True)
     #sub_categorias = serializers.RelatedField(source='subcategoria')
+    #imagen_set = ImagenSerializer(source='imagen_thumbnail')
     class Meta:
         model=Establecimiento
-        fields = ('id','nombre','address','email','position','description','sub_categorias','web_page')
+        fields = (
+            'id',
+            'nombre',
+            'address',
+            'email',
+            'position',
+            'description',
+            'sub_categorias',
+            'web_page',
+            'imagen_set',
+            )
+        depth = 1
+
+
 
 
 

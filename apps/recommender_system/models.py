@@ -69,6 +69,7 @@ from django.contrib.sites.models import Site
 
 class EstablecimientosRecommender(RecommendationProvider):
 
+    #k=100 por defecto
     algorithm=RecSysAlgorithm()
 
     def get_users(self):

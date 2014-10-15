@@ -229,13 +229,48 @@ class SignupFormMio(SignupForm):
 #Sobrecarga del formulaio signup social de Allauth
 class SignupFormSocial(SingupFormSoialAccount):
 
+    MIN_CHARS_FIRST_NAME=3
+    MIN_CHARS_LAST_NAME=3
+
     def __init__(self, *args, **kwargs):
         super(SignupFormSocial, self).__init__(*args, **kwargs)
+
+    def clean_first_name(self):
+        diccionario_limpio = self.cleaned_data      
+        first_name = diccionario_limpio.get('first_name')     
+
+        if len(first_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo nombre debe ser mayor de "+
+                str(self.MIN_CHARS_FIRST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(first_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return first_name 
+
+    def clean_last_name(self):
+        diccionario_limpio = self.cleaned_data      
+        last_name = diccionario_limpio.get('last_name')     
+
+        if len(last_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo apellido debe ser mayor de "+
+                str(self.MIN_CHARS_LAST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(last_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return last_name 
+
+    def hasNumbers(self,inputString):
+        return any(char.isdigit() for char in inputString)
 
 
 """This forms is about de update user profile by own user"""
 @parsleyfy
-class EditAccountForm(forms.ModelForm):    
+class EditAccountForm(forms.ModelForm):   
+    MIN_CHARS_FIRST_NAME=3
+    MIN_CHARS_LAST_NAME=3
+ 
     first_name=forms.CharField(label='Nombres', min_length=3, max_length=100,required=True)
     last_name=forms.CharField(label='Apellidos', min_length=3, max_length=100,required=True)
     username=forms.CharField(
@@ -243,6 +278,36 @@ class EditAccountForm(forms.ModelForm):
         min_length=settings.ACCOUNT_USERNAME_MIN_LENGTH, 
         max_length=30,
         required=True)
+
+    def clean_first_name(self):
+        diccionario_limpio = self.cleaned_data      
+        first_name = diccionario_limpio.get('first_name')     
+
+        if len(first_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo nombre debe ser mayor de "+
+                str(self.MIN_CHARS_FIRST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(first_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return first_name 
+
+    def clean_last_name(self):
+        diccionario_limpio = self.cleaned_data      
+        last_name = diccionario_limpio.get('last_name')     
+
+        if len(last_name) < self.MIN_CHARS_FIRST_NAME:
+            raise forms.ValidationError("El campo apellido debe ser mayor de "+
+                str(self.MIN_CHARS_LAST_NAME)+ 
+                " caracteres")
+        elif self.hasNumbers(last_name):
+            raise forms.ValidationError("El campo no puede tener numeros")
+     
+        return last_name 
+
+    def hasNumbers(self,inputString):
+        return any(char.isdigit() for char in inputString)
+
     class Meta:
         model = User
         fields = ('username','email','first_name', 'last_name')#,'password1', 'password2')

@@ -147,13 +147,27 @@ class EstablecimientoAdminForm(forms.ModelForm):
 class ComentarioForm(forms.ModelForm):    
     u"""
         Formulario para crear comentarios
-    """
+    """    
     body= forms.CharField(label="Comentario",min_length=5,  widget=forms.Textarea, 
         max_length=Comentario._meta.get_field('body').max_length)
 
     class Meta:
         model = Comentario
         fields = ("body",)
+
+
+    def clean_body(self):
+        """
+        If somebody enters into this form ' hello ', 
+        the extra whitespace will be stripped.
+        """
+        body=self.cleaned_data.get('body', '').strip()  
+        print "Esto es boyd:",body,"FIn"
+        if len(body)<5:
+            print "ENTRA AL PUTO ERROR"
+            raise forms.ValidationError('Tu comentario debe ser mayor a 5 caracteres (No se cuentan los espacion en blanco).')
+        print "NUnca entra al puto error"
+        return body
 
 
 class SolicitudAdminForm(forms.ModelForm):
@@ -239,6 +253,23 @@ class EstablecimientoTemporalForm(forms.ModelForm):
         self.fields['categorias']= forms.ModelChoiceField(queryset=query, initial=categoria.id,widget=forms.Select(attrs={'id': 'categoria'}))  
         self.fields['sub_categorias']= forms.ModelChoiceField(queryset=query2, initial=sub_categorias) 
 
+    # def clean_nombre(self):
+    #     nombre=self.cleaned_data.get('nombre', '')
+    #     Establecimiento.objects.filter(nombre=no)
+    #     try:
+    #         Establecimiento.objects.get(nombre=nombre)
+    #     except Exception, e:
+    #         raise forms.ValidationError('Ya existe un establecimiento con este nombre.')
+    #     return nombre          
+
+    # def clean_address(self):
+    #     address=self.cleaned_data.get('address', '')
+    #     try:
+    #         Establecimiento.objects.get(nombre=address)
+    #     except Exception, e:
+    #         raise forms.ValidationError(u'Ya existe un establecimiento con esta dirección.')
+        
+    #     return address
             
     class Meta:
         model = EstablecimientoTemporal

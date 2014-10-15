@@ -34,26 +34,52 @@
             <h1>Acerca de RecomendadorUD</h1>   
             <br>
             <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
-                <h2>¿Qué es recomendadorUD?</h2>
-                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <h2>¿Qué es Recomendado?</h2>                
+                <p class="text-justify">
+                    RecomendadorUD es un sistema recomendador de filtrado colaborativo soportado en un portal web que recomienda lugares, tales recomendaciones se basan en los gustos e intereses proporcionados por los mismos usuarios de manera voluntaria a partir de puntuaciones de lugares conocidos. De la misma forma los usuarios también pueden crear  y actualizar  lugares sin ninguna restricción, permitiendo que el portal tenga siempre información de actualidad para cada establecimiento.
+                </p>
+            </div>
+                <br>            
+
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+                <h2>¿Cómo funciona?</h2>
+                <p class="text-justify llamar">
+                    RecomendadorUd es un sistema de recomendación el cual aplica SVD (Singular Value Descomposition) en el filtrado colaborativo (Usamos la librería de <a href="http://ocelma.net/software/python-recsys/build/html/algorithm.html" target="_blank">Pyrecsys</a>),  esto permite generar recomendaciones con muy buenos resultados en comparación con otras técnicas. Si quieres más información mira este documento.
+                </p>
                 <br>
-            </div>         
+            </div>  
 
             <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
                 <h2>¿Qué beneficios tiene?</h2>
-                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <p class="text-justify">
+                    Los beneficios son incontables, RecomendadorUD aprende de tus intereses y filtra la información relevante que probablemente te importará, descartando lo irrelevante, esto se verá reflejado en tiempos de búsqueda, calidades de la búsqueda y nuevos resultados que tal vez no conocías y grandes sorpresas.
+                </p>
                 <br>
             </div>   
 
             <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
-                <h2>¿Soy propietario?</h2>
-                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                 <h2>Soy propietario de un lugar</h2>
+                <p class="text-justify">
+                   Si eres propietario de un lugar debes comprobarlo.  Para esto debes seleccionar el lugar que te pertenece, posteriormente ingresa a la sección de Solicitudes y pulsa en el enlace de "Soy propietario", seguidamente ingresa los datos sugeridos. Finalmente nos contactaremos contigo para seguir el proceso de solicitud.
+                </p>
                 <br>
             </div>   
+
+            <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
+             <h2>Quiero que me recomiendes</h2>
+                <p class="text-justify">
+                    Dirígete a <a href="{% url 'recmendacion_url' %}">Recomendaciones</a> y obtén tu recomendación, para que te demos las mejores recomendaciones debemos conocer tus gustos, califica en cuanto puedas, eso será de gran utilidad y tus recomendaciones mejorarán notablemente.
+                </p>
+            </div>
 
             <div class="col-md-offset-1 col-md-10 borde col-md-offset-1">
                 <h2>¿Cómo puedo contribuir?</h2>
-                <p class="text-justify llamar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil eaque ipsam esse ex nisi culpa sapiente dolore, eos at harum mollitia sit. Earum totam accusamus accusantium excepturi voluptatibus error, beatae!</p>
+                <p class="text-justify llamar">
+                    Si conoces algún  lugar que te guste y quiere crees que otras personas deberían conocerlo también, entonces esta es la  forma indicada de contribuir. Ingresa al enlace “Crear lugar” ubicado en el menú principal, posteriormente ingresa la información que conozcas. Por ultimo puedes agregar imágenes que detallen el establecimiento para facilitar su ubicación. Y eso es todo  tu contribución será recompensada por la comunidad y por parte del equipo RecomendadorUD con inmensas gratitudes :D.
+                </p>
+                <p class="text-justify">
+                    Por otro lado, si eres desarrollador puedes aportar mejoras y corrección de errores, el repositorio público se encuentra en <a href="https://github.com/camilortte/RecomendadorUD" target="_blank">Github</a>
+                </p>
                 <br>
             </div>    
         </div>

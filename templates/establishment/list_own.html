@@ -25,6 +25,7 @@
 
   <div class="row">
       <div class="clo-md-12">
+        <br>
         {% if establecimientos_propios %}
          
             <div class="table-responsive">
@@ -45,10 +46,32 @@
                         <td>{{establecimiento.sub_categorias.categorias | title}} - {{establecimiento.sub_categorias}}</td>
                         <td>{{establecimiento.rating.get_rating}} = {{establecimiento.rating.get_percent}}%</td>                        
                         <td>{{establecimiento.rating.votes}}</td>
-                        <td><a href="{% url 'establecimiento_update_url' establecimiento.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> </a></td>    
-                        <form action="">
-                          <td><button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash"></span> </button></td>
-                        </form>                    
+                        <td><a href="{% url 'establecimiento_update_url' establecimiento.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> </a></td>  
+
+                        <td>
+                        <form method="POST" action="{% url 'establecimientos_delete_url' establecimiento.id %}" id="borrar_form">
+                          {% csrf_token %}
+                          <button id="borrar_boton" type="submit" class="btn btn-danger "><span class="glyphicon glyphicon-trash"></span> </button>
+                        </form>   
+                        </td>                                               <!-- Modal -->
+                        <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="modal_delete_confirm" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title" id="generic_modal_title">Confirmación de eliminación</h4>
+                              </div>
+                              <div class="modal-body">
+                                ¿Esta seguro que desea borrar este lugar?
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Borrar</button>
+                                <button type="button" data-dismiss="modal" class="btn">Cancelar</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                     </tr>
                 {% endfor %}
               </table>
@@ -76,6 +99,7 @@
             {% endif %}
         {% else %}
         <div clss="col-md-offset-2 col-md-8 col-md-offset-2 ">
+          <br>
             <h2 class="text-center">Opps nada por aquí</h2>
             <p class="text-center">No hay ningun establecmiento que te pertenece.</p>
         </div>
@@ -85,7 +109,17 @@
 
   
 
-
+<script type="text/javascript">
+  $('#borrar_boton').on('click', function(e){
+      $('#generic_modal').modal('show');
+      var form = $(this).parents('form:first');
+      e.preventDefault();
+      $('#confirm').modal({ backdrop: 'static', keyboard: false })
+          .one('click', '#delete', function() {
+            form.submit(); // submit the form
+          });
+  });  
+</script>
       
 
 

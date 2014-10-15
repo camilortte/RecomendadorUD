@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages, admin
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 
 #External apps
 from notifications import notify

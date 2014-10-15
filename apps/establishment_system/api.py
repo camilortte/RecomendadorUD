@@ -22,10 +22,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
 #Internal apps
-from apps.establishment_system.models  import SubCategoria, Establecimiento
+from apps.establishment_system.models  import SubCategoria, Establecimiento, Imagen
 
 #Serializers
-from .serializers import SubCategoriaSerializer, EstablecimientoSerializer
+from .serializers import SubCategoriaSerializer, EstablecimientoSerializer, ImagenSerializer
 
      
 class SubCategoriaViewSet(viewsets.ReadOnlyModelViewSet):
@@ -65,3 +65,10 @@ class EstablecimientoViewSet(viewsets.ModelViewSet):
     queryset = Establecimiento.objects.all()
     serializer_class = EstablecimientoSerializer
 
+
+class ImagenViewSet(viewsets.ModelViewSet):
+    """
+        API Rest de las imagenes
+    """
+    queryset = Imagen.objects.all()
+    serializer_class = ImagenSerializer

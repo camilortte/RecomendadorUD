@@ -1,15 +1,11 @@
 TODO:
 
---> La pagina de inicio esta muy fea
-	--> EL video cambiarlo
+--> EL video cambiarlo
 --> FavIcon
---> Información en el About
---> El menú djear un pliegue que se vea
--->  Barra del menu al lado de RecomendadorUD
---> FavIcon
+
 --> Fondo en cada establecimiento
 --> Retroceder al iniciar sesión
---> Imagen en el menu, si es usuario
+
 
 --> Pagnia 404
 --> Pagina 500
@@ -19,68 +15,5 @@ TODO:
 --> Usuario en postgresql
 
 --> el boung , enviar solo cuando se mueve 
---> Eliminar establecimiento (propietario)
-
-Prubeas
-De sistema:
-
-	Sistema de usuarios:
-
-		Actualizar datos
-		Actualizar password
-		Actualizar Imagen
-		Registrarse con red social, pedir información que no proporcione la red social.
-		Olvidaste la contrasea, verificar si envia el emial
-		Al registrarse enviar link de verificacion
-		Validacion en el registro
-
-		Ver notificaciones
-		ELiminar las notificaciones
-
-		Cuanso se genera una solicitud notificar
-		CUando comenta, notificar
-		Cuando elimina comentario notificar
-
-		Subir imagen, tamanio y tipo de archivo
-
-
-	Sistema de establecimientos
-		Crear establecimiento, validaciones de datos
-		Filtros en la busqueda
-		Links de las busqudas
-		agregar varios propietarios a un establecimiento
-		subir mas de 3 imagenes
-		Subir mas de 8 images por establecimiento
-
-
-Pruebas de integridad
-
-	Sistema de usuarios:
-		Eliminar usuarios que sea propietario de un establecimiento
-		ELiminar usuario que calificó un establecimiento
-		eliminar un usuario administrador
-
-		crear usuario con username repetido
-		Eliminar comentario creado
-
-		Eliminar comentario administrador
-		Modificar comentario administrador
-
-
-	Sistema de establecimientos
-		Eliminar establecimiento que tenga calificaciones
-		Eliminar establecimiento que tenga imagenes
-		Eliminar establecimiento que pertenesca a un propietario
-
-		Eliminar solicitud activa
-		Eliminar imagen de un establecimietno propietario
-		Eliminar imagen que subio un usuario
-
-		Editar establecimiento, propietario 
-
-
-Pruebas de integración: Probar cada caso de uso.
-
-Prubas de sistema: Probar todo el sistema desde el usuario, todo el conjunto.
-
+--> Adiministración notificaciones categorias y subcategorias
 

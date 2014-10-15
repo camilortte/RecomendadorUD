@@ -152,6 +152,7 @@ class Comentario(models.Model):
         verbose_name = _('Comentario')
         verbose_name_plural = _('Comentarios')
 
+    
 
 class TiposSolicitud(models.Model):
     """

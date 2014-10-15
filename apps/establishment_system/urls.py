@@ -22,9 +22,9 @@ from .views import (DetalleEstablecimientoView, CommentCreateView,
 	UpdateEstablecimiento,  
 	Autocomplete, EliminarComentario, EstablecimientoCreateApiView, 
 	CalificacionApiView, UploadImagenView, UploadImagenApiView, EstablecimientosByBoung, 
-	DeleteImagen, Solicitar, EstablecimientosPropios, BusquedarView)
+	DeleteImagen, Solicitar, EstablecimientosPropios, BusquedarView, EliminarEstablecimiento)
 from rest_framework import routers
-from .api import SubCategoriaViewSet, EstablecimientoViewSet
+from .api import SubCategoriaViewSet, EstablecimientoViewSet, ImagenViewSet
 from django.contrib import admin
 admin.autodiscover()
 
@@ -34,6 +34,7 @@ router = routers.DefaultRouter()
 router = routers.DefaultRouter()
 router.register(r'sub_categoria', SubCategoriaViewSet)
 router.register(r'establecimientos', EstablecimientoViewSet)
+router.register(r'imagenes', ImagenViewSet)
 
 
 urlpatterns = patterns('',  	
@@ -51,6 +52,7 @@ urlpatterns = patterns('',
 	url(r'^establecimiento/calificar/(?P<pk>[0-9]+)/$', CalificacionApiView.as_view(), name='calificar_url'),	
 	url(r'^establecimiento/boung/$', EstablecimientosByBoung.as_view(), name='establecimientos_by_boung_url'),	
 	url(r'^establecimiento/busqueda/$', BusquedarView.as_view(), name='busqueda_establecimiento_url'),
+	url(r'^establecimientos/delete/(?P<pk>\d+)',EliminarEstablecimiento.as_view(),name='establecimientos_delete_url'),
 	url(r'^imagen/delete/(?P<pk>\d+)/(?P<est_id>\d+)/$', 
 			DeleteImagen.as_view(), name='eliminar_imagen_url'), 	
 	url(r'^comments/delete/(?P<establecimiento_id>\d+)/(?P<comentario_id>\d+)/$', 
