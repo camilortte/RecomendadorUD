@@ -372,7 +372,7 @@ class SubCategoriasAdmin(admin.ModelAdmin):
     """
     list_display = ('id','tag','categorias',)       
     list_filter = ('categorias', )
-    search_fields = ('nombre', 'tag', 'categorias',)
+    search_fields = ('nombre', 'tag', )
 
     class Meta:
         model=SubCategoria

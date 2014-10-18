@@ -613,8 +613,8 @@ $('#fileupload').fileupload({
             $('#modal_error_upload').modal('show');
             goUpload = false;
         }else{
-            if (uploadFile.size > 5000000) { // 2mb
-                set_error_modal_message('La imagen supera los 5MB.');
+            if (uploadFile.size > 10485760) { // 2mb
+                set_error_modal_message('La imagen supera los 10MB.');
                 $('#modal_error_upload').modal('show');
                 goUpload = false;
             }else{
