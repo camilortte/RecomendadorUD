@@ -90,7 +90,6 @@ class CustomUserCreationForm(forms.ModelForm):
 
 
     def save(self, commit=True):
-        print "Entro"
         # Make sure we pass back in our CustomUserCreationForm and not the
         # default `UserCreationForm`
         user = super(CustomUserCreationForm, self).save(commit=False)
@@ -416,13 +415,9 @@ class NotificationForm(forms.ModelForm):
             la data
         """
         cleaned_data = super(NotificationForm, self).clean()
-        if not self.es_instancea:   
-            print "Entro en clean"         
+        if not self.es_instancea:       
             todos = cleaned_data.get("todos")
             destinario = cleaned_data.get("destinario")
-
-            print "TODOS: ",todos
-            print "Destinario: ", destinario
 
             if todos:
                 try:

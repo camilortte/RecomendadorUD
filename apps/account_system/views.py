@@ -86,17 +86,13 @@ class ProfileUpdate(UpdateView):
         ctx = super(ProfileUpdate, self).get_context_data(**kwargs)
         usuario=self.request.user
         cuentas=SocialAccount.objects.filter(user=usuario)
-        print "Cuentas: ",cuentas
         if  cuentas:
-            print "Cuentas no vacio"
             ctx['social_accounts'] = cuentas
 
         return ctx
 
     @method_decorator(login_required(login_url='home_url'))
     def dispatch(self, *args, **kwargs):
-        print "ARGS: ",args
-        print "kwargs: ",kwargs
         return super(ProfileUpdate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self,*args, **kwargs):                
@@ -146,7 +142,7 @@ class MarcarNotificacionLeida(View):
             notificacion=usuario.notifications.filter(id=id_notificacion)
             notificacion.mark_all_as_read()
         except Exception:
-            print "Usuario anonimo "
+            print "Usuario anonimo."
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
@@ -176,7 +172,6 @@ class PorfilesUsers(TemplateView):
         """
             Se agrega el contexto del usuario
         """
-        print "El contexto es: ",kwargs['pk']
         context = super(PorfilesUsers, self).get_context_data(**kwargs)
         #context['now'] = timezone.now()
         context['usuario']= get_object_or_404(User,pk=kwargs['pk'])
@@ -292,7 +287,6 @@ class probe(View):
 
     def get(self, request):
         # TODO: GET ACTIONS
-        print "ENTRI EN GET"
         return self.hacer(request)
 
 #DEV
@@ -308,9 +302,6 @@ def send_notification(request):
         recipients = User.objects.all()
 
     for recipient in recipients:
-        print "Request user ",request.user, "Tipo=",type(request.user)
-
-        print "Recipient ", recipient ,"Tipo=",type(recipient)
         notify.send(
             request.user,
             recipient=recipient,

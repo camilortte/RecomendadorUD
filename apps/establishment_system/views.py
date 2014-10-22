@@ -115,8 +115,7 @@ class DetalleEstablecimientoView(DetailView):
                 data = {
                     'sender':context['object'].id,  
                     'is_public':True
-                }   
-                print "Esta vacio"        
+                }         
                 context['form'] = ComentarioForm(initial=data)                      
             
             else:
@@ -200,7 +199,6 @@ class JSONMixin(object):
         to_json = {}
         options = context.get('options', {})
         to_json.update(options=options)
-        print context
         fields = {}
         for field_name, field in form.fields.items():
             if isinstance(field, DateField) \
@@ -216,7 +214,6 @@ class JSONMixin(object):
         to_json.update(fields=fields)
 
         if form.errors:
-            print "Errres"
             errors = {
                 'non_field_errors': form.non_field_errors(),
             }
@@ -330,11 +327,10 @@ class EliminarEstablecimiento(DeleteView):
 
         if establecimiento and (self.request.user.is_organizacional or self.request.user.is_superuser ):
             context = super(EliminarEstablecimiento, self).get_object(queryset=None)
-            print "Si puede eliminar"
             return context
         #De lo contrario
         else:
-            print "No puede elimianr el comentario y esta intentando joder el sistema"
+            print "No puede elimianr el comentario y esta intentando romper el sistema"
             raise Http404
 
     def delete(self, request, *args, **kwargs):            
@@ -382,7 +378,7 @@ class EliminarComentario(DeleteView):
             return context
         #De lo contrario
         else:
-            print "No puede elimianr el comentario y esta intentando joder el sistema"
+            print "No puede elimianr el comentario y esta intentando romper el sistema"
             raise Http404
 
         return {'comentario_id':comentario_id}
@@ -464,7 +460,6 @@ class CrearEstablecimiento(CreateViewVanilla):
                             kwargs={'pk': self.object.id})
 
     def form_invalid(self, form):
-        print "Esto llega en form: ",form
         return super(CrearEstablecimiento, self).form_invalid(form)
 
     @method_decorator(login_required)
@@ -478,7 +473,6 @@ class CrearEstablecimiento(CreateViewVanilla):
         ctx = super(CrearEstablecimiento, self).get_context_data(**kwargs)
         form=kwargs.get('form')
         position= form.instance.position
-        print "ESto es posotion", position
         if position is not None:
             pnt = GEOSGeometry(position) # WKT        
             ctx['lng'] = pnt.y
@@ -510,7 +504,6 @@ class RecargarDatosEstablecimiento(TemplateViewVanilla):
         to_json = {}
         options = context.get('options', {})
         to_json.update(options=options)
-        print context
         fields = {}
         for field_name, field in form.fields.items():
             if isinstance(field, DateField) \
@@ -657,15 +650,11 @@ class Autocomplete(View):
             Returns:
                 Objeto JSON con los resultados de las coincidencias
         """
-        print "Entra a Autocomplete"
         q=request.GET.get('q', None)
         if q is not None and q != "":
 
-            print "\n\n---> Esto llega: ",q
-
             sqs = SearchQuerySet().autocomplete(nombre__icontains=q)[:10]
-            sqs = SearchQuerySet().autocomplete(nombre=q)[:10]            
-            print "ANtes: ",sqs
+            sqs = SearchQuerySet().autocomplete(nombre=q)[:10]        
             # sqs2 = SearchQuerySet().autocomplete(email=q)[:10]
             # sqs3 = SearchQuerySet().autocomplete(web_page=q)[:10]
             # sqs4 = SearchQuerySet().autocomplete(address=q)[:10]        
@@ -885,13 +874,13 @@ class Solicitar(View):
                 "e solicitud de "+tipo+", gracias por tu paciencia.",
                 timestamp=mydatetime.now()
             ) 
-            print "Esto es establecimiento_idtemporassssssssssssssssssssssssssssssssssssssssssssssssssssss"
-            print id_EstablecimientoTemporal
+            
+            
             if not id_EstablecimientoTemporal:                
                 self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
                      request.user, establecimiento_id, tipo)
             else:
-                print "SI tiene id establcimeinto temporal: ",id_EstablecimientoTemporal
+                
                 self.create_solicitud(tipo.title()+formulario.cleaned_data['contenido'],
                      request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
 
@@ -975,15 +964,13 @@ class UploadImagenView(View):
     def post(self, request,pk, *args, **kwargs):        
         form = UploadImageForm(request.POST, request.FILES)
         if form.is_valid():
-            print "FOrm valida: "
-            print "Pk: ",pk
-            print "CONTENIDO DE IMAGEN: ",request.FILES['imagen']
+            # print "FOrm valida: "
+            # print "Pk: ",pk
+            # print "CONTENIDO DE IMAGEN: ",request.FILES['imagen']
             establecimiento=Establecimiento.objects.get(id=pk)
-            Imagen.objects.create(imagen=request.FILES['imagen'],establecimientos=establecimiento)     
-            print "TODO BIEN"
+            Imagen.objects.create(imagen=request.FILES['imagen'],establecimientos=establecimiento)                 
             return redirect('establecimiento_detail_url',pk=pk)
         else:       
-            print "Form no valida"
             return redirect('establecimiento_detail_url',pk=pk)
 
     @method_decorator(login_required)
@@ -1058,9 +1045,7 @@ class EstablecimientoCreateApiView(APIView):
     def post(self, request, format=None):
         serializer = EstablecimientoSerializer(data=request.DATA)
         if serializer.is_valid():
-            print "IS VALID"
             serializer.save()
-            print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
@@ -1129,19 +1114,15 @@ class CalificacionApiView(APIView):
                         user=request.user, 
                         ip_address=request.META['REMOTE_ADDR']
                         )                                                         
-                    recommender.precompute()                    
-                    print "Esto es despues de recommender"
+                    recommender.precompute()                 
                     respuesta="Calificacion realizada"
-                    print "bINE2"
-                    print "Todo bien"
                     return Response(respuesta, status=status.HTTP_201_CREATED)
                 else:
                     respuesta="Valor no valido"     
         except Exception, e:
-            print "El establecimiento nno existe"
+            print "El establecimiento no existe"
             respuesta="Algo salio mal"
             print e
-        print "Hasta acá todo bien"
         return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -1185,7 +1166,7 @@ class UploadImagenApiView(APIView):
                                 respuesta="OK"
                                 return Response(respuesta, status=status.HTTP_201_CREATED)
                             else:
-                                print "SUpera el tamanio"
+                                print "Supera el tamanio de la image."
                                 respuesta={"error":"La imagen no puede ser mayor a 10 MB"}
                     else:
                         respuesta={"error":"No subio nada"}
@@ -1217,7 +1198,6 @@ class EstablecimientosByBoung(APIView):
             Returns:
                 JSON object.
         """
-        print request.GET
         # boung_data_x1 = request.GET.get("x1",None)
         # boung_data_y1 = request.GET.get("y1")
         # boung_data_x2 = request.GET.get("x2")
@@ -1264,7 +1244,7 @@ class EstablecimientosByBoung(APIView):
             query=paginator.page(number_page)
             serializer=PaginatedEstablecimientoSerializer(query)
             salida=serializer.data
-            print "Respuesta: ",salida
+            #print "Respuesta: ",salida
         else:
             salida={"error":"None"}       
 
@@ -1292,13 +1272,11 @@ def establecimiento_delete(sender, instance, **kwargs):
     u"""
         Cuando una establecimiento se borra tambíen se borrara los votos
     """
-    print "Entrada en el predelete"
     id_establecimiento=instance.id
     Vote.objects.filter(object_id=id_establecimiento).delete()
     Score.objects.filter(object_id=id_establecimiento).delete()
     recommender=EstablecimientosRecommender()    
     recommender.precompute()
-    print "Precompute al final del delete"
 
 
 

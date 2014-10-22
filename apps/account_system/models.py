@@ -125,7 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.is_staff = False
         self.is_superuser = False        
         self.notificar_cambio_de_tipo("user_register")
-        print "Continua normal"
         
 
 
@@ -147,7 +146,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             #     timestamp=datetime.now()
             # ) 
         except Exception,e:
-            print "ERROR ----------> ",e
+            print "ERROR: ",e
             
         
         

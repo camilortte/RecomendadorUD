@@ -162,11 +162,9 @@ class ComentarioForm(forms.ModelForm):
         the extra whitespace will be stripped.
         """
         body=self.cleaned_data.get('body', '').strip()  
-        print "Esto es boyd:",body,"FIn"
         if len(body)<5:
-            print "ENTRA AL PUTO ERROR"
             raise forms.ValidationError('Tu comentario debe ser mayor a 5 caracteres (No se cuentan los espacion en blanco).')
-        print "NUnca entra al puto error"
+        
         return body
 
 

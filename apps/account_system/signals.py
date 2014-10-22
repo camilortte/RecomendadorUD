@@ -25,10 +25,8 @@ def user_signed_up_(request, user, sociallogin=None, **kwargs):
  
     See the socialaccount_socialaccount table for more in the 'extra_data' field.
     '''
-    print "Entro, esto es lo que vale user="
     if sociallogin:
         # Extract first / last names from social nets and store on User record
-        print "Entro, esto es lo que vale user=",user
         if sociallogin.account.provider == 'twitter':
             name = sociallogin.account.extra_data['name']
             user.full_name = name.split()[0]

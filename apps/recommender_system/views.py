@@ -52,7 +52,6 @@ class RecomendacionView(TemplateView):
                                 break
                
         else:
-            print "No tenemos resultados"
             recomendaciones=Establecimiento.objects.all().order_by('rating_score')[:10]
         return recomendaciones
 

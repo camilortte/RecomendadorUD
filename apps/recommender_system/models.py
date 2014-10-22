@@ -90,31 +90,24 @@ class EstablecimientosRecommender(RecommendationProvider):
     algorithm=RecSysAlgorithm()
 
     def get_users(self):
-        print "Entro get_users"
         return User.objects.filter(is_active=True).distinct()
 
     def get_items(self):
-        print "Entro get_items"
         return Establecimiento.objects.all()
 
     def get_ratings(self, obj):
-        print "Entro get_ratings"
         return obj.rating.get_ratings()
 
     def get_rating_score(self, rating):
-        print "Entro get_rating_score"
         return rating.score
 
     def get_rating_site(self, rating):        
-        print "Entro get_rating_site"
         return Site.objects.get_current()#rating.ip_address
 
     def get_rating_user(self, rating):
-        print "Entro get_rating_user"
         return rating.user
 
     def get_rating_item(self, rating):
-        print "Entro get_rating_item"
         return rating.product
 
 

@@ -148,10 +148,7 @@ class SolicitudAdmin(admin.ModelAdmin):
         if  obj.aprobar:
             try:
                 if form.cleaned_data['aprobar'] == True:
-                    print "ATRIBUTOS DE OBJ: ", obj.__dict__
-                    print "SE aprobo la solicitud"
-                    if form.cleaned_data['tipo_solicitudes'].nombre=='eliminacion':
-                        print "ELIMINACION"            
+                    if form.cleaned_data['tipo_solicitudes'].nombre=='eliminacion':         
                         if self.aprobar_eliminacion(request,form,obj):
                             obj.save()
                             saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
@@ -164,7 +161,6 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         timestamp=datetime.now()
                                     ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='modificacion':
-                        print "MODIFICACION"
                         if self.aprobar_modificacion(request,form,obj):      
                             obj.save()
                             saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
@@ -177,7 +173,6 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         timestamp=datetime.now()
                                     ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='administracion':
-                        print "Administracion"
                         if self.aprobar_administracion(request,form,obj):                            
                             obj.save()
                             saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
@@ -190,9 +185,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         timestamp=datetime.now()
                                     ) 
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='desactivacion':
-                        print "desactivacion"
-                        if self.aprobar_desactivacon(request,form,obj):     
-                            print "ENTRO SAVE"                       
+                        if self.aprobar_desactivacon(request,form,obj):                  
                             obj.save()
                             saludo=u"Hola "+ obj.usuarios.first_name+", tu Solicitud de "\
                             +form.cleaned_data['tipo_solicitudes'].tag+" fue aprobada.".decode('utf-8')
@@ -205,7 +198,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                     ) 
 
             except Exception, e:                                
-                print "No se peude editar ",e     
+                print "No se puede editar: ",e     
                 #raise e      
             
         else:
@@ -264,12 +257,8 @@ class SolicitudAdmin(admin.ModelAdmin):
             # print self.__dict__
 
             # print "\n", obj.__dict__
-            print "SE puede aprobar la modificacion"
             #print self.establecimientos_temporales
             # self.establecimiento=self.establecimientos_temporales
-            print "Voy a inptimirt establecimientos:; "
-            print obj.establecimientos
-            print obj.establecimientos.id
             establecimiento=obj.establecimientos
             establecimiento_temp=EstablecimientoTemporal.objects.get(id=obj.establecimientos_temporales.id)
             #establecimiento_temp=EstablecimientoTemporal.objects.filter(solicitudes=obj.id)
@@ -295,7 +284,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                          level=messages.INFO, extra_tags='', fail_silently=False)
             return True
         else:
-            print "No se puede aprobar la modificacion paila"
+            print "No se puede aprobar la modificacion."
             self.message_user(request,
                         _(("No Se aprobó la solicitud, el modificación para el establecimiento"+str(obj.establecimientos)).decode('utf-8')),
                          level=messages.INFO, extra_tags='', fail_silently=False)
@@ -328,7 +317,6 @@ class SolicitudAdmin(admin.ModelAdmin):
 
                 return True
             else:
-                print "No se pudo, Carajo"
                 self.message_user(request,
                         ("No Se aprobó la solicitud, el usuario "+str(obj.usuarios)+" es ahora administrador de "+str(obj.establecimientos)).decode("utf-8"),
                          level=messages.ERROR, extra_tags='', fail_silently=False)
