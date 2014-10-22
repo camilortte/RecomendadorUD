@@ -427,7 +427,10 @@ class Dev(Base):
             'PORT': '5432',               
         }
     }
-    MEDIA_ROOT =  join(HOME_DIR+"/RecomendadorUD_dev/",  'media')
+    """
+    Configuración Media
+    """
+    MEDIA_ROOT =  MEDIA_DIR_PROD
     
       
 class Prod(Base):
@@ -446,6 +449,7 @@ class Prod(Base):
         }
     }
     STATIC_ROOT =join(BASE_DIR,'static')
+
     """
     Configuración Media
     """
