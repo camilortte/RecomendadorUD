@@ -1,9 +1,12 @@
 # -*- encoding: utf-8 -*-
 from configurations import Configuration
 import os
-from os.path import join
+from os.path import join, expanduser
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+HOME_DIR = expanduser("~")+"/www/"
+MEDIA_DIR_PROD = join(HOME_DIR+"/RecomendadorUD_prod/",  'media')
+MEDIA_DIR_DEV = join(HOME_DIR+"/RecomendadorUD_dev/",  'media')
 class Base(Configuration):    
     SECRET_KEY = 'oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
     DEBUG=True
@@ -176,9 +179,8 @@ class Base(Configuration):
 
 
     """
-    Configuración Medía
+    Configuración Media
     """
-    MEDIA_ROOT =  join(BASE_DIR,  'media')
     MEDIA_URL = '/media/'
 
 
@@ -425,6 +427,7 @@ class Dev(Base):
             'PORT': '5432',               
         }
     }
+    MEDIA_ROOT =  join(HOME_DIR+"/RecomendadorUD_dev/",  'media')
     
       
 class Prod(Base):
@@ -443,3 +446,7 @@ class Prod(Base):
         }
     }
     STATIC_ROOT =join(BASE_DIR,'static')
+    """
+    Configuración Media
+    """
+    MEDIA_ROOT =  MEDIA_DIR_PROD
