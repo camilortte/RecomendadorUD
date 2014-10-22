@@ -15,9 +15,8 @@ admin.autodiscover()
 
 #from yawdadmin import admin_site
 urlpatterns = patterns('',    	
-	#url(r'^grappelli/', include('grappelli.urls')),
 	#url(r'^admin_tools/', include('admin_tools.urls')),
-	#url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+	
     url(r'^admin/', include(admin.site.urls)),        
     url(r'^', include('apps.account_system.urls')),    
     url(r'^', include('apps.establishment_system.urls')),    
@@ -27,3 +26,14 @@ urlpatterns = patterns('',
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
+
+if 'grappelli' in settings.INSTALLED_APPS:
+		urlpatterns+=patterns('',url(r'^grappelli/', include('grappelli.urls')))
+
+
+from django.utils.functional import curry
+from django.views.defaults import page_not_found, server_error, permission_denied
+#handler404 = "apps.main.views.error404"
+handler500 = curry(server_error, template_name='main/500.html')
+handler404 = curry(page_not_found, template_name='main/404.html')
+#handler403 = curry(permission_denied, template_name='main/403.html')

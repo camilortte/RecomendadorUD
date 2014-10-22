@@ -444,3 +444,8 @@ class Prod(Base):
     Configuración Media
     """
     MEDIA_ROOT =  MEDIA_DIR_PROD
+
+    INSTALLED_APPS = (                     
+        'grappelli',        
+    )+Base.INSTALLED_APPS
+    

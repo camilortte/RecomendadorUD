@@ -168,4 +168,5 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-dj
 
 --> NewRelic
 	Login -->   https://rpm.newrelic.com/
+	https://rpm.newrelic.com/accounts/270836/applications/4115246
 	newrelic-admin generate-config b0d0c585215e4933295417a86903debf3fe6ab17 newrelic.ini

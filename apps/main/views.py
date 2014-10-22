@@ -40,3 +40,6 @@ class Home(TemplateView):
         context = super(Home, self).get_context_data(**kwargs)
         context['cantidad']=Establecimiento.objects.count()
         return context
+
+def error404(request):
+    return render(request,'main/404.html', status=404)

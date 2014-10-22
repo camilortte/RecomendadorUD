@@ -1,0 +1,33 @@
+{% extends "main/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load notifications_tags %}
+{% load bootstrap3 %}
+{% block head_title %}Acerca de...{%endblock head_title%}
+{% load static %}
+{% block scripts %}
+{% endblock %}
+{% load static %}
+
+{% block styles %}
+{% endblock styles %}
+
+
+
+
+{% block content %}
+<br>
+<h1>Error 404 Página no encontrada</h1>
+<br>
+<div class="col-md-12">
+	<img src="{% static 'img/404.jpg'%}" class="img-responsive center-block" alt="Error 404">	
+	<p >
+		<h4 class="text-center">
+			La url a la que intentas acceder no existe. Esto es todo lo que sabemos.
+			<a href="{{ request.META.HTTP_REFERER }}">Volver</a>			
+		</h4>
+	</p>
+</div>
+
+
+{% endblock content %}
