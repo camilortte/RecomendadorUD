@@ -7,8 +7,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 HOME_DIR = expanduser("~")+"/www/"
 MEDIA_DIR_PROD = join(HOME_DIR+"/RecomendadorUD_prod/",  'media')
 MEDIA_DIR_DEV = join(HOME_DIR+"/RecomendadorUD_dev/",  'media')
+
+
 class Base(Configuration):    
-    SECRET_KEY = 'oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
+    SECRET_KEY = os.environ.get("SECRET_KEY", '')
     DEBUG=True
     ALLOWED_HOSTS = []
 
@@ -138,12 +140,7 @@ class Base(Configuration):
     #         'PATH': os.path.join(os.path.dirname(__file__), 'xapian_index')
     #     },
     # }   
-    HAYSTACK_CONNECTIONS = {
-        'default': {
-            'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-            'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
-        },
-    }
+    
     # HAYSTACK_CONNECTIONS = {
     #     'default': {
     #         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
@@ -157,7 +154,7 @@ class Base(Configuration):
     RECOMMENDS_STORAGE_BACKEND='recommends.storages.redis.storage.RedisStorage'
     RECOMMENDS_STORAGE_REDIS_DATABASE ={
     'HOST': 'localhost',
-    'PORT': 7777,
+    'PORT': 6379,
     'NAME': 0,
     'ATOMIC_REQUESTS': True
     }
@@ -216,7 +213,7 @@ class Base(Configuration):
     """
     Configuración Mandrill Mail
     """
-    MANDRILL_API_KEY = "dF6LAeaL1H2ZGsbU-Ypu6Q"
+    MANDRILL_API_KEY = os.environ.get("MANDRILL_API_KEY", '')
     #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
     DEFAULT_FROM_EMAIL='camilolinchis@recomendadorud.com'
@@ -354,18 +351,7 @@ class Base(Configuration):
     """
     GRAPPELLI_ADMIN_TITLE= "RecomendadorUD"
 
-    
-    # Twitter:
-    #     Apikey=6cO8HoMTIuOaMAyFNT1yxSea0
-    #     Secret=XolegaJvDWvyGREcziHv8q7GkyKsXNUjEmJh0lVRY4HM8B2N0c
-
-    # Facebook:
-    #     ApiKey=543350239130783
-    #     apiSecret=7a6bc2911c658b8418131d057ab44335
-
-    # Google+:
-    #     ApiKey=481544714964-9jtarg0p2l7qm4ep7ea4u3ors9hpd43b.apps.googleusercontent.com
-    #     secret=HY5M6bs8qpX02dcSsqKtCJ3-
+     
     
 
 
@@ -406,48 +392,52 @@ class Dev(Base):
     MIDDLEWARE_CLASSES =   Base.MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     #('debug_toolbar.middleware.DebugToolbarMiddleware',) + Base.MIDDLEWARE_CLASSES
 
-    DATABASES = {
-        # 'default': {
-        #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',  #'django.db.backends.sqlite3',
-        #     'NAME': os.path.join(BASE_DIR, 'base.db'),#'db.sqlite3'),
-        #     'ATOMIC_REQUESTS': True
-        # }
-        # ,        
-        # 'spatial': {
-        #     'NAME': os.path.join(BASE_DIR, 'spatial.db'),
-        #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',        
-        #     'ATOMIC_REQUESTS': True    
-        # }
+    DATABASES = {     
         'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',  
-            'NAME': "recomendadorUD_database",
-            'USER': 'postgres',
-            'PASSWORD': 'recomendadorUD',
-            'HOST': 'localhost',                      
-            'PORT': '5432',               
+            'NAME': os.path.join(HOME_DIR, 'RecomendadorUD_dev/spatial_db.db'),
+            'ENGINE': 'django.contrib.gis.db.backends.spatialite'
         }
     }
+
+    HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',            
+            'PATH': os.path.join(HOME_DIR, 'RecomendadorUD_dev/indexs/whoosh_index'),
+        },
+    }
+
     """
     Configuración Media
     """
-    MEDIA_ROOT =  MEDIA_DIR_PROD
+    MEDIA_ROOT =  MEDIA_DIR_DEV
+
+
     
       
 class Prod(Base):
     DEBUG = False
     ALLOWED_HOSTS=['*']
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-
+    POSTGRESDATABASE_USER = os.environ.get("POSTGRESDATABASE_USER", '')
+    POSTGRESDATABASE_PASSWORD = os.environ.get("POSTGRESDATABASE_PASSWORD", '')
     DATABASES = {
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.postgis', 
             'NAME': "recomendadorUD_database",
-            'USER': 'postgres',
-            'PASSWORD': 'recomendadorUD',
+            'USER': POSTGRESDATABASE_USER,
+            'PASSWORD': POSTGRESDATABASE_PASSWORD,
             'HOST': 'localhost',                     
             'PORT': '5432',               
         }
     }
+
+    HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+            'PATH': os.path.join(HOME_DIR, 'RecomendadorUD_prod/indexs/whoosh_index'),
+        },
+    }
+
     STATIC_ROOT =join(BASE_DIR,'static')
 
     """

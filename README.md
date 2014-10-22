@@ -18,21 +18,22 @@ TODO:
 + Pagnias 400   
 + Paginas 500
 
-+ Variables del entorno
-+ Contrasena en redis
-+ Usuario en postgresql
++ ~~Variables del entorno~~
++ ~~Contrasena en redis~~
++ ~~Usuario en postgresql~~
 
-+ Partes que siguen en ingle
++ Partes que siguen en ingles
 
 + Eliminar impresiones mamonas.
 + Permisos de usuarios en nginx
 
-+ Eliminar las imagenes del proyecto y de git
++ ~~Eliminar las imagenes del proyecto y de git~~
 + Eliminar archivos no requeridos en github
 + Estadisticas de Google
 + NewRelic
 + Realtime Nginx
 
++ supervisor
 
 
 ##Licencia

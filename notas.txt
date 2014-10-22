@@ -52,6 +52,9 @@ https://github.com/digi604/django-smart-selects
 https://github.com/FinalsClub/django-ajax-selects-cascade  <--- interesa -->
 
 
+--> 
+
+
 
 
 http://django-generic-ratings.readthedocs.org/en/latest/signals.html votos
@@ -105,14 +108,21 @@ http://www.hackido.com/2014/04/setting-up-postgres-for-local.html
 https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn
 
 --> Despues de todo
-sudo -i -u postgres
-createdb recomendadorUD_database
-psql recomendadorUD_database
+	sudo -i -u postgres
+	createdb recomendadorUD_database
+	psql recomendadorUD_database
 
-CREATE EXTENSION postgis;
-CREATE EXTENSION postgis_topology;
-\q
-exit
+	CREATE EXTENSION postgis;
+	CREATE EXTENSION postgis_topology;
+	\q
+	exit
+
+
+	--> Users y passwords
+		postgres=RecomendadorUD_root_Django
+		acces_django=acces_django_pass
+
+		Crear usuario https://chartio.com/docs/datasources/connections/details/pgadmin
 
 
 --> nginx y Gnicorn Deplyment
@@ -120,3 +130,42 @@ exit
 	gunicorn RecomendadorUD.wsgi:application --bind=127.0.0.1:8001 <-- DOnde este el manage.py
 
 	sudo service nginx restart	
+
+
+--> Para instalar sqlite con spatialite
+
+
+	sudo apt-get install libproj-dev
+	sudo apt-get install libspatialite-dev libspatialite
+	sudo apt-get install spatialite-bin
+	sudo apt-get install python-pysqlite2
+
+	--> Luego de esto es necesario inicialziar la base de datos
+	spatialite spatial_db.db "SELECT InitSpatialMetaData();"
+
+--> configuración redis
+	sudo mkdir /etc/redis
+	sudo mkdir /var/redis
+
+--> VARIBLES DE ENTORNO SETTIGNS.py
+	export POSTGRESDATABASE_USER='acces_django'
+	export POSTGRESDATABASE_PASSWORD='acces_django_pass'
+	export SECRET_KEY='oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
+	export MANDRILL_API_KEY='dF6LAeaL1H2ZGsbU-Ypu6Q'
+
+	# Twitter:
+    #     Apikey=6cO8HoMTIuOaMAyFNT1yxSea0
+    #     Secret=XolegaJvDWvyGREcziHv8q7GkyKsXNUjEmJh0lVRY4HM8B2N0c
+
+    # Facebook:
+    #     ApiKey=543350239130783
+    #     apiSecret=7a6bc2911c658b8418131d057ab44335
+
+    # Google+:
+    #     ApiKey=481544714964-9jtarg0p2l7qm4ep7ea4u3ors9hpd43b.apps.googleusercontent.com
+    #     secret=HY5M6bs8qpX02dcSsqKtCJ3-
+
+
+--> NewRelic
+	Login -->   https://rpm.newrelic.com/
+	newrelic-admin generate-config b0d0c585215e4933295417a86903debf3fe6ab17 newrelic.ini
