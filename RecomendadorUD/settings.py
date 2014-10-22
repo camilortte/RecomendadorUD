@@ -1,27 +1,43 @@
 # -*- encoding: utf-8 -*-
 from configurations import Configuration
-
 import os
 from os.path import join
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-class Base(Configuration):
-    # Quick-start development settings - unsuitable for production
-    # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
-    # SECURITY WARNING: keep the secret key used in production secret!
-    
+class Base(Configuration):    
     SECRET_KEY = 'oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
-
-    
     DEBUG=True
-
     ALLOWED_HOSTS = []
-    MAX_UPLOAD_SIZE = 10485760 #10 MB
-    MAX_UPLOAD_PER_USER=3
-    MAX_IMAGES_PER_PLACE=8
-    ITEMS_PAGINATE=20
-    MAX_COMMENTS_PER_PAGE=10
+
+    TEMPLATE_CONTEXT_PROCESSORS = (
+        "django.core.context_processors.request",
+        'django.core.context_processors.debug',
+        'django.core.context_processors.i18n',
+        'django.core.context_processors.media',
+        'django.core.context_processors.static',
+        'django.core.context_processors.request',
+        'django.contrib.messages.context_processors.messages',
+        'django.contrib.auth.context_processors.auth',
+        "apps.establishment_system.context_processors.notificaciones",
+        "allauth.account.context_processors.account",
+        "allauth.socialaccount.context_processors.socialaccount",    
+    )
+
+    AUTHENTICATION_BACKENDS = (
+        "django.contrib.auth.backends.ModelBackend",
+        "allauth.account.auth_backends.AuthenticationBackend",    
+    )
+
+    MIDDLEWARE_CLASSES = (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',            
+        #'drealtime.middleware.iShoutCookieMiddleware',
+        #'simple_history.middleware.HistoryRequestMiddleware',
+    )
 
     INSTALLED_APPS = (
        #'grappelli', #http://django-grappelli.readthedocs.org/en/latest/customization.html
@@ -29,7 +45,6 @@ class Base(Configuration):
         #'admin_tools.menu',
         #'admin_tools.dashboard',
         #'yawdadmin',
-
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -78,50 +93,65 @@ class Base(Configuration):
         'avatar', #http://django-avatar.readthedocs.org/en/latest/
     )
 
+    """
+    Configuración imagenes
+    """
+    MAX_UPLOAD_SIZE = 10485760 #10 MB
+    MAX_UPLOAD_PER_USER=3
+    MAX_IMAGES_PER_PLACE=8
+    ITEMS_PAGINATE=20
+
+    """
+    Configuración comentarios
+    """
+    MAX_COMMENTS_PER_PAGE=10
+    COMMENT_MAX_LENGTH=500
+
+    """
+    Comfiguración mensajes
+    """
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
+    """
+    Configuración NewRelic
+    """
     NEW_RELIC_CONFIG_FILE="newrelic.ini"
+
+    """
+    Configuración Avatars
+    """
     AVATAR_DEFAULT_URL="/img/default_profile.png"    
     AVATAR_GRAVATAR_BACKUP=False
+
+    """
+    Configuración HAYSTACK
+    """
     #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
     #HAYSTACK_SIGNAL_PROCESSOR = 'apps.establishment_system.signals.QueuedSignalProcessor'
     HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
-
     # HAYSTACK_CONNECTIONS = {
     #     'default': {
     #         'ENGINE': 'xapian_backend.XapianEngine',
     #         'PATH': os.path.join(os.path.dirname(__file__), 'xapian_index')
     #     },
     # }   
-
-
     HAYSTACK_CONNECTIONS = {
         'default': {
             'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
             'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
         },
     }
-
     # HAYSTACK_CONNECTIONS = {
     #     'default': {
     #         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     #     },
     # }
     
-    #COMMENTS_APP = 'fluent_comments'
-    #COMMENTS_APP = 'django_comments_xtd'
-    #COMMENTS_APP = 'django.contrib.comments'
-    #COMMENTS_XTD_CONFIRM_EMAIL =True
-    #COMMENTS_XTD_MODEL = "apps.establishment_system.models.Comentario"
-    #COMMENTS_XTD_FORM_CLASS = "apps.establishment_system.forms.CommentForm"
-    #FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
-    COMMENT_MAX_LENGTH=500
-
-    #COMMENTS_XTD_CONFIRM_EMAIL = False
-
+       
+    """
+    Configuración recomendaciones
+    """
     RECOMMENDS_STORAGE_BACKEND='recommends.storages.redis.storage.RedisStorage'
-
     RECOMMENDS_STORAGE_REDIS_DATABASE ={
     'HOST': 'localhost',
     'PORT': 7777,
@@ -129,39 +159,45 @@ class Base(Configuration):
     'ATOMIC_REQUESTS': True
     }
 
-
-    MIDDLEWARE_CLASSES = (
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',            
-        #'drealtime.middleware.iShoutCookieMiddleware',
-        #'simple_history.middleware.HistoryRequestMiddleware',
-    )
-
+    """
+    Archivos estaticos
+    """
+    STATIC_URL = '/static/' 
+    # STATIC_URL =join(BASE_DIR,'/static/')
+    
     ROOT_URLCONF = 'RecomendadorUD.urls'
+    STATICFILES_FINDERS = (
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        #'dajaxice.finders.DajaxiceFinder',
+    )
 
     WSGI_APPLICATION = 'RecomendadorUD.wsgi.application'
 
+
+    """
+    Configuración Medía
+    """
+    MEDIA_ROOT =  join(BASE_DIR,  'media')
+    MEDIA_URL = '/media/'
+
+
+    """
+    Templates
+    """
     TEMPLATE_DIRS = (
         join(BASE_DIR,  'templates'),
     )
-
     TEMPLATE_LOADERS = (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
         'django.template.loaders.eggs.Loader',
     )
+   
 
-    # Database
-    # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-    
-
-    # Internationalization
-
+    """
+    Internacioalización
+    """
     LANGUAGE_CODE = 'es-CO'
     #LANGUAGE_CODE = 'us-en'
     TIME_ZONE = 'America/Bogota'
@@ -169,62 +205,27 @@ class Base(Configuration):
     USE_L10N = False
     USE_TZ = True
 
-    # Static files (CSS, JavaScript, Images)
-    # https://docs.djangoproject.com/en/1.6/howto/static-files/
-    STATIC_URL = '/static/'    
-    STATICFILES_DIRS = (    
-        join(BASE_DIR,  'static'),
-    )
-
-    # STATIC_URL =join(BASE_DIR,'/static/')
-    #STATIC_ROOT =join(BASE_DIR,'static')
-
-
-
-    #Custom model users
+    """
+    Custom model users
+    """
     AUTH_USER_MODEL = 'account_system.User'
 
     
-    #
-    #Mandrill Configuration
-    #
+    """
+    Configuración Mandrill Mail
+    """
     MANDRILL_API_KEY = "dF6LAeaL1H2ZGsbU-Ypu6Q"
-
     #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
     DEFAULT_FROM_EMAIL='camilolinchis@recomendadorud.com'
 
-    ##DJANGO-ALLAUTH
-    TEMPLATE_CONTEXT_PROCESSORS = (
-        "django.core.context_processors.request",
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.static',
-        'django.core.context_processors.request',
-        'django.contrib.messages.context_processors.messages',
-        'django.contrib.auth.context_processors.auth',
-        "apps.establishment_system.context_processors.notificaciones",
-        "allauth.account.context_processors.account",
-        "allauth.socialaccount.context_processors.socialaccount",           
-
-    )
-
-    AUTHENTICATION_BACKENDS = (
-        "django.contrib.auth.backends.ModelBackend",
-        "allauth.account.auth_backends.AuthenticationBackend",    
-    )
-
-
-    STATICFILES_FINDERS = (
-        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-        'django.contrib.staticfiles.finders.FileSystemFinder',
-        #'dajaxice.finders.DajaxiceFinder',
-    )
-
-    SITE_ID = 2
-
-        
+   
+    
+    
+    """
+    Configuración Allauth
+    """
+    SITE_ID = 2        
     ACCOUNT_ADAPTER =('allauth.account.adapter.DefaultAccountAdapter')
         #Specifies the adapter class to use, allowing you to alter certain default behaviour.
     ACCOUNT_AUTHENTICATION_METHOD ='username'#('username' | 'email' | 'username_email')   
@@ -301,11 +302,8 @@ class Base(Configuration):
         #As ACCOUNT_EMAIL_VERIFICATION, but for social accounts.
     #SOCIALACCOUNT_PROVIDERS (= dict)
         #Dictionary containing provider specific settings.
-
-
     LOGIN_REDIRECT_URLNAME='/home/'
     LOGOUT_REDIRECT_URL='/home/'
-
     SOCIALACCOUNT_PROVIDERS = { 
             'google':{ 
                 'SCOPE': ['https://www.googleapis.com/auth/userinfo.profile','email'],
@@ -321,38 +319,20 @@ class Base(Configuration):
             }
         }   
 
+    """
+    Fixtures
+    """
     FIXTURE_DIRS = (        
         join(BASE_DIR,  '/account_system/fixtures/'),
         join(BASE_DIR,  '/establishment_system/fixtures/'),
     )
 
-    #AJAX_SELECT_BOOTSTRAP = False
-
-    MEDIA_ROOT =  join(BASE_DIR,  'media')
-    MEDIA_URL = '/media/'
-
-
     
-
     """
-    Twitter:
-        Apikey=6cO8HoMTIuOaMAyFNT1yxSea0
-        Secret=XolegaJvDWvyGREcziHv8q7GkyKsXNUjEmJh0lVRY4HM8B2N0c
-
-    Facebook:
-        ApiKey=543350239130783
-        apiSecret=7a6bc2911c658b8418131d057ab44335
-
-    Google+:
-        ApiKey=481544714964-9jtarg0p2l7qm4ep7ea4u3ors9hpd43b.apps.googleusercontent.com
-        secret=HY5M6bs8qpX02dcSsqKtCJ3-
+    Configuración Rest Framework
     """
-
-
     REST_FRAMEWORK = {
-        # Use hyperlinked styles by default.
-        # Only used if the `serializer_class` attribute is not set on a view.
-        #'DEFAULT_MODEL_SERIALIZER_CLASS':            'rest_framework.serializers.HyperlinkedModelSerializer',
+        #'DEFAULT_MODEL_SERIALIZER_CLASS':'rest_framework.serializers.HyperlinkedModelSerializer',
 
         # Use Django's standard `django.contrib.auth` permissions,
         # or allow read-only access for unauthenticated users.
@@ -366,14 +346,29 @@ class Base(Configuration):
         )
     }
 
+
+    """
+    Configuración Grapelli
+    """
     GRAPPELLI_ADMIN_TITLE= "RecomendadorUD"
-    #ADMIN_TOOLS_MENU="RecomendadorUD"
+
+    
+    # Twitter:
+    #     Apikey=6cO8HoMTIuOaMAyFNT1yxSea0
+    #     Secret=XolegaJvDWvyGREcziHv8q7GkyKsXNUjEmJh0lVRY4HM8B2N0c
+
+    # Facebook:
+    #     ApiKey=543350239130783
+    #     apiSecret=7a6bc2911c658b8418131d057ab44335
+
+    # Google+:
+    #     ApiKey=481544714964-9jtarg0p2l7qm4ep7ea4u3ors9hpd43b.apps.googleusercontent.com
+    #     secret=HY5M6bs8qpX02dcSsqKtCJ3-
     
 
 
 
-class Dev(Base):
-    # SECURITY WARNING: don't run with debug turned on in production!
+class Dev(Base):    
     DEBUG = True
     TEMPLATE_DEBUG = True    
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
@@ -381,10 +376,14 @@ class Dev(Base):
     SOCIALACCOUNT_EMAIL_VERIFICATION =None
     ACCOUNT_EMAIL_VERIFICATION =None
     
-
     INSTALLED_APPS = Base.INSTALLED_APPS + (                     
         'django_extensions',
         'debug_toolbar',    
+    )
+
+
+    STATICFILES_DIRS = (    
+        join(BASE_DIR,  'static'),
     )
 
     INTERNAL_IPS = ('127.0.0.1',)
@@ -417,13 +416,12 @@ class Dev(Base):
         #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',        
         #     'ATOMIC_REQUESTS': True    
         # }
-
         'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',  #'django.db.backends.sqlite3',
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',  
             'NAME': "recomendadorUD_database",
             'USER': 'postgres',
             'PASSWORD': 'recomendadorUD',
-            'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+            'HOST': 'localhost',                      
             'PORT': '5432',               
         }
     }
@@ -431,10 +429,17 @@ class Dev(Base):
       
 class Prod(Base):
     DEBUG = False
-    ALLOWED_HOSTS=['localhost']
+    ALLOWED_HOSTS=['*']
+    EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 
-
-
-
-
-#Slider menu = https://github.com/codrops/Blueprint-SlidePushMenus
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.contrib.gis.db.backends.postgis', 
+            'NAME': "recomendadorUD_database",
+            'USER': 'postgres',
+            'PASSWORD': 'recomendadorUD',
+            'HOST': 'localhost',                     
+            'PORT': '5432',               
+        }
+    }
+    STATIC_ROOT =join(BASE_DIR,'static')

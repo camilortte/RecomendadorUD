@@ -1,3 +1,20 @@
+# -*- encoding: utf-8 -*-
+"""
+    
+    views: vistas sistema recomendador
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
 from django.views.generic import TemplateView
 from apps.recommender_system.models import EstablecimientosRecommender
 from apps.establishment_system.models import Establecimiento
@@ -20,9 +37,7 @@ class RecomendacionView(TemplateView):
         recomendaciones=recomendador_instance.storage.get_recommendations_for_user(user)
         if recomendaciones:
             result=[]
-            print "tenemos resultados: ",recomendaciones         
             for recomendacion in recomendaciones:
-                print "Esto es recomendaciones: ",recomendaciones
                 result.append(recomendacion.object)
             recomendaciones=result
 
@@ -37,7 +52,7 @@ class RecomendacionView(TemplateView):
                                 break
                
         else:
-            print "No tenemos resultadso"
+            print "No tenemos resultados"
             recomendaciones=Establecimiento.objects.all().order_by('rating_score')[:10]
         return recomendaciones
 

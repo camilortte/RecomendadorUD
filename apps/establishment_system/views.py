@@ -1185,7 +1185,8 @@ class UploadImagenApiView(APIView):
                                 respuesta="OK"
                                 return Response(respuesta, status=status.HTTP_201_CREATED)
                             else:
-                                respuesta={"error":"La imagen no puede ser mayor a 5 MB"}
+                                print "SUpera el tamanio"
+                                respuesta={"error":"La imagen no puede ser mayor a 10 MB"}
                     else:
                         respuesta={"error":"No subio nada"}
                 else:

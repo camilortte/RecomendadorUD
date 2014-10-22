@@ -1,3 +1,20 @@
+# -*- encoding: utf-8 -*-
+"""
+    
+    models: modelos del sistema recmendador.
+
+    @author     Camilo Ramírez
+    @contact    camilolinchis@gmail.com 
+                camilortte@hotmail.com
+                @camilortte on Twitter
+    @copyright  Copyright 2014-2015, RecomendadorUD
+    @license    GPL
+    @date       2014-10-10
+    @satus      Pre-Alpha
+    @version=   0..215
+
+
+"""
 from __future__ import unicode_literals
 from django.db import models
 from apps.account_system.models import User
