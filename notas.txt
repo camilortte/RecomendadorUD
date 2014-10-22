@@ -113,3 +113,10 @@ CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 \q
 exit
+
+
+--> nginx y Gnicorn Deplyment
+
+	gunicorn RecomendadorUD.wsgi:application --bind=127.0.0.1:8001 <-- DOnde este el manage.py
+
+	sudo service nginx restart	
