@@ -29,6 +29,9 @@ TODO:
 
 + Eliminar las imagenes del proyecto y de git
 + Eliminar archivos no requeridos en github
++ Estadisticas de Google
++ NewRelic
++ Realtime Nginx
 
 
 
