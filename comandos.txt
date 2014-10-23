@@ -3,13 +3,14 @@ pip install virtualenv
 
 
 cd ~
-mkdir www/Django/RecomendadorUD/source/
-mkdir www/Django/RecomendadorUD/dev/
-mkdir www/Django/RecomendadorUD/prod/
+mkdir -p www/Django/RecomendadorUD/source/
+mkdir -p www/Django/RecomendadorUD/dev/
+mkdir -p www/Django/RecomendadorUD/prod/
 
-cd www/Django/RecomendadorUD/source/
+cd www/Django/RecomendadorUD/
 virtualenv env
 source env/bin/activate
+cd www/Django/RecomendadorUD/source/
 git clone https://github.com/camilortte/RecomendadorUD.git .
 
 
