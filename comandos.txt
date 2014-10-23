@@ -1,0 +1,42 @@
+sudo apt-get install python-pip python-dev ssh git
+pip install virtualenv
+
+
+cd ~
+mkdir www/Django/RecomendadorUD/source/
+mkdir www/Django/RecomendadorUD/dev/
+mkdir www/Django/RecomendadorUD/prod/
+
+cd www/Django/RecomendadorUD/source/
+virtualenv env
+source env/bin/activate
+git clone https://github.com/camilortte/RecomendadorUD.git .
+
+
+cd ..
+sudo apt-get install redis-server redis-tools 
+sudo apt-get install python-numpy python-nose python-matplotlib ipython ipython-notebook python-pandas python-sympy
+sudo apt-get install liblapack-dev libatlas-dev gfortran
+sudo apt-get install sqlite spatialite-bin 
+sudo pip install csc-pysparse networkx divisi2
+sudo apt-get install python-scipy   
+
+sudo easy_install scipy
+
+mkdir libs
+cd libs
+git clone https://github.com/ocelma/python-recsys.git pyrecsys
+cd pyrecsys
+sudo python setup.py install
+cd ..
+
+  
+
+
+pip install -R requeriments.txt
+
+
+env/bin/pip install django-recommends
+env/bin/pip install  -U django-recommends   
+sudo env/bin/easy_install scipy
+python manage.py runserver 0.0.0.0:8000
