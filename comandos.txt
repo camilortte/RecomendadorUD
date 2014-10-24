@@ -10,34 +10,51 @@ mkdir -p www/Django/RecomendadorUD/prod/
 cd www/Django/RecomendadorUD/
 virtualenv env
 source env/bin/activate
-cd www/Django/RecomendadorUD/source/
+cd source/
 git clone https://github.com/camilortte/RecomendadorUD.git .
 
 
 cd ..
-sudo apt-get install redis-server redis-tools 
-sudo apt-get install python-numpy python-nose python-matplotlib ipython ipython-notebook python-pandas python-sympy
-sudo apt-get install liblapack-dev libatlas-dev gfortran
-sudo apt-get install sqlite spatialite-bin 
-sudo pip install csc-pysparse networkx divisi2
-sudo apt-get install python-scipy   
+sudo apt-get install redis-server redis-tools  python-numpy python-nose python-matplotlib ipython ipython-notebook python-pandas python-sympy liblapack-dev libatlas-dev gfortran sqlite spatialite-bin python-scipy   
 
+sudo apt-get install libproj-dev libspatialite-dev libspatialite spatialite-bin python-pysqlite2
+
+
+
+cd www/Django/RecomendadorUD/source/
+pip install -r requeriments.txt
+
+
+sudo pip install csc-pysparse networkx divisi2
 sudo easy_install scipy
 
+cd www/Django/RecomendadorUD/
 mkdir libs
 cd libs
 git clone https://github.com/ocelma/python-recsys.git pyrecsys
 cd pyrecsys
 sudo python setup.py install
+
+
 cd ..
+export POSTGRESDATABASE_USER='acces_django'
+export POSTGRESDATABASE_PASSWORD='acces_django_pass'
+export SECRET_KEY='oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
+export MANDRILL_API_KEY='dF6LAeaL1H2ZGsbU-Ypu6Q'
 
-  
+cd ~
+cd www/Django/RecomendadorUD/RecomendadorUD_dev/
+spatialite spatial_db.db "SELECT InitSpatialMetaData();"
+
+cd www/Django/RecomendadorUD/source/
+python manage.py runserver --configuration=Dev
+
+env/bin/easy_install numpy
+env/bin/easy_install scipy
+sudo pip install celery
 
 
-pip install -R requeriments.txt
 
 
-env/bin/pip install django-recommends
-env/bin/pip install  -U django-recommends   
-sudo env/bin/easy_install scipy
-python manage.py runserver 0.0.0.0:8000
+
+

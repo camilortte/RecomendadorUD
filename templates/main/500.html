@@ -16,17 +16,16 @@
 
 
 {% block content %}
-
 <br>
-<h1>Error 500. Internal error</h1>
+<h1>Error 500 - Internal server error</h1>
 <br>
 <div class="col-md-12">
 	<img src="{% static 'img/500.jpg'%}" class="img-responsive center-block" alt="Error 500">	
 	<p >
 		<h4 class="text-center">
 			<h3 class="text-center">Pero, ¿Qué hiciste?.</h3>
-			¡No es tu culpa es la nuestra, pronto arreglaremos el fallo!.
-			<a href="{{request.META.HTTP_REFERER}}">Volver</a>			
+			<p class="text-center">¡No es tu culpa es la nuestra, pronto arreglaremos el fallo!.<a href="{{request.META.HTTP_REFERER}}">Volver</a>	</p>
+					
 		</h4>
 	</p>
 </div>

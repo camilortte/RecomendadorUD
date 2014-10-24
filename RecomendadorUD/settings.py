@@ -4,9 +4,9 @@ import os
 from os.path import join, expanduser
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-HOME_DIR = expanduser("~")+"/www/"
-MEDIA_DIR_PROD = join(HOME_DIR+"/RecomendadorUD_prod/",  'media')
-MEDIA_DIR_DEV = join(HOME_DIR+"/RecomendadorUD_dev/",  'media')
+HOME_DIR = expanduser("~")+"/www/Django/RecomendadorUD"                            
+MEDIA_DIR_PROD = join(HOME_DIR+"/prod/",  'media')
+MEDIA_DIR_DEV = join(HOME_DIR+"/dev/",  'media')
 
 
 class Base(Configuration):    
@@ -394,7 +394,7 @@ class Dev(Base):
 
     DATABASES = {     
         'default': {
-            'NAME': os.path.join(HOME_DIR, 'RecomendadorUD_dev/spatial_db.db'),
+            'NAME': os.path.join(HOME_DIR, 'dev/spatial_db.db'),
             'ENGINE': 'django.contrib.gis.db.backends.spatialite'
         }
     }
@@ -402,7 +402,7 @@ class Dev(Base):
     HAYSTACK_CONNECTIONS = {
         'default': {
             'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',            
-            'PATH': os.path.join(HOME_DIR, 'RecomendadorUD_dev/indexs/whoosh_index'),
+            'PATH': os.path.join(HOME_DIR, 'dev/indexs/whoosh_index'),
         },
     }
 
@@ -434,7 +434,7 @@ class Prod(Base):
     HAYSTACK_CONNECTIONS = {
         'default': {
             'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-            'PATH': os.path.join(HOME_DIR, 'RecomendadorUD_prod/indexs/whoosh_index'),
+            'PATH': os.path.join(HOME_DIR, 'prod/indexs/whoosh_index'),
         },
     }
 

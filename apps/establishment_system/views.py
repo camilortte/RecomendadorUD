@@ -99,6 +99,7 @@ class DetalleEstablecimientoView(DetailView):
         context = super(DetalleEstablecimientoView, self).get_context_data(**kwargs)
         establecimiento = self.object
         context['imagenes'] = Imagen.objects.filter(establecimientos=establecimiento)
+
         count=Imagen.objects.filter(establecimientos=establecimiento).count()
         if count < settings.MAX_IMAGES_PER_PLACE:
             context['imagenes_nulas'] = range(count,settings.MAX_IMAGES_PER_PLACE)
