@@ -13,13 +13,14 @@ cd www/Django/RecomendadorUD/
 #source env/bin/activate
 cd source/
 git clone https://github.com/camilortte/RecomendadorUD.git .
+git clone --depth=1 https://github.com/camilortte/RecomendadorUD.git .
+
 
 
 cd ..
 sudo apt-get install redis-server redis-tools  python-numpy python-nose python-matplotlib ipython ipython-notebook python-pandas python-sympy liblapack-dev libatlas-dev gfortran sqlite spatialite-bin python-scipy   
 
 sudo apt-get install build-dep libproj-dev libspatialite-dev libspatialite5 spatialite-bin python-pysqlite2 gdal-bin binutils libpq-dev
-
 
 
 
