@@ -188,6 +188,26 @@ redirect_stderr = true                                                          
 environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8                                         ; Set UTF-8 as default encoding
 
 
+#Configurando redis
+sudo nano /etc/sysctl.conf
+vm.overcommit_memory = 1
+sudo nano /etc/supervisor/conf.d/redis.conf
+touch log_redis.log
+sudo supervisorctl reread
+sudo supervisorctl update
+
+
+[program:Redis]
+command = redis-server                                                                  ; Command to start app
+user = recomendadorud                                                                   ; User to run as
+stdout_logfile = /home/recomendadorud/www/Django/RecomendadorUD/log_redis.log           ; Where to write log messages
+redirect_stderr = true                                                                  ; Save stderr in the same log
+
+
+---###OJO PROBAR SI REDIS FUNCIONA###########
+
+
+
 -------------------------------------------------------------------------------------
 export POSTGRESDATABASE_USER='postgres'
 export POSTGRESDATABASE_PASSWORD='RecomendadorUD'
