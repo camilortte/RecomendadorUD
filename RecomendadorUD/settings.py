@@ -1,8 +1,10 @@
 # -*- encoding: utf-8 -*-
+from YamJam import yamjam
 from configurations import Configuration
 import os
 from os.path import join, expanduser
 
+CFG = yamjam()['RecomendadorUD']
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 HOME_DIR = expanduser("~")+"/www/Django/RecomendadorUD"                            
 MEDIA_DIR_PROD = join(HOME_DIR+"/prod/",  'media')
@@ -10,7 +12,7 @@ MEDIA_DIR_DEV = join(HOME_DIR+"/dev/",  'media')
 
 
 class Base(Configuration):    
-    SECRET_KEY = os.environ.get("SECRET_KEY", '')
+    SECRET_KEY = CFG['SECRET_KEY']#os.environ.get("SECRET_KEY", '')
     DEBUG=True
     ALLOWED_HOSTS = []
 
@@ -213,7 +215,7 @@ class Base(Configuration):
     """
     Configuración Mandrill Mail
     """
-    MANDRILL_API_KEY = os.environ.get("MANDRILL_API_KEY", '')
+    MANDRILL_API_KEY = CFG['MANDRILL_API_KEY']#os.environ.get("MANDRILL_API_KEY", '')
     #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
     DEFAULT_FROM_EMAIL='camilolinchis@recomendadorud.com'
@@ -418,8 +420,8 @@ class Prod(Base):
     DEBUG = False
     ALLOWED_HOSTS=['*']
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-    POSTGRESDATABASE_USER = os.environ.get("POSTGRESDATABASE_USER", '')
-    POSTGRESDATABASE_PASSWORD = os.environ.get("POSTGRESDATABASE_PASSWORD", '')
+    POSTGRESDATABASE_USER = CFG['POSTGRESDATABASE_USER']#os.environ.get("POSTGRESDATABASE_USER", '')
+    POSTGRESDATABASE_PASSWORD = CFG['POSTGRESDATABASE_PASSWORD']#os.environ.get("POSTGRESDATABASE_PASSWORD", '')
     DATABASES = {
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.postgis', 
