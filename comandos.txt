@@ -33,7 +33,7 @@ sudo easy_install scipy
 sudo pip install psycopg2 
 
 
-cd www/Django/RecomendadorUD/
+cd ~/www/Django/RecomendadorUD/
 mkdir libs
 cd libs
 git clone https://github.com/ocelma/python-recsys.git pyrecsys
