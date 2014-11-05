@@ -13,32 +13,29 @@
   <link rel="icon" href="{% static 'img/icon/favicon.ico'%}" type="image/x-icon">  
   <title>{% block head_title %}Third-party Authentication Tutorial{% endblock head_title %}</title>
 
-    <!-- Bootstrap  servido por mi
-    <link href="{% static 'bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
-    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css'%}" rel="stylesheet">
+  <!-- Bootstrap  servido por mi
+  <link href="{% static 'bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static 'bootstrap/css/bootstrap-theme.min.css'%}" rel="stylesheet">
   -->
 
   <!-- Latest compiled and minified CSS 
    style="background:#DBDBDB;"
--->
+  -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">  
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link href="{% static 'Bootstrap-3-Typeahead/typeaheadjs.css'%}" rel="stylesheet">
+  <link href="{% static 'bootstrap-notify/bootstrap-notify.css'%}">
 
   <!--Menu desplegable -->
   <link rel="stylesheet" href="{% static 'css/menu_desplegable.css'%}">
 
-  <!-- Latest compiled and minified JavaScript -->
+  <!-- JavaScript -->
   <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-
   <script src="{% static 'Classie/classie.js'%}"></script>   
   <script src="{% static 'Classie/modernizr.custom.js'%}"></script>   
-
-  <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
-  <link href="{% static 'Bootstrap-3-Typeahead/typeaheadjs.css'%}" rel="stylesheet">
-
-  <link href="{% static 'bootstrap-notify/bootstrap-notify.css'%}">
+  <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>  
   <script src="{% static 'bootstrap-notify/bootstrap-notify.js'%}"></script>    
 
   <style>
@@ -109,6 +106,11 @@ a.alert_message:hover{color : grey}
   margin-left: 0px;
   padding-left: 3px;
 }
+
+.bg-info{
+    border-radius: 0.8em;
+    text-align: center;
+  }
 
   {% block styles %}
     
@@ -263,15 +265,6 @@ a.alert_message:hover{color : grey}
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-
 <!-- body has the class "cbp-spmenu-push" -->
 <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
 
@@ -279,7 +272,7 @@ a.alert_message:hover{color : grey}
     <div class="row">
       <div class="col-md-8">
         {% if user.is_authenticated %}
-        {{user.first_name}}
+          {{user.first_name}}
         {%else%}
         Menu
         {% endif %}
@@ -291,14 +284,19 @@ a.alert_message:hover{color : grey}
     <br>
     <br>
   </a>  
-  <a href="{% url 'home_url' %}"><span class="glyphicon glyphicon-home"></span> Inicio</a>
-  <a href="{% url 'establecimientos_list_url' %}"><span class="glyphicon glyphicon-map-marker"></span> Mapa de Lugares</a>  
+  {% url 'home_url' as home_menu %}  
+  {% url 'establecimientos_list_url' as establecimientos_list_menu %} 
+  {% url 'establecimientos_propios_ur' as establecimientos_propios_menu %}  
+  {% url 'recmendacion_url' as recmendacion_menu %}  
+  {% url 'establecimiento_create_url' as establecimiento_create_menu %}    
+  <a href="{% url 'home_url' %}" {% if request.get_full_path == home_menu %}class="active-menu"{% endif %}><span class="glyphicon glyphicon-home"></span> Inicio</a>   
+  <a href="{% url 'establecimientos_list_url' %}" {% if request.get_full_path == establecimientos_list_menu %}class="active-menu"{% endif %}><span class="glyphicon glyphicon-map-marker"></span> Mapa de Lugares</a>  
   {% if request.user.is_authenticated %}
-    {% if  user.is_organizacional or user.is_superuser%}
-      <a href="{% url 'establecimientos_propios_ur'%}"><span class="glyphicon glyphicon-briefcase"></span> Mis Lugares</a>
+    {% if  user.is_organizacional or user.is_superuser%}      
+      <a href="{% url 'establecimientos_propios_ur'%}" {% if request.get_full_path == establecimientos_propios_menu %}class="active-menu"{% endif %}><span class="glyphicon glyphicon-briefcase"></span> Mis Lugares</a>
     {% endif %}
-      <a href="{% url 'recmendacion_url'%}"><span class="glyphicon glyphicon-thumbs-up"></span> ¡Te recomendamos!</a> 
-      <a href="{% url 'establecimiento_create_url' %}"><span class="glyphicon glyphicon-ok"></span>  Crear lugar</a>         
+      <a href="{% url 'recmendacion_url'%}" {% if request.get_full_path == recmendacion_menu %}class="active-menu"{% endif %}><span class="glyphicon glyphicon-thumbs-up"></span> ¡Te recomendamos!</a> 
+      <a href="{% url 'establecimiento_create_url' %}" {% if request.get_full_path == establecimiento_create_menu %}class="active-menu"{% endif %}><span class="glyphicon glyphicon-ok"></span>  Crear lugar</a>         
   {% else %}
 
   {% endif %}
@@ -324,6 +322,7 @@ a.alert_message:hover{color : grey}
 
 {% if request.get_full_path != '/establecimientos/' %}
 </div>
+<br>
 <div id="footer">
       <div class="container text-center">
          <div class="col-md-4">

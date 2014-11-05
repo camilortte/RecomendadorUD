@@ -164,7 +164,7 @@ sudo service nginx restart
 export POSTGRESDATABASE_USER='acces_django'
 export POSTGRESDATABASE_PASSWORD='acces_django_pass'
 export SECRET_KEY='oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
-export MANDRILL_API_KEY='dF6LAeaL1H2ZGsbU-Ypu6Q'
+export MANDRILL_API_KEY='dF6LAeaL1H2ZGsbU-Ypu6Q'    
 
 gunicorn RecomendadorUD.wsgi:application --bind=127.0.0.1:8001
 
@@ -173,7 +173,7 @@ gunicorn RecomendadorUD.wsgi:application --bind=127.0.0.1:8001
 
 sudo aptitude install supervisor
 sudo nano /etc/supervisor/conf.d/recomendadorud.conf
-cd www/Django/RecomendadorUD/
+cd ~/www/Django/RecomendadorUD/
 touch log_supervisor.log
 sudo supervisorctl reread
 sudo supervisorctl update

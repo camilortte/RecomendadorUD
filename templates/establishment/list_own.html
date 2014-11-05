@@ -38,7 +38,7 @@
                   <th>Numero Votos</th>
                   <th>Editar</th>
                   <th>Eliminar</th>
-                </tr>      
+                </tr>                      
                 {% for establecimiento in establecimientos_propios %}
                     <tr>
                         <td><a href="{% url 'establecimiento_detail_url' establecimiento.id %}">{{ establecimiento.nombre |title}}</a></td>

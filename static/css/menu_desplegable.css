@@ -24,6 +24,10 @@
 .cbp-spmenu a:hover {
     background: #258ecd;
 }
+
+.active-menu{
+    background: #258ecd;
+}
  
 .cbp-spmenu a:active {
     background: #afdefa;

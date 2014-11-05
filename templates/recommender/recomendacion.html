@@ -32,39 +32,40 @@
 				{% if recomendaciones %}					
 					{% for recomendacion in recomendaciones  %}
 						<div class="col-md-6">
-							<div class="col-md-12">
-							<div class="recomendacion">
-								<div class="media">
-								  <a class="pull-left" href="{% url 'establecimiento_detail_url' recomendacion.id %}">
-								    <img class="media-object" src="{% static 'img/icon_place.png'%}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
-								  </a>
-								  <div class="media-body">
-								    <a href="{% url 'establecimiento_detail_url' recomendacion.id %}"><h4 class="media-heading">
-							{{recomendacion.nombre|title}}	</h4></a>
-			                {% if recomendacion.email  %}
-			                <h4><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{recomendacion.email}}</small></h4>    
-			                {% endif %}
-			                {% if recomendacion.web_page %}
-			                <h4><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white">{{recomendacion.web_page}}</small></h4>
-			                {% endif %}
-			                <h4><span class="glyphicon glyphicon-map-marker"></span>  Dirección:  <small class="small-white">{{recomendacion.address}}</small></h4>
-			                {% if recomendacion.telefono %}
-			                    <h4><span class="glyphicon glyphicon-phone-alt"></span>  Telefono:  <small class="small-white">{{recomendacion.telefono}}</small></h4>    
-			                {% endif %}
-			                
-			                <input type="hidden" id="latitude_{{recomendacion.id}}" value="{{recomendacion.position.y}}">
-			                <input type="hidden" id="longitude_{{recomendacion.id}}" value ="{{recomendacion.position.x}}">
-			                
-			                {% if recomendacion.description%}
-				                <h4><span class="
-				                glyphicon glyphicon-comment"></span>  Descripción:  </h4><p class="text-justify">
-				                     {{recomendacion.description}}
-				                </p>
-				            {%endif%}
-			                <br><br><br>							  
-								</div>
-								</div>                 
-							</div>								
+							<div class="row recomendacion col-md-12  center-block">
+								<div class="">
+									<div class="col-md-3">
+									  <a class="" href="{% url 'establecimiento_detail_url' recomendacion.id %}">
+									    <img class="img-responsive" src="{% static 'img/icon_place.png'%}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+									  </a>
+									  <br>
+									</div>
+									  <div class="col-md-9">
+									    <a href="{% url 'establecimiento_detail_url' recomendacion.id %}"><h4 class="media-heading">
+								{{recomendacion.nombre|title}}	</h4></a>
+				                {% if recomendacion.email  %}
+				                <h4><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{recomendacion.email}}</small></h4>    
+				                {% endif %}
+				                {% if recomendacion.web_page %}
+				                <h4><span class="glyphicon glyphicon-globe"></span>  Pagina Web:  <small class="small-white">{{recomendacion.web_page}}</small></h4>
+				                {% endif %}
+				                <h4><span class="glyphicon glyphicon-map-marker"></span>  Dirección:  <small class="small-white">{{recomendacion.address}}</small></h4>
+				                {% if recomendacion.telefono %}
+				                    <h4><span class="glyphicon glyphicon-phone-alt"></span>  Telefono:  <small class="small-white">{{recomendacion.telefono}}</small></h4>    
+				                {% endif %}
+				                
+				                <input type="hidden" id="latitude_{{recomendacion.id}}" value="{{recomendacion.position.y}}">
+				                <input type="hidden" id="longitude_{{recomendacion.id}}" value ="{{recomendacion.position.x}}">
+				                
+				                {% if recomendacion.description%}
+					                <h4><span class="
+					                glyphicon glyphicon-comment"></span>  Descripción:  </h4><p class="text-justify">
+					                     {{recomendacion.description}}
+					                </p>
+					            {%endif%}
+				                <br><br><br>							  
+									</div>                 
+								</div>								
 							</div>
 						</div>
 
@@ -75,15 +76,21 @@
 </div>
 
 <script>
+
+
 	$( document ).ready(function() {
-    var heights = $(".recomendacion").map(function() {
-        return $(this).height();
-    }).get(),
-
-    maxHeight = Math.max.apply(null, heights);
-
-    $(".recomendacion").height(maxHeight);
-});
+		if ($(window).width() >= 900){	
+			console.log("Mayor (Y)");
+			// do something here
+			var heights = $(".recomendacion").map(function() {
+		        return $(this).height();
+		    }).get();   
+		    maxHeight = Math.max.apply(null, heights);
+		    $(".recomendacion").height(maxHeight);
+		}	else {
+			console.log("Menor");
+		}		  
+	});
 
 	
 
@@ -102,7 +109,7 @@ for (var i = lista.length - 1; i >= 0; i--) {
 	console.log("Longitude; "+longitude)
 
 	url = GMaps.staticMapURL({
-	  size: [128,228],
+	  size: [128,128],
 	  lat: latitude,	
 	  lng: longitude,
 	  markers: [

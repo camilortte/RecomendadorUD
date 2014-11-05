@@ -5,6 +5,7 @@
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
+  
 {% block content %}
 
     <div class="row " >
@@ -14,13 +15,13 @@
             <h1>{% trans "Registro" %}</h1>
             <p class="text-justify">{% blocktrans %}¿Ya tienes una cuenta?  <a href="{{ login_url }}">Iniciar sesión</a>.{% endblocktrans %}</p>
 
-            <form  data-parsley-validate action="{% url 'account_signup' %}" class="form-horizontal signup" role="form" method="POST" id="signup_form">{% csrf_token %}  
+            <form  data-parsley-validate action="{% url 'account_signup' %}" class="center-block" role="form" method="POST" id="signup_form">{% csrf_token %}  
                     {% bootstrap_form form %}
                     {% if redirect_field_value %}
                         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }} " />
                     {% endif %}
-                <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
-                <button type="submit" class="btn btn-success">{% trans "Registrarse" %}</button>   
+                <p class="bg-info" ><br>Los campos marcados con * son obligatorios.<br><br></p>
+                <button type="submit" class="btn btn-success center-block">{% trans "Registrarse" %}</button>   
             </form>   
             <br>
                   

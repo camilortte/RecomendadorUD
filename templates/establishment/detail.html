@@ -87,7 +87,17 @@
 
 
 
+// Classes
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+// Usage as mixins
+.element {
+  .center-block();
+}
 {% endblock styles %}
 
 {% block content %}
@@ -124,7 +134,11 @@
                             <span class="close">                            
                                 <input type="submit" value="&times;"/>
                             </span>
-                        </form>                    
+                        </form>      
+                    {%else%}
+                        <span class="close">                            
+                           <input type="submit" value=""/>
+                        </span>
                     {% endif %}                       
                     <a class="fancybox thumbnail" rel="gallery1" href="{{MEDIA_URL}}{{imagen.imagen}}" title="{{imagen.imagen}}">
                     <img class="img-responsive"  src="{{imagen.imagen_thumbnail.url}}" alt="{{imagen.imagen}}"/>
@@ -324,16 +338,17 @@
                 </div>
 
             {% else %}
-                <h2>Nadie a dado su opinión, se el primero :D.</h2>
+                <ul>
+                    <li><h3>Nadie a dado su opinión, se el primero :D.</h3></li>
+                </ul>
             {% endif %}
             
             
             {% if form %}
 
-                <form action="{%  url 'crear_comentario_url' object.id %}"  class="form-horizontal" role="form" id="my_form" method="POST" >{% csrf_token %}  
+                <form action="{%  url 'crear_comentario_url' object.id %}"  class="center-block" role="form" id="my_form" method="POST" >{% csrf_token %}  
                       {% bootstrap_form form %}
-                     <input type="button" class="add_comment_submit btn btn-success" value="{% trans "Enviar" %}" id="enviar">
-                                                             
+                     <input type="button" class="add_comment_submit btn btn-success center-block" value="{% trans "Enviar" %}" id="enviar">                                                            
                 </form>   
 
             {% endif %}

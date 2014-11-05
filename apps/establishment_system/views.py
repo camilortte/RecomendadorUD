@@ -480,7 +480,9 @@ class CrearEstablecimiento(CreateViewVanilla):
             ctx['lat'] = pnt.x
         return ctx
 
-#################NO SE PARA QUE SE USA#########################################<------------------------------------------------------------------------------------------------------------------------------------
+"""
+DEPRECATE
+"""
 class RecargarDatosEstablecimiento(TemplateViewVanilla):
 
     def render_to_response(self, context, **httpresponse_kwargs):
@@ -946,7 +948,8 @@ class EstablecimientosPropios(ListView):
         """
             Se filtra los establecimientos por el propietario del request
         """
-        query=Establecimiento.objects.filter(administradores=self.request.user)
+        query=Establecimiento.objects.filter(administradores=self.request.user)        
+        print "Query: ",query        
         return query
 
     @method_decorator(login_required)

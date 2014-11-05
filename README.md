@@ -28,12 +28,12 @@ TODO:
 + ~~Permisos de usuarios en nginx~~
 
 + ~~Eliminar las imagenes del proyecto y de git~~
-+ Eliminar archivos no requeridos en github
++ ~~Eliminar archivos no requeridos en github~~
 + Estadisticas de Google
 + ~~NewRelic~~
 + Realtime Nginx
 
-+ supervisor
++ ~~supervisor~~
 
 
 ##Licencia

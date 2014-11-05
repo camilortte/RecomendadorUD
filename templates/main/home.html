@@ -5,7 +5,7 @@
 {% load staticfiles %}
 {% block head_title %}{% trans "Home" %}{% endblock %}
 {% block scripts %}
-        <link href='http://fonts.googleapis.com/css?family=Paytone+One' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Nunito' rel='stylesheet' type='text/css'>
         <script>
             function my_callback(data){
                 $('#unread').text(data.count);
@@ -14,7 +14,6 @@
             }
 
         </script>
-
 {% endblock %}
 
 {% block styles %}
@@ -57,13 +56,14 @@
 
 
 .header{
-    color:white;
-    font-family: 'Paytone One', sans-serif;    
-    -webkit-text-stroke: 1px black;
-    -moz-text-stroke: 1px black;
-    -ms-text-stroke: 1px black;
-    -o-text-stroke: 1px black;
-   color: white;
+    #color:white;
+    font-family: 'Nunito', sans-serif;
+    -webkit-text-stroke: 1px #47a3da;
+    -moz-text-stroke: 1px #47a3da;;
+    -ms-text-stroke: 1px #47a3da;;
+    -o-text-stroke: 1px #47a3da;;
+    color: #47a3da;
+   
 }
 
 
@@ -120,14 +120,21 @@
             </div>
 
             <div class="col-md-12">
-                <h2 class="text-center">Actualmente tenemos {{cantidad}} lugares registrados</h2
+                <h2 class="text-center">Actualmente tenemos {{cantidad}} lugares registrados</h2>
                 <p class="text-center">
-                    <a href="{% url 'establecimientos_list_url'%}"  class="btn btn-primary btn-lg pull-left">&lt;&lt; Ver mapa &gt; &gt;</a>  
-                    {% if user.is_authenticated %}                        
-                        <a href="{% url 'establecimiento_create_url'%}"  class="btn btn-primary btn-lg pull-right">&lt;&lt; Aporta: Crea un lugar &gt; &gt;</a>                                
-                    {% else %}
-                        <a href="{% url 'login_url'%}"  class="btn btn-primary btn-lg pull-right"> Iniciar sesión o registrarse </a>        
-                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{% url 'establecimientos_list_url'%}"  class="btn btn-primary btn-lg  center-block">&lt;&lt; Ver mapa &gt; &gt;</a><br>
+                        </div>
+                        <div class="col-md-6 center-block   ">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'establecimiento_create_url'%}"  class="btn btn-primary btn-lg  center-block">&lt;&lt; Aporta: Crea un lugar &gt; &gt;</a>                                
+                            {% else %}
+                                <a href="{% url 'login_url'%}"  class="btn btn-primary btn-lg  center-block"> Iniciar sesión o registrarse </a>        
+                            {% endif %}
+                        </div>
+                    </div>
+                    
                     
                 </p>
             </div>
@@ -143,24 +150,24 @@
     <div class="row">
          <div class="col-md-offset-1 col-md-10 col-md-offset-1">
              <div class="col-md-6 help">
-                <h2>¿Qué es Recomendado?</h2>                
+                <h2 class="text-center">¿Qué es RecomendadorUD?</h2>                
                 <p class="text-justify">
                     RecomendadorUD es un sistema recomendador de filtrado colaborativo soportado en un portal web que recomienda lugares, tales recomendaciones se basan en los gustos e intereses proporcionados por los mismos usuarios de manera voluntaria a partir de puntuaciones de lugares conocidos. De la misma forma los usuarios también pueden crear  y actualizar  lugares sin ninguna restricción, permitiendo que el portal tenga siempre información de actualidad para cada establecimiento.
                 </p></div>
              <div class="col-md-6 help">
-                <h2>¿Qué beneficios tiene?</h2>
+                <h2 class="text-center">¿Qué beneficios tiene?</h2>
                 <p class="text-justify">
                     Los beneficios son incontables, RecomendadorUD aprende de tus intereses y filtra la información relevante que probablemente te importará, descartando lo irrelevante, esto se verá reflejado en tiempos de búsqueda, calidades de la búsqueda y nuevos resultados que tal vez no conocías y grandes sorpresas.
                 </p>
             </div>
 
             <div class="col-md-6 help">
-                <h2>Soy propietario de un lugar</h2>
+                <h2 class="text-center">Soy propietario de un lugar</h2>
                 <p class="text-justify">
                    Si eres propietario de un lugar debes comprobarlo.  Para esto debes seleccionar el lugar que te pertenece, posteriormente ingresa a la sección de Solicitudes y pulsa en el enlace de "Soy propietario", seguidamente ingresa los datos sugeridos. Finalmente nos contactaremos contigo para seguir el proceso de solicitud.
                 </p></div>
              <div class="col-md-6 help">
-                <h2>Quiero que me recomiendes</h2>
+                <h2 class="text-center">Quiero que me recomiendes</h2>
                 <p class="text-justify">
                     Dirígete a <a href="{% url 'recmendacion_url' %}">Recomendaciones</a> y obtén tu recomendación, para que te demos las mejores recomendaciones debemos conocer tus gustos, califica en cuanto puedas, eso será de gran utilidad y tus recomendaciones mejorarán notablemente.
                 </p>
