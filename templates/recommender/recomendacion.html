@@ -19,7 +19,19 @@
 	border-radius: 7px;
 	padding: 0.5em;
 	margin-bottom: 2em;
+	background-size: 100%;
+	box-shadow: inset 0 150px 200px -30px #47a3da;
 }
+
+.url-lugares{
+	color:blue;
+}
+
+.small-white {
+	color: black;
+}
+  
+
 {% endblock styles %}
 
 
@@ -32,16 +44,16 @@
 				{% if recomendaciones %}					
 					{% for recomendacion in recomendaciones  %}
 						<div class="col-md-6">
-							<div class="row recomendacion col-md-12  center-block">
+							<div class="row recomendacion col-md-12  center-block mierda" id="lugar_{{recomendacion.id}}"	>
 								<div class="">
 									<div class="col-md-3">
 									  <a class="" href="{% url 'establecimiento_detail_url' recomendacion.id %}">
-									    <img class="img-responsive" src="{% static 'img/icon_place.png'%}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+									    <img class="img-responsive recomendacion-img" src="{% static 'img/icon_place.png'%}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
 									  </a>
 									  <br>
 									</div>
 									  <div class="col-md-9">
-									    <a href="{% url 'establecimiento_detail_url' recomendacion.id %}"><h4 class="media-heading">
+									    <a href="{% url 'establecimiento_detail_url' recomendacion.id %}"><h4 class="media-heading url-lugares">
 								{{recomendacion.nombre|title}}	</h4></a>
 				                {% if recomendacion.email  %}
 				                <h4><span class="glyphicon glyphicon-envelope"></span>  Email:  <small class="small-white">{{recomendacion.email}}</small></h4>    
@@ -53,7 +65,8 @@
 				                {% if recomendacion.telefono %}
 				                    <h4><span class="glyphicon glyphicon-phone-alt"></span>  Telefono:  <small class="small-white">{{recomendacion.telefono}}</small></h4>    
 				                {% endif %}
-				                
+
+				                				                
 				                <input type="hidden" id="latitude_{{recomendacion.id}}" value="{{recomendacion.position.y}}">
 				                <input type="hidden" id="longitude_{{recomendacion.id}}" value ="{{recomendacion.position.x}}">
 				                
@@ -65,7 +78,7 @@
 					            {%endif%}
 				                <br><br><br>							  
 									</div>                 
-								</div>								
+								</div>		
 							</div>
 						</div>
 
@@ -98,10 +111,10 @@
 
 lista=$( ".contenedir" ).children()
 for (var i = lista.length - 1; i >= 0; i--) {	
-	imagen=$(lista[i]).find("img")
+	imagen=$(lista[i]).find(".recomendacion-img")
 	id=imagen.attr("id")
 
-	$(lista[i]).find("img").attr("id")
+	$(lista[i]).find(".recomendacion-img").attr("id")
 	latitude=$(lista[i]).find("#latitude_"+id).val()
 	longitude=$(lista[i]).find("#longitude_"+id).val()
 
@@ -109,16 +122,22 @@ for (var i = lista.length - 1; i >= 0; i--) {
 	console.log("Longitude; "+longitude)
 
 	url = GMaps.staticMapURL({
-	  size: [128,128],
+	  size: [250,450],
 	  lat: latitude,	
 	  lng: longitude,
 	  markers: [
 	    {lat: latitude, lng:longitude,
 	      color: 'blue'}
-	  ]
+	  ],
+	  zoom:16
 	});
 
 	imagen.attr('src', url)
+
+	// imagen_background=$(lista[i]).find("#imagen_"+id).val();
+	// console.log("Esto es imagen_background");
+	// console.log(imagen_background);
+	// $('#lugar_'+id).css("background-image", "url("+imagen_background+")");  
 
 };
 
@@ -127,3 +146,4 @@ for (var i = lista.length - 1; i >= 0; i--) {
 </script>
 
 {% endblock content %}
+

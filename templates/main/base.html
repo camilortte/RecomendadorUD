@@ -101,7 +101,6 @@ a.alert_message:hover{color : grey}
 
 
 
-
 .izq{
   margin-left: 0px;
   padding-left: 3px;
@@ -111,6 +110,25 @@ a.alert_message:hover{color : grey}
     border-radius: 0.8em;
     text-align: center;
   }
+
+
+#menu_boton{  
+  background-size: 100%;
+  background: -webkit-linear-gradient(#47a3da, white); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#47a3da, white); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#47a3da, white); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#47a3da, white); /* Standard syntax */
+}
+
+ {% if request.user|has_avatar  %}
+    #menu_boton{
+      background-image: url("{% avatar_url user 300 %}");
+      background-size: 100%;
+      box-shadow: inset 0 115px 100px -50px #47a3da;
+    }    
+{% endif %}
+
+
 
   {% block styles %}
     
@@ -272,7 +290,7 @@ a.alert_message:hover{color : grey}
     <div class="row">
       <div class="col-md-8">
         {% if user.is_authenticated %}
-          {{user.first_name}}
+          {{user.first_name}} 
         {%else%}
         Menu
         {% endif %}

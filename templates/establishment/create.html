@@ -27,7 +27,7 @@
 {% block content %}
 
 	<div class="row">		
-		<div class="well col-md-4 col-sm-offset-1 col-sm-10 col-sm-offset-1 col-xs-offset-1 col-xs-10 col-xs-offset-1 borde ">		
+		<div class="well col-md-4 ">					
 			<div class="float">
 			<h2>Ten en cuenta</h2>	
 			<ul>
@@ -36,16 +36,13 @@
 				<li><p class="text-justify">La información debe ser veridica.</p></li>				
 				<li><p class="text-justify">Al enviar la información aceptas los <a href="">terminos y condiciones</a></p></li>
 			</ul>
-		</div>		
-
-			
+			</div>					
 		</div>
-		<div class="col-md-8 col-sm-12	 col-xs-12">
-			<h1 class="text-center">Crear un lugar</h1>
-			
+
+		<div class="col-md-8 ">
+			<h1 class="text-center">Crear un lugar</h1>			
 			<form action="" method="post" role="form">{% csrf_token %}				
 				{% bootstrap_form form %}
-
 				<div class="form-group"><label class="control-label" for="id_mapa">Posición</label>
 		            <div class="map" id="id_mapa"></div>
 		        </div>
@@ -54,12 +51,9 @@
 		        <p class="bg-info"><br>Los campos marcados con * son obligatorios.<br><br></p>
 			    <button type="submit" class="btn btn-success center-block">{% trans "Crear" %}</button>
 			</form>	
-
-		
-		
-			<br><br>
+			<br>
 		</div>
-		</div>
+	</div>
 
 	<script src="{% static 'js/update_categoria.js'%}"></script>  
 	<script>

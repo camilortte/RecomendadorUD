@@ -30,14 +30,14 @@
         <div class="col-md-offset-1 col-md-10 col-md-offset-1 borde">
             <div class="col-md-12">
                     <div class="recomendacion">
-                        <div class="media">
-                          <div class="pull-left" href="">
+                        <div class="">
+                          <div class="col-md-2  text-center" href="">
                             <br><br>                            
-                            <img class="media-object" src="{% avatar_url usuario 125 %}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
+                            <img class="img-responsive center-block" src="{% avatar_url usuario 125 %}" alt="establecimiento_{{recomendacion.id}}" id="{{recomendacion.id}}" id="{{recomendacion.id}}">
                           </div>
                           
 
-                          <div class="media-body">    
+                          <div class="col-md-10">    
                             <h1>Perfil de {{usuario.username}}</h1>
                             <hr>
                             <h4>Nombre: <small>{{usuario.first_name}}</small></h4>

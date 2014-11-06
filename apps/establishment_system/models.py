@@ -123,7 +123,7 @@ class Imagen(models.Model):
                                       processors=[ ResizeToFill(245, 147),
                                                 Adjust(contrast=1, sharpness=1)],
                                       format='JPEG',
-                                      options={'quality': 40})
+                                      options={'quality': 80})
     usuarios=models.ForeignKey(User)
     class Meta:
         verbose_name = _('Imagen')

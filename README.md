@@ -5,35 +5,35 @@ Wait I'm working hard for it, soon done.
 TODO:
 
 + Reame.md
++ EL video cambiarlo.
++ Fondo en cada establecimiento.
++ Retroceder al iniciar sesión.
++ Partes que siguen en ingles (Usar el translate de Django".
++ Estadisticas de Google.
++ el boung , enviar solo cuando se mueve .
++ Organizar CSS y JS en archivos estaticos.
 
-+ EL video cambiarlo
 + ~~FavIcon~~
-
-+ Fondo en cada establecimiento
-+ Retroceder al iniciar sesión
-
-+ el boung , enviar solo cuando se mueve 
-
-
++ ~~Fondo en cada establecimiento en las recomendaciones~~
 + ~~Pagnias 400~~
 + ~~Paginas 500~~
-
 + ~~Variables del entorno~~
 + ~~Contrasena en redis~~
 + ~~Usuario en postgresql~~
-
-+ Partes que siguen en ingles
-
-+ Eliminar impresiones mamonas.
++ ~~Eliminar impresiones mamonas.~~
 + ~~Permisos de usuarios en nginx~~
-
 + ~~Eliminar las imagenes del proyecto y de git~~
 + ~~Eliminar archivos no requeridos en github~~
-+ Estadisticas de Google
 + ~~NewRelic~~
-+ Realtime Nginx
-
++ ~~Realtime Nginx~~
 + ~~supervisor~~
+
+
+#Sobre el Trabajo
++ Agegar la conclución de la lentitud del algoritmo.
++ Agregar trabajos futuros.
++ Agregar agradecimientos.
++ Abstract.
 
 
 ##Licencia
