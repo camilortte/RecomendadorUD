@@ -29,7 +29,7 @@ TODO:
 + ~~supervisor~~
 
 
-#Sobre el Trabajo
+###Sobre el Trabajo
 + Agegar la conclución de la lentitud del algoritmo.
 + Agregar trabajos futuros.
 + Agregar agradecimientos.
