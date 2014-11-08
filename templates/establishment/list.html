@@ -85,6 +85,13 @@ body{
   height: 10em;
 }
 
+.box-est{
+  border-style: solid;
+  border-color: #47a3da; 
+  border-width: 0.2em;
+  border-radius: 0.5em;
+}
+
 {% endblock styles %}
 
 
@@ -133,6 +140,11 @@ body{
     <div class="row" id="all_elements">
        <!-- Aca los items -->       
     </div>
+
+    <div class="row loading">
+      <img src="{% static 'img/loading.gif'%}" class="img-responsive center-block"/>
+    </div>
+
     <div class="row">
     <div class="col-md-12 text-center">
       <ul class="pagination text-center">  
@@ -210,6 +222,10 @@ function send_data(){
       "y2":y2,"pagina":pagina, "nombre":nombre_input,
       "categoria":categoria_input,"sub_categoria":subcategoria_iput},
       dataType: 'json',
+      beforeSend: function() {  
+        $( "#all_elements" ).empty();      
+        $('.loading').show();   
+      },
       success: function(response) {
         console.log("succes");
         console.log(response)
@@ -249,9 +265,11 @@ function send_data(){
         }  else{
             $('<div class="col-md-12"><h4 class="text-center">Opps No se encontró nada</h4></div>').appendTo("#all_elements");
         }     
-        
+        $('.loading').hide(); 
       },
-      error:function(error){
+      error:function(error){          
+          $( "#all_elements" ).empty();
+          $("<div class='col-md-12'><h3 class='text-center'>Algo salio mal</h3><br></div>").appendTo('#all_elements');
           console.log("ERROR");
           console.log(error);
       }
@@ -288,42 +306,19 @@ map = new GMaps({
   lat: 4.579503,
   lng: -74.157113,
   scrollwheel: true,
-  idle:function(e) {
-    console.log(this.getBounds());
-
+  idle:function(e) {     
     var bounds = map.getBounds();
-
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
-
-
-    // x1= this.getBounds().pa.j;
-    // y1= this.getBounds().Ca.k;
-
-    // x2= this.getBounds().pa.k;
-    // y2= this.getBounds().Ca.j;
-
     x1=ne.lat()
     y1=sw.lng()
 
     x2=sw.lat()
     y2=ne.lng()
 
-    // x2=ne.lat()
-    // y2=sw.lng()
-
-    // x1=sw.lat()
-    // y1=ne.lng()
-
-
     path = [[x1,y1], [x1,y2], [x2,y2], [x2,y1],[x1,y1]];
-    //path = [[-74.1,5.10], [x1,y2], [x2,y2],[-74.1,5.10]];    
-    //path = [[-12.040397656836609,-77.03373871559225], [-12.040248585302038,-77.03993927003302], [-12.050047116528843,-77.02448169303511], [-12.044804866577001,-77.02154422636042]];
-//    sra(path);
-
-   
-    
-    send_data();
+     
+    send_data(); 
   },
   mousemove: function(e){
    // console.log("Latitude: "+e.latLng.lat());
@@ -332,48 +327,20 @@ map = new GMaps({
 });
 
 
-// $('#all_elements').hover(function () {
-//   //this.find( ".col-md-6" ).css( "background-color", "red" );
-//   function() {
-//     $( this ).append( $( "<span> ***</span>" ) );
-//   }, function() {
-//     $( this ).find( "span:last" ).remove();
-//   }
-//   });
-
-
-// $( ".mierda").hover(  
-//   function() {
-//     //alert("ENTRO MIEDA");
-//       //id=$(this).prop('id')
-//       console.log("id");
-//       //marker_only=$.grep(markers, function(e){ return e.id == id; })
-//       //marker_only[0].setIcon();
-
-//   }, function() {
-//       //id=$(this).prop('id')
-//       console.log("id");
-//       //marker_only=$.grep(markers, function(e){ return e.id == id; })
-//       //marker_only[0].setIcon("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|47a3da");      
-//   }
-// );
-
-
-
 $(document).on({
-    mouseenter: function () {
+    mouseenter: function () {      
       id=$(this).prop('id')
       //console.log("id");
       marker_only=$.grep(markers, function(e){ return e.id == id; })
       marker_only[0].setIcon();
     },
-    mouseleave: function () {
+    mouseleave: function () {      
       id=$(this).prop('id')
       //console.log("id");
       marker_only=$.grep(markers, function(e){ return e.id == id; })
       marker_only[0].setIcon("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|47a3da");      
     }
-}, ".mierda"); //pass the element as an argument to .on
+}, ".box-info"); //pass the element as an argument to .on
 
 function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
   if (descripcion.length>100) {
@@ -381,14 +348,14 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
   };
     
     var item= "\
-    <div class='col-md-6 mierda' id='"+id+"'> \
+    <div class='col-md-6 box-info' id='"+id+"'> \
               <a href='/establecimientos/"+id+"' >\
               <div class='media' id=''>    \
-                         <div class='media-body'  style='border-style: dotted;border-color: #47a3da; border-width: 2px;'>\
+                         <div class='media-body box-est' >\
                           <br>\
                             <h4 class='media-heading text-center ' > "+nombre+" </h4>\
                             <div class='col-md-offset-1 col-md-10 col-md-offset-1'>\
-                            <p class='text-justify'>"+descripcion+"</p>\
+                            <p class='text-justify'>"+/*descripcion*/""+"</p>\
                             <h4><small>  </small> </h4>\
                             </div> \
                         </div>     \
@@ -398,35 +365,26 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
             </div>  \
     "
     $(item).appendTo("#all_elements");
-
-
 }
-//cargando datos
-// $(document).on({
-//     ajaxStart: function() { $("#myModal").modal('show'); },
-//     ajaxStop: function() { $("#myModal").modal('hide'); }    
-// });
 
-// }
+$('#boton_aplicar_filtro').click(function(){
+    nombre_input=$('#filtrado').val();
+    categoria_input=$('#categoria').val();
+    subcategoria_iput=$('#id_sub_categorias').val();
+    send_data();
+});
 
+$('#boton_limpiar').click(function(){
+  console.log("limpiando");
+    $('#filtrado').val(null);
+    $('#categoria option[value=""]').attr("selected",true);
+    $( "#categoria" ).trigger( "click" );
+    nombre_input=null;
+    categoria_input=null;
+    subcategoria_iput=null;
+    send_data();
+});
 
-  $('#boton_aplicar_filtro').click(function(){
-      nombre_input=$('#filtrado').val();
-      categoria_input=$('#categoria').val();
-      subcategoria_iput=$('#id_sub_categorias').val();
-      send_data();
-  })
-
-  $('#boton_limpiar').click(function(){
-    console.log("limpiando");
-      $('#filtrado').val(null);
-      $('#categoria option[value=""]').attr("selected",true);
-      $( "#categoria" ).trigger( "click" );
-      nombre_input=null;
-      categoria_input=null;
-      subcategoria_iput=null;
-      send_data();
-  })
 
 </script>
 

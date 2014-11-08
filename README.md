@@ -6,7 +6,7 @@ TODO:
 
 + Reame.md
 + EL video cambiarlo.
-+ Fondo en cada establecimiento.
++ ~~Fondo en cada establecimiento.~~
 + Retroceder al iniciar sesión.
 + Partes que siguen en ingles (Usar el translate de Django".
 + Estadisticas de Google.
@@ -30,10 +30,10 @@ TODO:
 
 
 ###Sobre el Trabajo
-+ Agegar la conclución de la lentitud del algoritmo.
-+ Agregar trabajos futuros.
-+ Agregar agradecimientos.
-+ Abstract.
++ ~~Agegar la conclución de la lentitud del algoritmo.~~
++ ~~Agregar trabajos futuros.~~
++ ~~Agregar agradecimientos.~~
++ ~~Abstract.~~
 
 
 ##Licencia

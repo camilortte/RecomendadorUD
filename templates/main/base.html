@@ -76,8 +76,7 @@ body {
 #footer {
   height: 60px;
   background-color: #f5f5f5;
-  background-color: rgb(197, 197, 197);
-  border-radius: 20px;
+  background-color: rgb(197, 197, 197);  
 }
 
 #footer > .container{
@@ -119,6 +118,13 @@ a.alert_message:hover{color : grey}
   background: -moz-linear-gradient(#47a3da, white); /* For Firefox 3.6 to 15 */
   background: linear-gradient(#47a3da, white); /* Standard syntax */
 }
+
+
+body{
+  background: #47a3da;
+  background-image: url("{% static 'img/pattern-eimx.png'%}");
+}
+
 
  {% if request.user|has_avatar  %}
     #menu_boton{
@@ -198,7 +204,7 @@ a.alert_message:hover{color : grey}
 
       <ul class="nav navbar-nav navbar-right" >  
         {% if user.is_authenticated %}
-        {% notifications_unread as unread_count %}
+          {% notifications_unread as unread_count %}
         {% if unread_count %}   
     
           <li><a href="#" id="notificaciones">
@@ -344,16 +350,16 @@ a.alert_message:hover{color : grey}
 <div id="footer">
       <div class="container text-center">
          <div class="col-md-4">
-                <h3><span class="glyphicon glyphicon-heart"></span> Sobre la plataforma</h3>
+                <h3><span class="glyphicon glyphicon-info-sign"></span> Sobre la plataforma</h3>
                 <p class="text-justify">Para más información mira  <a href="{% url 'about_url' %}">este</a> enlace.</p> 
                 <p class="text-justify">Repositorio público en <a href="https://github.com/camilortte/RecomendadorUD">GitHub</a></p>
             </div>
             <div class="col-md-4">
-                <h3 ><span class="glyphicon glyphicon-star"></span> Sobre el proyecto</h3>
+                <h3 ><span class="glyphicon glyphicon-ok-sign"></span> Sobre el proyecto</h3>
                 <p class="text-justify">RecomendadorUD ® es un proyecto final de grado de la carrera de Sistematización de datos de la <a href="http://www.udistrital.edu.co/" target="_blanck"> Universidad distrital Francisco José de Caldas</a></p>                
             </div>
             <div class="col-md-4" >
-                <h3 ><span class="glyphicon glyphicon-music"></span> Sobre el autor</h3>
+                <h3 ><span class="glyphicon glyphicon-question-sign"></span> Sobre el autor</h3>
                 <p class="text-justify">Diseñado y desarollado por Camilo Ramírez</p>
                 <p class="text-justify">- camilortte@hotmail.com</p>
                 <p class="text-justify">- camilolinchis@gmail.com</p>

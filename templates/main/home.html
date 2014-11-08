@@ -55,7 +55,7 @@
 
 
 
-.header{
+.header, .header2{
     #color:white;
     font-family: 'Nunito', sans-serif;
     -webkit-text-stroke: 1px #47a3da;
@@ -65,6 +65,7 @@
     color: #47a3da;
    
 }
+
 
 
 /* Large desktops and laptops */
@@ -113,6 +114,7 @@
 
         <div class="col-md-offset-2 col-md-8 col-md-offset-2">
             <h1 class="header text-center">Bienvenido {{user.first_name|truncatechars:20}}</h1>
+            <h3 class="header2 text-center">Encuentra los mejores lugares que se ajusten a tus  preferencias.</h3>
             <div class="embed-responsive embed-responsive-16by9">              
                 <video class="embed-responsive-item" autoplay="autoplay" muted="muted" loop="loop" poster="{% static 'img/backgroundVideo.png'%}" onended="this.play()" playbackRate="0.5"  id="bgvid">                
                     <source src="{% static 'video/header2.mp4'%}" type="video/mp4">
@@ -121,6 +123,7 @@
 
             <div class="col-md-12">
                 <h2 class="text-center">Actualmente tenemos {{cantidad}} lugares registrados</h2>
+                
                 <p class="text-center">
                     <div class="row">
                         <div class="col-md-6">
