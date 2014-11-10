@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" href="{% static 'img/icon/favicon.ico'%}" type="image/x-icon">
   <link rel="icon" href="{% static 'img/icon/favicon.ico'%}" type="image/x-icon">  
+  {% block styles_link %}{% endblock styles_link %}
   <title>{% block head_title %}Third-party Authentication Tutorial{% endblock head_title %}</title>
 
   <!-- Bootstrap  servido por mi
@@ -38,94 +39,13 @@
   <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>  
   <script src="{% static 'bootstrap-notify/bootstrap-notify.js'%}"></script>    
 
-  <style>
-    h1 {
-        text-align: center;
-    }
-
-    hr {
-  -moz-border-bottom-colors: none;
-  -moz-border-image: none;
-  -moz-border-left-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-top-colors: none;
-  border-color: #EEEEEE -moz-use-text-color #FFFFFF;
-  border-style: solid none;
-  border-width: 1px 0;
-  margin: 18px 0;
-}
-
-
-html,
-body {
-  height: 100%;
-  /* The html and body elements cannot have any padding or margin. */
-}
-
-/* Wrapper for page content to push down footer */
-#wrap {
-  min-height: 100%;
-  height: auto;
-  /* Negative indent footer by its height */
-  margin: 0 auto -60px;
-  /* Pad bottom by footer height */
-  padding: 0 0 60px;
-}
-
-/* Set the fixed height of the footer here */
-#footer {
-  height: 60px;
-  background-color: #f5f5f5;
-  background-color: rgb(197, 197, 197);  
-}
-
-#footer > .container{
-  background-color: rgb(197, 197, 197);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-
-.alert_list{font-size: 11px; color:grey}
-li.alert_li {
-  font-size: 11px; 
-  color:grey;
-  padding:10px 0px 2px 0px;
-  border-bottom: thin solid #c0c0c0;
-}
-li.alert_li:hover{background-color:#eee}
-.turn_off_alert{float:right;margin-bottom :1px}
-a.alert_message{color : grey}
-a.alert_message:hover{color : grey}
-
-
-
-.izq{
-  margin-left: 0px;
-  padding-left: 3px;
-}
-
-.bg-info{
-    border-radius: 0.8em;
-    text-align: center;
+  <link rel="stylesheet" href="{% static 'css/main/main.css'%}">
+  <style>  
+  body{
+    background: #47a3da;
+    background-image: url("{% static 'img/pattern-eimx.png'%}");
   }
-
-
-#menu_boton{  
-  background-size: 100%;
-  background: -webkit-linear-gradient(#47a3da, white); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(#47a3da, white); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(#47a3da, white); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(#47a3da, white); /* Standard syntax */
-}
-
-
-body{
-  background: #47a3da;
-  background-image: url("{% static 'img/pattern-eimx.png'%}");
-}
-
-
+  
  {% if request.user|has_avatar  %}
     #menu_boton{
       background-image: url("{% avatar_url user 300 %}");
@@ -134,15 +54,9 @@ body{
     }    
 {% endif %}
 
-
-
   {% block styles %}
     
-  {% endblock styles %}
-
-
-
-  
+  {% endblock styles %}  
 
   </style>
 
@@ -372,97 +286,7 @@ body{
 {% endif %}
 
 <script src="{% static 'js/menu_desplegable.js'%}"></script>  
-
-
-
-<script type="text/javascript">
-    
-
-
-    var bestPictures = new Bloodhound({
-      datumTokenizer: function (d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      prefetch: '/buscar_json',
-      remote:   {
-            url: '/buscar_json',
-            filter: function (data) {
-                query=$("#id_qs").val();  
-                return data.results
-            },
-            ajax: {
-                type: 'GET',
-                data: {
-                    q: function(){
-                        return $('#id_qs').val();
-                    }
-                },
-
-            },
-            replace: function(url, query) {
-                return url + "#" + query; // used to prevent the data from being cached. New requests aren't made without this (cache: false setting in ajax settings doesn't work)
-            }
-        }
-    });
-     
-    bestPictures.initialize();
-
-    ;(function (_) {
-        'use strict';
-
-        _.compile = function (templ) {
-            var compiled = this.template(templ);
-            compiled.render = function (ctx) {
-                return this(ctx);
-            }
-            return compiled;
-        }
-    })(window._);
-
-    $('#remote .typeahead').typeahead(null, {
-      name: 'best-pictures',
-      displayKey: 'nombre',
-      templates: {
-        suggestion:  _.compile([
-          '<p class="repo-language"  style="color:black;"><strong  style="color:black;"> <a  style="color:black;" href="/establecimientos/<%=id%>"><%=nombre%></a></strong></p>'       
-        ].join(''))
-      },
-      source: bestPictures.ttAdapter()
-    });
-
-
-    $("#notificaciones").popover({
-  'title' : "<p style='color:black;'>Notificaciones</p>", 
-  'html' : true,
-  'placement' : 'bottom',
-  'content':$('.alert_list').html(),
-  'placement': 'bottom',
-  'animation': 'true',
-  'container': '.navbar-nav'
-
-});
-
-if ($('#notification_content').html()){
-      $('.top-left').notify({
-        message: { html:  $('#notification_content').html()},
-        fadeOut: { enabled: true, delay: 5000 }
-      }).show(); // for the ones that aren't closable and don't fade out there is a .hide() function.
-    }
-
-$('#enviar_form').click(function(){
-  $('#search_form').submit()
-})
-
-$("#id_qs").keypress(function(event) {
-    if (event.which == 13) {
-        event.preventDefault();
-        $('#search_form').submit()
-    }
-});
-
-
-    </script>
+<script src="{% static 'js/main/main.js'%}"></script>  
 <!-- Google Analytics -->
 <script async src='//www.google-analytics.com/analytics.js'></script>
 <script>

@@ -1,0 +1,49 @@
+#map-canvas { height: 30em; }
+
+     
+
+.small-white {
+ color:white;
+
+}
+
+.color-white {
+  color:white;
+}
+   
+.upload_image{         
+  border-style: dashed;
+  border-width: medium;
+  height: 4.5em;
+  border-width: 2px;
+  border-color:#47a3da;
+
+}
+  
+.upload_image > h4{
+  color: #47a3da;
+}
+    
+
+.blanck-space{
+    width:245px; 
+    height:147px;
+    border-width: 2px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 147px;  
+}
+
+
+
+// Classes
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Usage as mixins
+.element {
+  .center-block();
+}

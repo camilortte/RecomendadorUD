@@ -1,0 +1,83 @@
+ h1 {
+        text-align: center;
+        
+    }
+
+    hr {
+  -moz-border-bottom-colors: none;
+  -moz-border-image: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: #EEEEEE -moz-use-text-color #FFFFFF;
+  border-style: solid none;
+  border-width: 1px 0;
+  margin: 18px 0;
+}
+
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+  background-color: rgb(197, 197, 197);  
+}
+
+#footer > .container{
+  background-color: rgb(197, 197, 197);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+
+.alert_list{font-size: 11px; color:grey}
+li.alert_li {
+  font-size: 11px; 
+  color:grey;
+  padding:10px 0px 2px 0px;
+  border-bottom: thin solid #c0c0c0;
+}
+li.alert_li:hover{background-color:#eee}
+.turn_off_alert{float:right;margin-bottom :1px}
+a.alert_message{color : grey}
+a.alert_message:hover{color : grey}
+
+
+
+.izq{
+  margin-left: 0px;
+  padding-left: 3px;
+}
+
+.bg-info{
+    border-radius: 0.8em;
+    text-align: center;
+  }
+
+
+#menu_boton{  
+  background-size: 100%;
+  background: -webkit-linear-gradient(#47a3da, white); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#47a3da, white); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#47a3da, white); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#47a3da, white); /* Standard syntax */
+}
+
+
+

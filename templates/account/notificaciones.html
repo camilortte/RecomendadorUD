@@ -10,15 +10,9 @@
 {% load static %}
 {% load avatar_tags %}
 {% load humanize %}
-{% block styles %}
-.borde{
-    border-style: solid;
-    border-radius: 10px;
-    border-width: 2px;
-    border-color: #47a3da;
-    margin-bottom: 1em;
-}
-{% endblock styles %}
+{% block styles_link %}
+<link rel="stylesheet" href="{% static 'css/account_system/decorators.css'%}"> 
+{% endblock styles_link %}
 
 
 
