@@ -81,3 +81,12 @@ a.alert_message:hover{color : grey}
 
 
 
+h1,h2,h3,h4 {
+  font-family: 'Nunito', sans-serif;
+}
+
+#footer{
+  border-color: cadetblue;
+  border-style: dotted;
+  border-width: 0.4em;
+}

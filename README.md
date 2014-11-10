@@ -12,6 +12,7 @@ TODO:
 + Estadisticas de Google.
 + el boung , enviar solo cuando se mueve .
 + Organizar CSS y JS en archivos estaticos.
++ Ojo problema de xss en list Tener en cuenta los validatos
 
 + ~~FavIcon~~
 + ~~Fondo en cada establecimiento en las recomendaciones~~

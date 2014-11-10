@@ -16,6 +16,8 @@
 
 
 """
+import re
+
 #Django
 #from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -23,6 +25,7 @@ from django.utils import timezone
 from django.core import urlresolvers
 from django.contrib.gis.db import models 
 from django.contrib.contenttypes.models import ContentType
+from django.core import validators
 
 #External apps
 from imagekit.models import ImageSpecField
@@ -76,7 +79,10 @@ class Establecimiento(models.Model):
         Modelo de establecimientos
     """
     nombre= models.CharField(_('Nombre'),max_length=100,null=False,blank=False,
-        help_text='Nombre legal del Establecimiento. ',unique=True)
+        help_text='Nombre legal del Establecimiento. ',unique=True,
+        validators=[
+            validators.RegexValidator(re.compile('^[\w.@+-><]+$'), _('Enter a valid username.'), 'invalid')
+        ])
     email= models.EmailField(_('Email'),null=True,blank=True,
         help_text=u'Correo electrónico del Establecimiento',unique=False)
     web_page=models.URLField(_(u'URL Página web'),null=True,blank=True, unique=False, 

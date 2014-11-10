@@ -159,6 +159,21 @@ map = new GMaps({
 });
 
 
+var entityMap = {    
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  };
+
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
+
 $(document).on({
     mouseenter: function () {      
       id=$(this).prop('id')
@@ -185,7 +200,7 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
               <div class='media' id=''>    \
                          <div class='media-body box-est' >\
                           <br>\
-                            <h4 class='media-heading text-center ' > "+nombre+" </h4>\
+                            <h4 class='media-heading text-center ' id='nombre_est'> "+escapeHtml(nombre)+" </h4>\
                             <div class='col-md-offset-1 col-md-10 col-md-offset-1'>\
                             <p class='text-justify'>"+/*descripcion*/""+"</p>\
                             <h4><small>  </small> </h4>\
