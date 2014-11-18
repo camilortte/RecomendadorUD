@@ -150,6 +150,8 @@ server {
     # content to IE6
     gzip_vary on;
     
+    charset utf-8;
+    
     #logs
     #access_log ~/logs/access.log;
 	#error_log ~/logs/error.log;

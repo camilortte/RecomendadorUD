@@ -417,7 +417,7 @@ class Dev(Base):
     
       
 class Prod(Base):
-    DEBUG = False
+    DEBUG = True
     ALLOWED_HOSTS=['*']
     EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
     POSTGRESDATABASE_USER = CFG['POSTGRESDATABASE_USER']#os.environ.get("POSTGRESDATABASE_USER", '')
@@ -448,6 +448,8 @@ class Prod(Base):
     MEDIA_ROOT =  MEDIA_DIR_PROD
 
     INSTALLED_APPS = (                     
-        'grappelli',        
-    )+Base.INSTALLED_APPS
+        'grappelli',                
+    )+Base.INSTALLED_APPS 
+
+
     

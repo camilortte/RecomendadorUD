@@ -122,6 +122,7 @@ class MarcarTodasNotificacionesLeidas(View):
     def get(self, request):
         # TODO: GET ACTIONS
         request.user.notifications.unread().mark_all_as_read()
+        print "Notificaciones vistas"
         return redirect('notificaciones_url')
 
 
@@ -140,6 +141,7 @@ class MarcarNotificacionLeida(View):
             #obtengo el id
             id_notificacion=request.GET.get('id')
             notificacion=usuario.notifications.filter(id=id_notificacion)
+            print "Notificacion vista"
             notificacion.mark_all_as_read()
         except Exception:
             print "Usuario anonimo."
@@ -229,10 +231,13 @@ def created_user(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=User)
 def delete_user(sender,instance,using,**kwargs):
     #Eliminamos sus comentarios
+    print "On eliminar"
     Comentario.objects.filter(author=instance.id).delete()
 
     #Eliminamos sus votos    
+    print "Antes"
     Vote.objects.filter(user=instance.id).delete()    
+    print "DEspues"
     recommender=EstablecimientosRecommender()    
     recommender.precompute()
 

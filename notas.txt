@@ -176,3 +176,12 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-dj
 	sudo -i -u postgres
 	pg_dump -s -f db.dump recomendadorUD_database
 	exit
+
+
+--> Ver Thrends
+	https://mixpanel.com/report/523045/events/#events/properties?unit=day&from_date=2014-10-11&to_date=2014-11-11&event[]=Load%20page&limit=255&type=general&service=events%2Fproperties&chart_type=line&analysis=default&name=%24city
+
+
+--> Para la gestión de pruebas use Testlink
+	usuario:  camilortte
+	password: RecomendadorUD-TestLink

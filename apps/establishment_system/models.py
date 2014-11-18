@@ -79,10 +79,12 @@ class Establecimiento(models.Model):
         Modelo de establecimientos
     """
     nombre= models.CharField(_('Nombre'),max_length=100,null=False,blank=False,
-        help_text='Nombre legal del Establecimiento. ',unique=True,
-        validators=[
-            validators.RegexValidator(re.compile('^[\w.@+-><]+$'), _('Enter a valid username.'), 'invalid')
-        ])
+        help_text='Nombre legal del Establecimiento. ',unique=True
+        # ,
+        # validators=[
+        #     validators.RegexValidator(re.compile('^[\w.@+-><]+$'), _('Enter a valid username.'), 'invalid')
+        # ]
+        )
     email= models.EmailField(_('Email'),null=True,blank=True,
         help_text=u'Correo electrónico del Establecimiento',unique=False)
     web_page=models.URLField(_(u'URL Página web'),null=True,blank=True, unique=False, 
@@ -107,8 +109,9 @@ class Establecimiento(models.Model):
         verbose_name = _('Establecimiento')
         verbose_name_plural = _('Establecimientos')
 
-    def __unicode__(self):
-        return self.nombre
+    def __unicode__(self):                
+        #return self.nombre.encode('utf8')
+        return u"%s" % ( str(self.id)) 
 
 
     def get_admin_url(self):

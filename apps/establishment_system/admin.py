@@ -41,11 +41,11 @@ class CommentAdmin(admin.ModelAdmin):
     u"""
         Clase encargada de presentar los comentarios en el admin
     """
-    raw_id_fields = ('author','post' )
-    list_display= ('author', 'post', 'body', 'is_public',)
-    list_filter = ('is_public',)
-    search_fields = ('author', 'post', )
-    ordering = ('author',)
+    # raw_id_fields = ('post', )
+    # list_display= ('author', 'post', 'body', 'is_public',)
+    # list_filter = ('is_public',)
+    # search_fields = ('post', )
+    # ordering = ('author',)
 
     class Meta:
         model = Comentario
@@ -160,6 +160,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         description=saludo,
                                         timestamp=datetime.now()
                                     ) 
+                            print "Solicitud de aliminacion Aprobada"
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='modificacion':
                         if self.aprobar_modificacion(request,form,obj):      
                             obj.save()
@@ -172,6 +173,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         description=saludo,
                                         timestamp=datetime.now()
                                     ) 
+                            print "Solicitud de modificacion Aprobada"
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='administracion':
                         if self.aprobar_administracion(request,form,obj):                            
                             obj.save()
@@ -184,6 +186,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         description=saludo,
                                         timestamp=datetime.now()
                                     ) 
+                            print "Solicitud de administracion Aprobada"
                     elif form.cleaned_data['tipo_solicitudes'].nombre=='desactivacion':
                         if self.aprobar_desactivacon(request,form,obj):                  
                             obj.save()
@@ -196,6 +199,7 @@ class SolicitudAdmin(admin.ModelAdmin):
                                         description=saludo,
                                         timestamp=datetime.now()
                                     ) 
+                            print "Solicitud de desactivacion Aprobada"
 
             except Exception, e:                                
                 print "No se puede editar: ",e     
@@ -213,7 +217,7 @@ class SolicitudAdmin(admin.ModelAdmin):
             obj.establecimientos.save()               
             self.message_user(request,
                             _(("Se aprobó la desactivacion de eliminacion del establecimiento"+str(obj.establecimientos)).decode("utf-8")),
-                             level=messages.INFO, extra_tags='', fail_silently=False)
+                             level=messages.INFO, extra_tags='', fail_silently=False)            
             return True
         except Exception, e:
             print "ERROR: ", e
@@ -404,7 +408,7 @@ class EstablecimientoAdmin(admin.OSMGeoAdmin):
     extra_js = ["http://maps.google.com/maps/api/js?key=AIzaSyCvfyKIBeaLLGXbF5HS73ZcfmDhPtM05rA&sensor=true"] 
     map_template = 'admin/gmgdav3.html'
 
-    list_display = ('nombre','email','web_page','address','visible','sub_categorias')
+    list_display = ('nombre','id','email','web_page','address','visible','sub_categorias')
     filter_horizontal=('administradores',)
     form=EstablecimientoAdminForm
     list_select_related = ('imagen',)

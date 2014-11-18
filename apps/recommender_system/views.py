@@ -33,9 +33,12 @@ class RecomendacionView(TemplateView):
         return context
 
     def obtener_recomendacion(self,user):
+        print "Prediciendo recomendacion"
         recomendador_instance=EstablecimientosRecommender()
         recomendaciones=recomendador_instance.storage.get_recommendations_for_user(user)
+        print recomendaciones
         if recomendaciones:
+            print "Recomendando"
             result=[]
             for recomendacion in recomendaciones:
                 result.append(recomendacion.object)
@@ -53,6 +56,7 @@ class RecomendacionView(TemplateView):
                
         else:
             recomendaciones=Establecimiento.objects.all().order_by('rating_score')[:10]
+            print "No se encontraron recomendaciones"
         return recomendaciones
 
     @method_decorator(login_required)

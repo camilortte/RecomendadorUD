@@ -167,6 +167,7 @@ class DetalleEstablecimientoView(DetailView):
 
     @method_decorator(cache_control(must_revalidate=True, no_cache=True, no_store=True)) 
     def dispatch(self, *args, **kwargs):
+        print "Establecimiento consultado"
         return super(DetalleEstablecimientoView, self).dispatch(*args, **kwargs)
 
 class JSONMixin(object):
@@ -888,6 +889,7 @@ class Solicitar(View):
                      request.user, establecimiento_id, tipo,id_EstablecimientoTemporal)
 
             messages.success(self.request, u"Solicitud enviada.") 
+            print "Solicitud pendiente"
             return redirect('/establecimientos/'+establecimiento_id+'/')
             
 
@@ -909,6 +911,7 @@ class Solicitar(View):
                     establecimientos=Establecimiento.objects.get(id=establecimiento_id),
                     tipo_solicitudes=TiposSolicitud.objects.get(nombre=tipo_solicitud)
             )
+            print "Solicitud creada"
         else:
             Solicitud.objects.create(
                     contenido=contenido,
@@ -917,6 +920,7 @@ class Solicitar(View):
                     tipo_solicitudes=TiposSolicitud.objects.get(nombre=tipo_solicitud),
                     establecimientos_temporales=establecimientos_temporales,
             )
+            print "Solicitud creada"
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -939,6 +943,7 @@ class EstablecimientosPropios(ListView):
         """
             Se agrega el contexto del formulario de categorias 
         """
+        print "Establecimiento consultado"
         context = super(EstablecimientosPropios, self).get_context_data(**kwargs)
         #context['now'] = timezone.now()
         context['form_categorias']=CategoriasFilterForm
@@ -1118,8 +1123,10 @@ class CalificacionApiView(APIView):
                         user=request.user, 
                         ip_address=request.META['REMOTE_ADDR']
                         )                                                         
+                    print "Actualizando matriz"
                     recommender.precompute()                 
                     respuesta="Calificacion realizada"
+
                     return Response(respuesta, status=status.HTTP_201_CREATED)
                 else:
                     respuesta="Valor no valido"     
@@ -1260,7 +1267,7 @@ class EstablecimientosByBoung(APIView):
 #####################################################    SIGNALS      #####################
 #####################################################                 #####################
 ###########################################################################################
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from apps.externals.djangoratings.models import Vote, Score
 
@@ -1276,11 +1283,31 @@ def establecimiento_delete(sender, instance, **kwargs):
     u"""
         Cuando una establecimiento se borra tambíen se borrara los votos
     """
+    print "Establecimiento eliminado"
     id_establecimiento=instance.id
     Vote.objects.filter(object_id=id_establecimiento).delete()
     Score.objects.filter(object_id=id_establecimiento).delete()
+    print "Calificacion eliminada"
     recommender=EstablecimientosRecommender()    
+    print "Eliminando recomendacion"
+    recommender.storage.remove_recommendations(instance)
+    print "Computando"
     recommender.precompute()
 
 
+@receiver(post_save, sender=Establecimiento)
+def establecimiento_save(sender, instance, created,**kwargs):
+    if created:
+        print "Estalecimiento creado"
+    else:
+        print "Establecimiento actualizado"
 
+
+@receiver(post_save, sender=Solicitud)
+def solicitud_created(sender, instance,created, **kwargs):
+    if created:
+        print "Solicitud creada"
+
+@receiver(pre_delete, sender=Solicitud)
+def solicitud_delete(sender, instance, **kwargs):
+    print "Solicitud eliminada"
