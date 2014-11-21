@@ -1,3 +1,4 @@
+apt-get update
 sudo apt-get install python-pip python-dev ssh git
 
 
@@ -79,7 +80,6 @@ createdb recomendadorUD_database
 psql
 ALTER USER postgres PASSWORD 'RecomendadorUD';
 \q
-sudo -i -u postgres
 psql recomendadorUD_database
 CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;

@@ -185,3 +185,7 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-dj
 --> Para la gestión de pruebas use Testlink
 	usuario:  camilortte
 	password: RecomendadorUD-TestLink
+
+--> Servidor ubuntu
+	user: recomendadorud
+	pasw: RecomendadorUD
