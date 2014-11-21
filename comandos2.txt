@@ -1,0 +1,234 @@
+apt-get update
+apt-get -y install python-pip python-dev ssh git
+
+cd ~
+mkdir -p www/Django/RecomendadorUD/source/
+mkdir -p www/Django/RecomendadorUD/dev/
+mkdir -p www/Django/RecomendadorUD/prod/
+cd www/Django/RecomendadorUD/
+cd source/
+
+git clone --depth=1 https://github.com/camilortte/RecomendadorUD.git .
+
+apt-get -y install redis-server redis-tools  python-numpy python-nose python-matplotlib ipython ipython-notebook python-pandas python-sympy liblapack-dev libatlas-dev gfortran sqlite spatialite-bin python-scipy   
+
+apt-get -y install build-essential libproj-dev libspatialite-dev libspatialite5 spatialite-bin python-pysqlite2 gdal-bin binutils libpq-dev
+
+cd ~/www/Django/RecomendadorUD/source/
+pip install -r requeriments.txt
+
+pip install csc-pysparse networkx divisi2
+easy_install scipy
+pip install psycopg2 
+
+cd ~/www/Django/RecomendadorUD/
+mkdir libs
+cd libs
+
+git clone https://github.com/ocelma/python-recsys.git pyrecsys
+cd pyrecsys
+python setup.py install
+
+pip install yamjam
+mkdir ~/.yamjam
+touch ~/.yamjam/config.yaml
+chmod -R go-rwx ~/.yamjam
+
+cd ~/.yamjam
+cat <<EOM >"config.yaml"
+RecomendadorUD:
+    POSTGRESDATABASE_USER: acces_django
+    POSTGRESDATABASE_PASSWORD: acces_django_pass
+    SECRET_KEY: oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55
+    MANDRILL_API_KEY: dF6LAeaL1H2ZGsbU-Ypu6Q
+EOM
+
+export POSTGRESDATABASE_USER='acces_django'
+export POSTGRESDATABASE_PASSWORD='acces_django_pass'
+export SECRET_KEY='oo*-tbab-(tdkyvo6bdc9=ir+75@#@bio^5w$17p9%l$qfdd55'
+export MANDRILL_API_KEY='dF6LAeaL1H2ZGsbU-Ypu6Q'
+
+
+apt-get -y install postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1
+
+cd ~/www/Django/RecomendadorUD/dev/
+spatialite spatial_db.db "SELECT InitSpatialMetaData();"
+
+###Por si pasa lo de No PostgreSQL clusters exist; see "man pg_createcluster
+###http://solutions4linux.blogspot.com/2014/09/solving-no-postgresql-clusters-exist.html
+# sudo locale-gen es_CO.UTF-8
+# sudo dpkg-reconfigure locales
+# sudo pg_createcluster 9.3 main --start
+#
+#
+
+sudo pg_createcluster 9.3 main --start
+sudo service postgresql start
+
+psql -U -i postgres postgres <<OMG
+createdb recomendadorUD_database;
+ALTER USER postgres PASSWORD 'RecomendadorUD';
+OMG
+psql recomendadorUD_database -c "CREATE EXTENSION postgis;"
+psql recomendadorUD_database -c "CREATE EXTENSION postgis_topology;"
+psql -i -U postgres postgres <<OMG
+ CREATE USER acces_django password 'acces_django_pass' ;
+ ALTER USER acces_django PASSWORD 'acces_django_pass';
+OMG
+psql recomendadorUD_database -c "GRANT ALL PRIVILEGES ON DATABASE "recomendadorUD_database" to acces_django;"
+psql recomendadorUD_database -c "GRANT ALL ON ALL TABLES IN SCHEMA public to acces_django;"
+psql recomendadorUD_database -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA public to acces_django;"
+psql recomendadorUD_database -c "GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to acces_django;"
+exit
+
+##################################################
+cd ~/www/Django/RecomendadorUD/source/
+sudo chmod 777 ./init.sh
+./init.sh
+
+apt-get install nginx
+cd /etc/nginx/sites-enabled/
+
+cd /etc/nginx/sites-enabled/
+sudo touch RecomendadorUD
+sudo chmod 777 RecomendadorUD
+
+###################################################
+sudo cat <<EOM >"RecomendadorUD"
+server {
+    listen 8000;
+    server_name RecomendadorUD;
+
+    access_log off;
+
+    location /static/ {
+        alias /home/$USER/www/Django/RecomendadorUD/source/static/;
+    }
+    
+    location /media/ {
+        autoindex on;
+        alias /home/$USER/www/Django/RecomendadorUD/prod/media/;
+    }
+
+
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+        #proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+    	proxy_redirect off;
+        proxy_set_header X-Scheme \$scheme;
+        proxy_connect_timeout 10;
+        proxy_read_timeout 10;
+        client_max_body_size 11M;
+    }
+    
+    # Compression
+    gzip on;
+    gzip_http_version 1.0;
+    gzip_comp_level 5;
+    gzip_proxied any;
+    gzip_min_length  1100;
+    gzip_buffers 16 8k;
+    gzip_types text/plain text/html text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+    # Some version of IE 6 don't handle compression well on some mime-types, 
+    # so just disable for them
+    gzip_disable "MSIE [1-6].(?!.*SV1)";
+    # Set a vary header so downstream proxies don't send cached gzipped 
+    # content to IE6
+    gzip_vary on;
+    
+    charset utf-8;
+    
+    #logs
+    #access_log ~/logs/access.log;
+	#error_log ~/logs/error.log;
+}
+EOM
+
+
+mkdir -p ~/logs
+touch ~/logs/access.log
+touch ~/logs/error.log
+
+chmod 777 -R ~/logs
+
+apt-get -y install nginx
+service nginx restart
+
+
+aptitude -y install supervisor
+sudo service supervisor stop
+cd ~/www/Django/RecomendadorUD/
+touch log_supervisor.log
+
+cd /etc/supervisor/conf.d/
+sudo touch recomendadorud.conf
+sudo chmod 777 recomendadorud.conf
+cat <<EOM >recomendadorud.conf
+[program:RecomendadorUD]
+command = gunicorn RecomendadorUD.wsgi:application --bind=127.0.0.1:8001                ; Command to start app
+directory= /home/recomendadorud/www/Django/RecomendadorUD/source/                       ; Directory
+user = recomendadorud                                                                   ; User to run as
+stdout_logfile = /home/recomendadorud/www/Django/RecomendadorUD/log_supervisor.log      ; Where to write log messages
+redirect_stderr = true                                                                  ; Save stderr in the same log
+environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8                                         ; Set UTF-8 as default encoding
+
+[program:Redis]
+command = redis-server                                                                  ; Command to start app
+user = recomendadorud                                                                   ; User to run as
+stdout_logfile = /home/recomendadorud/www/Django/RecomendadorUD/log_redis.log           ; Where to write log messages
+redirect_stderr = true                                                                  ; Save stderr in the same log
+
+EOM
+
+supervisorctl reread
+supervisorctl update
+
+sudo service nginx restart
+cd ~/www/Django/RecomendadorUD/source/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Configurando redis
+nano /etc/sysctl.conf
+vm.overcommit_memory = 1
+nano /etc/supervisor/conf.d/redis.conf
+touch log_redis.log
+supervisorctl reread
+supervisorctl update
+
+---###OJO PROBAR SI REDIS FUNCIONA###########
+-------------------------------------------------------------------------------------
+export POSTGRESDATABASE_USER='postgres'
+export POSTGRESDATABASE_PASSWORD='RecomendadorUD'
+cd www/Django/RecomendadorUD/source/
+python manage.py runserver --configuration=Dev
+
+
+
+
+
+
+
+
