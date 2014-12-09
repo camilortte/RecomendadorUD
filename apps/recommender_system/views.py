@@ -55,7 +55,14 @@ class RecomendacionView(TemplateView):
                                 break
                
         else:
-            recomendaciones=Establecimiento.objects.all().order_by('rating_score')[:10]
+            query=Establecimiento.objects.all().order_by('-rating_score')
+            for establecimiento in query:
+                if establecimiento not in recomendaciones:
+                    if not Vote.objects.filter(object_id=establecimiento.id,user=user.id):
+                        recomendaciones.append(establecimiento)
+                        if len(recomendaciones)>=10:
+                            print "Se completo la lista de 10 recomendaciones"
+                            break
             print "No se encontraron recomendaciones"
         return recomendaciones
 

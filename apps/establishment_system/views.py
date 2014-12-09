@@ -1113,16 +1113,28 @@ class CalificacionApiView(APIView):
         try:                      
             calificacion = request.DATA.get("calificacion")
             respuesta=""            
-            establecimiento = Establecimiento.objects.get(id=pk)            
+            
+            establecimiento = Establecimiento.objects.get(id=pk)                        
             if calificacion:
-                calificacion=int(calificacion)
-                if calificacion>=1 and calificacion<=5 :    
+                calificacion=int(calificacion)                
+                if calificacion>=1 and calificacion<=5 :                        
                     recommender=EstablecimientosRecommender()        
+                    print "BIne"
+                    # print establecimiento
+                    # print calificacion
+                    # print request.user
+                    # print request.META['REMOTE_ADDR']
+                    # print request.__dict__
+                    # print "----------__>\n"
+                    # print request.COOKIES
+                    
                     establecimiento.rating.add(
-                        score=calificacion, 
-                        user=request.user, 
-                        ip_address=request.META['REMOTE_ADDR']
-                        )                                                         
+                    score=calificacion, 
+                    user=request.user, 
+                    ip_address=request.META['REMOTE_ADDR']
+                    )  
+                                                                           
+                    print "MAL"
                     print "Actualizando matriz"
                     recommender.precompute()                 
                     respuesta="Calificacion realizada"
@@ -1131,8 +1143,8 @@ class CalificacionApiView(APIView):
                 else:
                     respuesta="Valor no valido"     
         except Exception, e:
-            print "El establecimiento no existe"
-            respuesta="Algo salio mal"
+            print "Ell establecimiento no existe "            
+            respuesta="Algo salio mal ",str(e)            
             print e
         return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1149,7 +1161,8 @@ class UploadImagenApiView(APIView):
     def post(self, request, pk,format=None):
         u"""
             Se valida que la imagen cumpla los requisitos (jpeg,pjpeg,png,jpg) menor o igual
-            a 5 MB, el usuario convencional no podra subir mas de 3 imagenes y el establecimientono 
+            a 5 MB, el usuario convencional no podra subir mas de 3 imagenes
+             y el establecimientono 
             no tendrá más de 8 imagenes
         """
         

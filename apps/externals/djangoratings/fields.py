@@ -180,6 +180,8 @@ class RatingManager(object):
         except Vote.DoesNotExist:
             if delete:
                 raise CannotDeleteVote("attempt to find and delete your vote for %s is failed" % (self.field.name,))
+            # print "RATINGS_VOTES_PER_IP: "
+            # print getattr(settings, 'RATINGS_VOTES_PER_IP', RATINGS_VOTES_PER_IP)
             if getattr(settings, 'RATINGS_VOTES_PER_IP', RATINGS_VOTES_PER_IP):
                 num_votes = Vote.objects.filter(
                     content_type=kwargs['content_type'],
@@ -188,7 +190,7 @@ class RatingManager(object):
                     ip_address=ip_address,
                 ).count()
                 if num_votes >= getattr(settings, 'RATINGS_VOTES_PER_IP', RATINGS_VOTES_PER_IP):
-                    raise IPLimitReached()
+                    raise Exception("Numero Maximo de votos por ip")
             kwargs.update(defaults)
             if use_cookies:
                 # record with specified cookie was not found ...

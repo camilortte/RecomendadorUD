@@ -19,7 +19,7 @@ function add_marker(lng,lat,id,nombre){
     animation: google.maps.Animation.DROP,
     id:id,
     infoWindow: {
-      content: '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;"><h4><a href="/establecimientos/'+id+'">'+nombre+'</h4></div>'
+      content: '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;"><h4><a  href="/establecimientos/'+id+'">'+nombre+'</h4></div>'
     },
   }));  
 
@@ -196,7 +196,7 @@ function add_elemento(id,nombre,descripcion,subcategoria,cantidad){
     
     var item= "\
     <div class='col-md-6 box-info' id='"+id+"'> \
-              <a href='/establecimientos/"+id+"' >\
+              <a href='/establecimientos/"+id+"'  target='_blanck'>\
               <div class='media' id=''>    \
                          <div class='media-body box-est' >\
                           <br>\

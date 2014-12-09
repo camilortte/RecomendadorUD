@@ -104,7 +104,7 @@ class Establecimiento(models.Model):
     sub_categorias=models.ForeignKey(SubCategoria)
     visible = models.BooleanField(_('Es visible'), default=True,
         help_text=_('El establecimiento es visible'))
-    rating = RatingField(range=5,can_change_vote = True) # 5 possible rating values, 1-5
+    rating = RatingField(range=5,can_change_vote = True, use_cookies = False, allow_anonymous = False) # 5 possible rating values, 1-5
     class Meta:
         verbose_name = _('Establecimiento')
         verbose_name_plural = _('Establecimientos')

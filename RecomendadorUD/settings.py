@@ -353,7 +353,7 @@ class Base(Configuration):
     """
     GRAPPELLI_ADMIN_TITLE= "RecomendadorUD"
 
-     
+    RATINGS_VOTES_PER_IP = 1000
     
 
 
@@ -412,6 +412,9 @@ class Dev(Base):
     Configuración Media
     """
     MEDIA_ROOT =  MEDIA_DIR_DEV
+
+    
+
 
 
     
