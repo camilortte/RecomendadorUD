@@ -1,6 +1,11 @@
 #**RecomendadorUD**
 Este proyecto se enfoca en uso de los sistemas de recomendación de filtrado colaborativo aplicados a los establecimientos comerciales en la localidad de Ciudad Bolívar en Bogotá Colombia, centrándose en el campo de la recomendación de establecimientos mediante el uso de métodos de descomposición en valores singulares (SVD por sus siglas en inglés) aplicadas al filtrado colaborativo propuesto por Simon Funk. Lo anterior residirá en un portal web desarrollado en Django, permitiendo agregar estos establecimientos por parte de cualquier usuario y al mismo tiempo ser consultado y recomendado.
 
+##Documentación
+Toda la documentación la encontrará en [este enlace](https://drive.google.com/folderview?id=0B4GqQ4xxNNPIfmtWa0E2YU9oSG1DRlpnbDN4VUdVbExMTlhPNXlqanoyeWxNcVhBOHcyVjg&usp=sharing)
+
+Documento final [PDF](https://drive.google.com/file/d/0B4GqQ4xxNNPIQzNGd0U4ZUZfUG8/view?usp=sharing)
+
 
 ##Licencia
 Ver archivo LICENCE
